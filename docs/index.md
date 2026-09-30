@@ -32,5 +32,7 @@ configuración del portal.
 
 ## Páginas
 
+- [Estado y pendientes](estado-y-pendientes.md): qué existe, qué se decidió y qué falta
 - [Levantamiento local](levantamiento.md)
 - [Documentar un repo con TechDocs](techdocs.md)
+- [Migración a VPS](despliegue-vps.md)

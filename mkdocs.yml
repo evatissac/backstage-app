@@ -2,6 +2,7 @@ site_name: Portal de Desarrollo HRL
 site_description: Cómo se levanta, se configura y se amplía el portal.
 nav:
   - Inicio: index.md
+  - Estado y pendientes: estado-y-pendientes.md
   - Levantamiento local: levantamiento.md
   - Documentar un repo (TechDocs): techdocs.md
   - Migración a VPS (pendiente): despliegue-vps.md
