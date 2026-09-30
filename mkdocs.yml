@@ -4,5 +4,6 @@ nav:
   - Inicio: index.md
   - Levantamiento local: levantamiento.md
   - Documentar un repo (TechDocs): techdocs.md
+  - Migración a VPS (pendiente): despliegue-vps.md
 plugins:
   - techdocs-core
