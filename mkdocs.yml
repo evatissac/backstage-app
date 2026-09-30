@@ -1,0 +1,8 @@
+site_name: Portal de Desarrollo HRL
+site_description: Cómo se levanta, se configura y se amplía el portal.
+nav:
+  - Inicio: index.md
+  - Levantamiento local: levantamiento.md
+  - Documentar un repo (TechDocs): techdocs.md
+plugins:
+  - techdocs-core

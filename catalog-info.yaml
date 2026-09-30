@@ -1,0 +1,15 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: hrl-backstage
+  title: Portal de Desarrollo HRL
+  description: Portal de documentación y catálogo de los sistemas del Hospital Regional de Loreto.
+  annotations:
+    github.com/project-slug: DevHRL/hrl-backstage
+    # La documentación está en docs/ de este mismo repo.
+    backstage.io/techdocs-ref: dir:.
+spec:
+  type: website
+  owner: equipo-plataforma
+  system: plataforma-hrl
+  lifecycle: experimental

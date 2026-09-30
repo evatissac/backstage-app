@@ -1,0 +1,76 @@
+# Estructura del Hospital Regional de Loreto en el catálogo.
+# Aquí solo va lo que no pertenece a un repo concreto: el dominio, los sistemas
+# y los equipos. Cada repo declara sus componentes en su propio catalog-info.yaml
+# y los cuelga de uno de estos sistemas con `spec.system`.
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: salud-hrl
+  title: Sistemas del HRL
+  description: Sistemas de información desarrollados para el Hospital Regional de Loreto.
+spec:
+  owner: equipo-plataforma
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: vigilancia-oncologica
+  title: Sistema de Vigilancia Oncológica
+  description: Registro, seguimiento e indicadores de pacientes oncológicos.
+  links:
+    - url: https://github.com/DevHRL/HIS_HRL
+      title: Repositorio
+spec:
+  owner: equipo-oncologia
+  domain: salud-hrl
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: reporte-estadistico
+  title: Sistema de Reporte Estadístico
+  description: Reportes estadísticos del hospital, incluido el módulo de Nutrición.
+  links:
+    - url: https://github.com/DevHRL/Estadistica_hrl
+      title: Repositorio
+spec:
+  owner: equipo-estadistica
+  domain: salud-hrl
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: plataforma-hrl
+  title: Plataforma HRL
+  description: Piezas compartidas por todos los sistemas, como el kit de UI y este portal.
+spec:
+  owner: equipo-plataforma
+  domain: salud-hrl
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: equipo-plataforma
+  title: Equipo de Plataforma
+spec:
+  type: team
+  children: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: equipo-oncologia
+  title: Equipo de Oncología
+spec:
+  type: team
+  children: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: equipo-estadistica
+  title: Equipo de Estadística
+spec:
+  type: team
+  children: []
