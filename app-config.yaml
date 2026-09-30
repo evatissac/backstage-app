@@ -230,10 +230,8 @@ catalog:
       target: ../../catalog/hrl.yaml
       rules:
         - allow: [Domain, System, Group, User]
-
-    # El propio portal, con su documentación (TechDocs) en docs/.
-    - type: file
-      target: ../../catalog-info.yaml
+    # El propio portal no se registra aquí: está en DevHRL y lo encuentra el
+    # descubrimiento, como cualquier otro repo.
 
     # Local example template
     - type: file
