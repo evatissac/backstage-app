@@ -5,6 +5,7 @@ nav:
   - Estado y pendientes: estado-y-pendientes.md
   - Levantamiento local: levantamiento.md
   - Documentar un repo (TechDocs): techdocs.md
-  - Migración a VPS (pendiente): despliegue-vps.md
+  - Idioma del portal: idioma.md
+  - Despliegue (pendiente): despliegue.md
 plugins:
   - techdocs-core

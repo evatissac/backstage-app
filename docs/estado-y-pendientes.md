@@ -7,11 +7,13 @@ qué existe, qué se decidió, qué **no** se debe hacer todavía y qué sigue.
 
 - Se está montando un portal **Backstage** para documentar y catalogar los sistemas
   del Hospital Regional de Loreto. Responsable: Andre.
-- El portal **ya funciona en local** (login con GitHub, catálogo, TechDocs). Está en
-  `DevHRL/hrl-backstage` (privado).
+- El portal **funciona en local** (login con GitHub, catálogo, TechDocs, bilingüe
+  español/inglés, Postgres en Docker). Está en `DevHRL/hrl-backstage` (privado).
 - Los repos del hospital se están moviendo a la organización de GitHub **`DevHRL`**.
-- **No se ha desplegado** ni se va a hacer todavía. El plan de despliegue está
-  escrito en [Migración a VPS](despliegue-vps.md).
+- **Fase A terminada** (plantilla limpia, base de datos, idioma, diagramas). Sigue
+  la fase B: personalización visual y subportales por proyecto.
+- **No se ha desplegado.** El primer despliegue será en **Coolify autoalojado**,
+  para presentar el catálogo, y todo gratuito. Ver [Despliegue](despliegue.md).
 - **Aún no se documenta ningún repo** ni se crean equipos. Ver sección 4.
 
 ## 2. Qué existe hoy
@@ -25,7 +27,8 @@ qué existe, qué se decidió, qué **no** se debe hacer todavía y qué sigue.
 | Reporte Estadístico y Nutrición | `DevHRL/Estadistica_hrl` | **Transferido** desde `evatissac`. Ramas `main`, `prototype`, `feature/backend-nucleo` |
 | Oncología | `DevHRL/HIS_HRL` | **Espejo**, no transferencia. El original `evatissac/HIS_HRL` sigue desplegado desde `main` |
 | `SIGH-FRONTEND`, `SIGH-BACKEND` | `DevHRL` | Ya estaban en la organización; no se han revisado |
-| RotaPass y RotaPass-Admin | `GiancarloChavez` | **Fuera de `DevHRL`**; falta decidir si pertenecen al hospital |
+
+RotaPass y RotaPass-Admin **no forman parte** del hospital ni de este portal.
 
 Detalles que importan:
 
@@ -37,36 +40,40 @@ Detalles que importan:
   URL a `DevHRL/hrl-core-ui` en Estadística (`main`, `feature/backend-nucleo`) y en
   el espejo de Oncología. La URL vieja sigue funcionando por redirección.
 - **Organización `DevHRL`:** el 2FA obligatorio está **desactivado** y los miembros
-  pueden crear repos. Tiene 6 miembros. **No tiene equipos de GitHub.**
+  pueden crear repos. El importador trae **9 miembros**. **No tiene equipos de GitHub.**
 
 ### El portal
 
 | Pieza | Estado |
 |---|---|
-| Login con GitHub | ✅ Funciona. Solo entran los miembros de `DevHRL` (el usuario debe existir en el catálogo) |
-| Ingreso como invitado | ⚠️ Activo solo para local; hay que quitarlo antes de desplegar |
+| Login con GitHub | ✅ Solo entran los miembros de `DevHRL` (el usuario debe existir en el catálogo) |
+| Ingreso como invitado | ✅ Solo en local: la página de ingreso no lo muestra fuera de desarrollo y el backend lo rechaza |
 | Catálogo | ✅ Dominio `salud-hrl`, 3 sistemas (`vigilancia-oncologica`, `reporte-estadistico`, `plataforma-hrl`), definidos en `catalog/hrl.yaml` |
-| Descubrimiento de repos | ✅ Cada 30 min busca `catalog-info.yaml` en la raíz de cada repo de `DevHRL`. Hoy encuentra 5 repos, **ninguno con ese archivo salvo el portal** |
-| Importación de miembros | ✅ Cada 60 min. Trae 6 usuarios con usuario, nombre y avatar. Sin correo |
+| Descubrimiento de repos | ✅ Cada 30 min busca `catalog-info.yaml` en la raíz de cada repo de `DevHRL`. Hoy solo el portal lo tiene |
+| Importación de miembros | ✅ Cada 60 min. Trae 9 usuarios con usuario, nombre y avatar. Sin correo |
 | Equipos (Groups) | ⚠️ Los 3 de `catalog/hrl.yaml` existen pero **sin miembros** (ver sección 4) |
-| TechDocs | ✅ Compila en local con Docker. Mermaid **no** se dibuja (ver decisiones) |
-| Zoom de imágenes | ✅ Addon LightBox activo; **no probado con un `.drawio.svg` real** |
-| Búsqueda | ✅ Índice en memoria (básico) |
-| Base de datos | ⚠️ SQLite **en memoria**: se pierden sesiones y preferencias al detener el portal |
+| Base de datos | ✅ PostgreSQL 17 en Docker (`compose.yaml`, `127.0.0.1:5433`); la levanta `iniciar.ps1`. Sesiones y preferencias ya no se pierden |
+| Búsqueda | ✅ Motor de Postgres (antes, índice en memoria) |
+| Idioma | ✅ Español por defecto e inglés en *Ajustes*. ~800 textos traducidos con glosario. Quedan huecos conocidos: ver [Idioma](idioma.md) |
+| TechDocs | ✅ Compila en local con Docker. Mermaid **no** se dibuja (decisión: draw.io) |
+| Diagramas y zoom | ✅ Probado con un `.drawio.svg` real: el LightBox lo abre y amplía con la rueda. Ejemplo en `docs/img/catalogo.drawio.svg` |
+| Portada | ✅ Sin chistes, relojes ni enlaces a backstage.io. Tarjeta de bienvenida, favoritos y visitas. La portada propia llega en la fase B |
+| Plantilla de ejemplo | ✅ Quitada, con la carpeta `examples/`. El Scaffolder sigue instalado, sin plantillas |
+| Kubernetes | ✅ Quitado |
 | Permisos | ⚠️ «Permitir todo» |
-| Kubernetes | ⚠️ Plugin cargado sin configurar (deja un aviso en cada arranque) |
-| Idioma | Todo en inglés salvo lo que escribimos |
+| Logo y colores | ⚠️ Los de Backstage (fase B) |
 
 ## 3. Cómo retomar el trabajo
 
 ```powershell
 cd C:\Users\Andre\Desktop\hrl-backstage
-.\iniciar.ps1          # http://localhost:3000 (frontend), :7007 (backend)
+.\iniciar.ps1          # levanta Postgres y el portal: http://localhost:3000 (frontend), :7007 (backend)
 ```
 
-Requisitos: Docker Desktop encendido (TechDocs; el script avisa si está apagado),
-`.env` con las credenciales (copia de `.env.example`) y Yarn activado con Corepack.
-Detalle en [Levantamiento local](levantamiento.md).
+Requisitos: **Docker Desktop encendido** (ahora es obligatorio: ahí vive la base;
+el script se detiene si está apagado), `.env` con las credenciales (copia de
+`.env.example`) y Yarn activado con Corepack. Detalle en
+[Levantamiento local](levantamiento.md).
 
 Cosas que ya dieron problemas:
 
@@ -75,13 +82,20 @@ Cosas que ya dieron problemas:
 - **Un arranque con «IPC request timed out»**: varios plugins fallaron una vez.
   Reiniciar el portal lo resolvió; si se repite, investigar.
 - **Ver la página de ingreso**: si el navegador ya tiene sesión de invitado no
-  aparece. Usar ventana privada o cerrar sesión en *Settings*.
+  aparece. Usar ventana privada o cerrar sesión en *Ajustes*.
 - **Token de GitHub**: el importador de miembros necesita los permisos `repo`,
   `read:org`, `read:user` y `user:email`. Con menos, falla al leer el correo.
 - **Capturas de pantalla**: hay Edge instalado; Playwright puede usarlo con
   `channel: 'msedge'` sin descargar nada.
 - **Crear una OAuth App**: cada una admite una sola URL de callback, por eso
-  producción necesitará la suya.
+  cada dirección del portal necesita la suya (o una GitHub App).
+- **La documentación del propio portal se compila desde GitHub** (`main` de
+  `DevHRL/hrl-backstage`), no desde la copia local: un cambio en `docs/` no se ve
+  en el portal hasta que se sube. Para probar en local, registrar una entidad
+  temporal con `app-config.local.yaml` (git lo ignora) y **reiniciar** el portal:
+  un archivo de configuración nuevo no se detecta en caliente.
+- **Añadir una dependencia al frontend**: declarar la versión que ya está en
+  `yarn.lock` y revisar que el diff del lockfile no suba versiones.
 
 ## 4. Decisiones tomadas
 
@@ -89,9 +103,13 @@ Cosas que ya dieron problemas:
 |---|---|
 | **Backstage**, no BookStack ni otros | Equipo de ~30 personas; se aceptó el costo de mantenerlo. |
 | **Login con GitHub** | La organización `DevHRL` es la fuente de usuarios. |
-| **Alojamiento futuro: un VPS con Coolify** | Contenedor Backstage + recursos Postgres y MinIO. Ver [Migración a VPS](despliegue-vps.md). |
-| **Descartados** | Supabase, Netlify, Vercel y Amplify. |
+| **Todo gratuito** | Alojamiento, dominio, base de datos y respaldos. |
+| **Alojamiento: Coolify autoalojado**, provisional | En un equipo de Andre, para presentar el catálogo; después, un servidor dedicado. Oracle Always Free y las nubes con capa gratis se descartaron (ver [Despliegue](despliegue.md)). |
+| **Una sola instancia con subportales por proyecto** | Los proyectos comparten base de datos. Cada proyecto es un `System`, con su ruta (`/proyectos/<proyecto>`) y una cabecera que deja claro en qué proyecto se está. Nada se registra sin `spec.system`. |
+| **PostgreSQL 17 en todas partes** | También en local (Docker, puerto 5433): no se cambia de base al migrar. Se descartó SQLite en archivo. |
+| **Bilingüe: español por defecto, inglés opcional** | Con las herramientas oficiales de Backstage (`translations export/import`) y un glosario fijo. La documentación de los repos, solo en español. |
 | **Diagramas: draw.io como `.drawio.svg`** | Con el addon LightBox para zoom y arrastre. **No instalar el plugin de Mermaid** salvo que no haya mejor alternativa. |
+| **RotaPass fuera** | Es un proyecto aislado: no entra en `DevHRL` ni en el portal. |
 | **Commits del repo del portal** | A nombre de Andre (`Andre-pezo@outlook.es`), **sin** línea `Co-Authored-By` de Claude. |
 | **Empezar con el portal estándar** | Se personaliza poco a poco; no se hace fork de Backstage. |
 
@@ -99,45 +117,45 @@ Cosas que ya dieron problemas:
 
 - **No documentar ningún repo** (ni `catalog-info.yaml`, ni `mkdocs.yml`, ni `docs/`).
 - **No crear equipos** en GitHub ni asignar miembros a los del catálogo.
-- **No desplegar**.
+- **No desplegar** hasta preparar lo de la sección E; el destino ya está decidido.
 
 ## 5. Decisiones abiertas
 
-1. **Base de datos local:** ¿SQLite en archivo (simple, dos líneas de configuración)
-   o Postgres en Docker (misma versión que el recurso de Coolify)?
-   - Hay un **PostgreSQL 18 de Windows** ocupando el puerto 5432; si se usa Docker,
-     mapear a `127.0.0.1:5433`.
-   - Recomendación dada: SQLite ahora y Postgres en Docker al preparar el despliegue.
-     El usuario aún no eligió.
-2. **Idioma de la interfaz:** ¿traducir lo visible (menús, ingreso, portada) al
-   español o dejarlo en inglés? Afecta a toda la personalización.
-3. **RotaPass:** ¿es del hospital y entra en `DevHRL`?
-4. **Oncología:** fecha de corte para dejar de usar `evatissac/HIS_HRL` y desplegar
+1. **Coolify:** ¿en qué equipo y sistema corre (Linux, WSL2, máquina virtual)? ¿Ya
+   está instalado?
+2. **Acceso:** ¿basta la red local para presentar, o hace falta entrar desde fuera
+   (DuckDNS, túnel)?
+3. **Oncología:** fecha de corte para dejar de usar `evatissac/HIS_HRL` y desplegar
    desde `DevHRL/HIS_HRL`. Al cortar: resincronizar lo que entró al original, recrear
    los 5 issues abiertos, secretos y webhooks, y cambiar el origen del despliegue.
-5. **Nombre del espejo de Oncología:** hoy `HIS_HRL` (igual que el original).
+4. **Nombre del espejo de Oncología:** hoy `HIS_HRL` (igual que el original).
    Renombrar cuando convenga; GitHub redirige.
-6. **Acceso al portal en producción:** público en internet (solo login de GitHub) o
-   detrás de VPN / red del hospital.
-7. **Dominio:** aún no hay. Coolify da un `*.sslip.io` con HTTPS mientras tanto.
+5. **Proyectos del portal:** ¿Nutrición es un proyecto propio o parte de
+   Estadística (comparten repo)? ¿Entra SIGH?
 
 ## 6. Pendientes, en orden sugerido
 
-### A. Preparar el portal antes de personalizarlo
+### A. Preparar el portal — ✅ terminada
 
-- [ ] Resolver la base de datos local (decisión abierta 1).
-- [ ] Limpiar la plantilla: quitar chistes aleatorios, relojes de otras ciudades y
-      enlaces a backstage.io de la portada; quitar Kubernetes; quitar la plantilla de
-      ejemplo del Scaffolder y su carpeta `examples/`.
-- [ ] Decidir e implementar el idioma (decisión abierta 2).
-- [ ] Probar el LightBox con un `.drawio.svg` real.
+- [x] Base de datos local: Postgres 17 en Docker.
+- [x] Limpiar la plantilla: portada, Kubernetes, plantilla de ejemplo y `examples/`.
+- [x] Idioma bilingüe, con comprobación automática de claves y marcadores.
+- [x] Probar el LightBox con un `.drawio.svg` real.
 
-### B. Personalización (después de A)
+### B. Personalización y subportales
 
-- [ ] Tema con colores y fuentes de `hrl-core-ui`.
-- [ ] Logo, favicon y título.
-- [ ] Barra lateral y portada propias.
-- [ ] Revisar cómo encaja la paleta con el modo oscuro.
+- [ ] Tema con colores y fuentes de `hrl-core-ui`, y revisar el modo oscuro.
+- [ ] Logo, favicon y título (hoy dice «Backstage» en la barra lateral).
+- [ ] Portada propia (reemplaza los títulos de tarjeta que siguen en inglés).
+- [ ] **Subportales por proyecto**: página `/proyectos` con una tarjeta por
+      sistema y `/proyectos/<proyecto>` con pestañas *Resumen · Componentes ·
+      Documentación · APIs · Equipo*; franja de color y nombre del proyecto en la
+      cabecera; selector de proyecto en la barra lateral.
+- [ ] Addon de TechDocs que muestre el proyecto en la cabecera de cada documento.
+- [ ] Búsqueda filtrada por proyecto (comprobar si el índice de TechDocs incluye
+      el sistema; si no, añadirlo al indexar).
+- [ ] Regla en el backend que rechace entidades sin `spec.system`.
+- [ ] Probar `theme.language: es` en `mkdocs.yml` para traducir «Table of contents».
 
 ### C. Catálogo (cuando el usuario lo autorice)
 
@@ -164,13 +182,12 @@ Cosas que ya dieron problemas:
 - [ ] Ejecutar `npm install` con la URL nueva en los proyectos migrados: **no se
       probó**, solo se confía en la redirección de GitHub.
 
-### E. Despliegue (solo cuando el usuario lo pida)
+### E. Despliegue en Coolify (solo cuando el usuario lo pida)
 
-Ver el orden completo en [Migración a VPS](despliegue-vps.md). Resumen:
-VPS con Coolify → GitHub App y OAuth App de producción → `app-config.production.yaml`
-reescrito, Dockerfile, workflow de imagen y sin invitado → recursos Postgres y MinIO
-→ **respaldos fuera del VPS, probados** → TechDocs por CI en un repo piloto →
-política de permisos propia.
+Ver el detalle en [Despliegue](despliegue.md). Resumen: TechDocs dentro del
+contenedor → imagen publicada por GitHub Actions → OAuth App de la dirección
+elegida → recurso Postgres en Coolify → **respaldos a Cloudflare R2, probados** →
+pruebas. `app-config.production.yaml` y el Dockerfile ya están listos.
 
 ### F. Seguridad
 
@@ -178,18 +195,23 @@ política de permisos propia.
       carpeta local. El usuario dijo que los repos ya fueron verificados; aun así,
       antes de abrir el portal a más gente conviene confirmar que no esté versionado
       y, si lo estuvo, rotar esas claves.
-- [ ] Reemplazar el token personal por una GitHub App de la organización.
+- [ ] Reemplazar el token personal por una GitHub App de la organización (también
+      resuelve las callbacks de varias direcciones).
 - [ ] Política de permisos distinta de «permitir todo» antes de abrir a los 30.
 
 ## 7. Dónde está cada cosa
 
 | Qué | Dónde |
 |---|---|
-| Configuración del portal | `app-config.yaml` (local), `app-config.production.yaml` (**por reescribir**) |
+| Configuración del portal | `app-config.yaml` (local), `app-config.production.yaml` (despliegue) |
+| Base de datos local | `compose.yaml` |
 | Backend (plugins) | `packages/backend/src/index.ts` |
 | Frontend (extensiones) | `packages/app/src/App.tsx` y `packages/app/src/modules/` |
 | Página de ingreso | `packages/app/src/modules/signIn/index.tsx` |
+| Barra lateral | `packages/app/src/modules/nav/Sidebar.tsx` |
+| Textos propios y traducciones | `packages/app/src/modules/idioma/` y `packages/app/translations/` |
 | Dominio, sistemas y equipos | `catalog/hrl.yaml` |
 | Arranque local | `iniciar.ps1` y `.env` (no versionado; ver `.env.example`) |
-| Plan de despliegue | `docs/despliegue-vps.md` |
+| Plan de despliegue | `docs/despliegue.md` |
+| Idioma | `docs/idioma.md` |
 | Este documento | `docs/estado-y-pendientes.md` |

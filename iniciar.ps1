@@ -21,8 +21,16 @@ if (-not $env:AUTH_GITHUB_CLIENT_ID -or -not $env:AUTH_GITHUB_CLIENT_SECRET) {
   Write-Warning 'Faltan AUTH_GITHUB_CLIENT_ID / AUTH_GITHUB_CLIENT_SECRET en .env: solo funcionará el ingreso como invitado.'
 }
 
+# Credenciales de la base local: si .env no las trae, las mismas que usa
+# compose.yaml por defecto. Solo escucha en 127.0.0.1, no es un secreto.
+if (-not $env:POSTGRES_USER) { $env:POSTGRES_USER = 'backstage' }
+if (-not $env:POSTGRES_PASSWORD) { $env:POSTGRES_PASSWORD = 'backstage' }
+
 # cmd /c evita que PowerShell 5.1 convierta la salida de error de docker en un error fatal.
 cmd /c "docker info >nul 2>&1"
-if ($LASTEXITCODE -ne 0) { Write-Warning 'Docker no está encendido: el catálogo funciona, pero TechDocs no podrá compilar la documentación.' }
+if ($LASTEXITCODE -ne 0) { throw 'Docker no está encendido: lo necesitan la base de datos y la compilación de TechDocs.' }
+
+cmd /c "docker compose up -d --wait 2>&1"
+if ($LASTEXITCODE -ne 0) { throw 'No se pudo levantar Postgres (compose.yaml). Revisa: docker compose logs postgres' }
 
 yarn start

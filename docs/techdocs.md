@@ -37,12 +37,25 @@ plugins:
 
 ## 3. `docs/index.md`
 
-Markdown normal, con tablas e imágenes (`docs/img/...`). Los diagramas de
-draw.io se guardan como `.drawio.svg` y se insertan como imagen.
+Markdown normal, en español, con tablas e imágenes (`docs/img/...`).
 
-Los bloques ` ```mermaid ` todavía se muestran como código: TechDocs necesita
-un addon en el frontend del portal para dibujarlos, y aún no está instalado.
-Se pueden escribir desde ya; se verán como diagrama cuando se instale.
+### Diagramas
+
+Se dibujan en **draw.io** y se guardan como `.drawio.svg`: el archivo es una
+imagen normal y a la vez guarda el diagrama editable, así que se vuelve a abrir
+en draw.io (o en su extensión de VS Code) sin exportar nada. Se insertan como
+cualquier imagen:
+
+```markdown
+![Qué muestra el diagrama](img/arquitectura.drawio.svg)
+```
+
+En el portal, un clic sobre la imagen la abre a pantalla completa, con zoom y
+arrastre. Dale fondo blanco al diagrama para que se lea también en el tema oscuro.
+Ejemplo: `docs/img/catalogo.drawio.svg` de este repo.
+
+Los bloques ` ```mermaid ` **no se dibujan**: se ven como código. No se instalará
+el plugin de Mermaid; usa draw.io.
 
 ## Cuándo aparece
 

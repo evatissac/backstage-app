@@ -1,0 +1,23 @@
+{
+  "catalogGraphCard.title": "Relaciones",
+  "catalogGraphCard.deepLinkTitle": "Ver el grafo",
+  "catalogGraphPage.title": "Grafo del catálogo",
+  "catalogGraphPage.filterToggleButtonTitle": "Filtros",
+  "catalogGraphPage.supportButtonDescription": "Empieza a seguir tu componente agregándolo al catálogo.",
+  "catalogGraphPage.simplifiedSwitchLabel": "Simplificado",
+  "catalogGraphPage.mergeRelationsSwitchLabel": "Unir relaciones",
+  "catalogGraphPage.zoomOutDescription": "Pellizca y usa el zoom para recorrer el diagrama. Haz clic para cambiar el nodo activo y Mayús + clic para abrir la entidad.",
+  "catalogGraphPage.curveFilter.title": "Curva",
+  "catalogGraphPage.curveFilter.curveStepBefore": "Escalonada",
+  "catalogGraphPage.curveFilter.curveMonotoneX": "Suave (monótona en X)",
+  "catalogGraphPage.directionFilter.title": "Dirección",
+  "catalogGraphPage.directionFilter.leftToRight": "De izquierda a derecha",
+  "catalogGraphPage.directionFilter.rightToLeft": "De derecha a izquierda",
+  "catalogGraphPage.directionFilter.topToBottom": "De arriba abajo",
+  "catalogGraphPage.directionFilter.bottomToTop": "De abajo arriba",
+  "catalogGraphPage.maxDepthFilter.title": "Profundidad máxima",
+  "catalogGraphPage.maxDepthFilter.inputPlaceholder": "∞ Sin límite",
+  "catalogGraphPage.maxDepthFilter.clearButtonAriaLabel": "quitar la profundidad máxima",
+  "catalogGraphPage.selectedKindsFilter.title": "Clases",
+  "catalogGraphPage.selectedRelationsFilter.title": "Relaciones"
+}

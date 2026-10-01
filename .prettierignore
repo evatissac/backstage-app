@@ -2,3 +2,6 @@ dist
 dist-types
 coverage
 .vscode
+
+# Lo genera `yarn traducciones:importar`; se reescribe en cada importación.
+packages/app/src/translations/resources.ts

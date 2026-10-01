@@ -1,0 +1,27 @@
+# Base de datos local del portal. La levanta iniciar.ps1; no hace falta
+# ejecutarlo a mano. Misma imagen que el recurso PostgreSQL de Coolify, para
+# que lo que funciona aquí funcione allá.
+#
+# Puerto 5433 y solo en 127.0.0.1: el 5432 lo ocupa el PostgreSQL de Windows,
+# y la base no debe quedar accesible desde la red.
+name: hrl-backstage
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-backstage}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-backstage}
+    ports:
+      - '127.0.0.1:5433:5432'
+    volumes:
+      - datos:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER}']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  datos:

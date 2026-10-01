@@ -1,0 +1,20 @@
+{
+  "workflow.noDescription": "Sin descripción",
+  "passwordWidget.content": "Este campo no es seguro. Usa [`ui:field: Secret`](https://backstage.io/docs/features/software-templates/writing-templates/#using-secrets) en lugar de `ui:widget: password`",
+  "scaffolderPageContextMenu.createLabel": "Crear",
+  "scaffolderPageContextMenu.moreLabel": "más",
+  "scaffolderPageContextMenu.editorLabel": "Administrar plantillas",
+  "scaffolderPageContextMenu.actionsLabel": "Acciones instaladas",
+  "scaffolderPageContextMenu.tasksLabel": "Lista de tareas",
+  "scaffolderPageContextMenu.templatingExtensionsLabel": "Extensiones de plantillas",
+  "stepper.backButtonText": "Atrás",
+  "stepper.nextButtonText": "Siguiente",
+  "stepper.createButtonText": "Crear",
+  "stepper.reviewButtonText": "Revisar",
+  "stepper.stepIndexLabel": "Paso {{index, number}}",
+  "templateCategoryPicker.title": "Categorías",
+  "templateCard.noDescription": "Sin descripción",
+  "templateCard.chooseButtonText": "Elegir",
+  "cardHeader.detailBtnTitle": "Ver los detalles de la plantilla",
+  "templateOutputs.title": "Salida en texto"
+}

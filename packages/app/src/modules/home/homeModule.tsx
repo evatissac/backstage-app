@@ -1,52 +1,49 @@
-import { createFrontendModule } from '@backstage/frontend-plugin-api';
+import {
+  createFrontendModule,
+  useTranslationRef,
+} from '@backstage/frontend-plugin-api';
 import { HomePageWidgetBlueprint } from '@backstage/plugin-home-react/alpha';
+import homePlugin from '@backstage/plugin-home/alpha';
 import { MarkdownContent } from '@backstage/core-components';
+import { textosHrl } from '../idioma';
 
-const content = `
-## Welcome to Backstage! 👋
+const Bienvenida = () => {
+  const { t } = useTranslationRef(textosHrl);
+  return <MarkdownContent content={t('bienvenida.content')} />;
+};
 
-Backstage is your developer portal — a single place to manage all your
-software, services, and documentation.
-
-### Quick Start
-
-- **Explore the catalog** — Browse all your organization's software in
-  the [Software Catalog](/catalog)
-- **Create something new** — Use a [Software Template](/create) to
-  scaffold a new project in minutes
-- **Read the docs** — Find technical documentation for any service
-  right from its catalog page
-
-### Helpful Links
-
-- [Backstage Documentation](https://backstage.io/docs)
-- [Customizing Your Homepage](https://backstage.io/docs/getting-started/homepage)
-- [Adding Plugins](https://backstage.io/docs/plugins)
-- [Contributing](https://github.com/backstage/backstage/blob/master/CONTRIBUTING.md)
-
-### How to Edit This Card
-
-This widget is defined in \`packages/app/src/modules/home/homeModule.tsx\`.
-You can update the markdown content there to welcome your team with
-your own links and getting started tips.
-
-To remove this card entirely, delete the getting started widget and
-remove it from the home module's extensions array in this file.
-`;
-
-const gettingStartedWidget = HomePageWidgetBlueprint.make({
-  name: 'getting-started',
+const bienvenidaWidget = HomePageWidgetBlueprint.make({
+  name: 'bienvenida',
   params: {
-    name: 'GettingStarted',
-    title: 'Getting Started',
-    description: 'Tips and links to help you get started with Backstage',
-    components: async () => ({
-      Content: () => <MarkdownContent content={content} />,
-    }),
+    name: 'Bienvenida',
+    // `title` y `description` son texto fijo del blueprint: no cambian con el
+    // idioma, igual que los títulos de las demás tarjetas de la portada. La
+    // portada propia de la fase B los reemplazará.
+    title: 'Bienvenida',
+    description: 'Qué es este portal y por dónde empezar',
+    components: async () => ({ Content: Bienvenida }),
   },
 });
 
+// Tarjetas del plugin con el título en español. Igual que en la bienvenida, el
+// título del blueprint es texto fijo: se ve en español en ambos idiomas.
+const conTitulo = (
+  id:
+    | 'home-page-widget:home/starred-entities'
+    | 'home-page-widget:home/recently-visited'
+    | 'home-page-widget:home/most-visited',
+  title: string,
+) => homePlugin.getExtension(id).override({ params: { title } });
+
 export const homeModule = createFrontendModule({
   pluginId: 'home',
-  extensions: [gettingStartedWidget],
+  extensions: [
+    bienvenidaWidget,
+    conTitulo('home-page-widget:home/starred-entities', 'Favoritos'),
+    conTitulo(
+      'home-page-widget:home/recently-visited',
+      'Visitados recientemente',
+    ),
+    conTitulo('home-page-widget:home/most-visited', 'Más visitados'),
+  ],
 });

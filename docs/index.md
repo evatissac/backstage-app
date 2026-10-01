@@ -10,15 +10,14 @@ Portal interno del Hospital Regional de Loreto construido con
 
 ## Cómo se organiza el catálogo
 
-```mermaid
-flowchart TD
-  D[Dominio: Sistemas del HRL] --> S1[Sistema: Vigilancia Oncológica]
-  D --> S2[Sistema: Reporte Estadístico]
-  D --> S3[Sistema: Plataforma HRL]
-  S1 --> C1[Componentes del repo HIS_HRL]
-  S2 --> C2[Componentes del repo Estadistica_hrl]
-  S3 --> C3[hrl-core-ui, este portal]
-```
+![Un dominio, tres sistemas y los componentes de cada repo](img/catalogo.drawio.svg)
+
+*Haz clic en el diagrama para ampliarlo. Para editarlo, abre el `.drawio.svg` en
+draw.io o en su extensión de VS Code: el archivo guarda el diagrama editable.*
+
+Cada sistema es un **proyecto**: más adelante tendrá su propio subportal
+(`/proyectos/<proyecto>`) con sus componentes, documentación y APIs, y la
+cabecera indicará siempre en qué proyecto estás.
 
 | Qué | Dónde se declara |
 |---|---|
@@ -35,4 +34,5 @@ configuración del portal.
 - [Estado y pendientes](estado-y-pendientes.md): qué existe, qué se decidió y qué falta
 - [Levantamiento local](levantamiento.md)
 - [Documentar un repo con TechDocs](techdocs.md)
-- [Migración a VPS](despliegue-vps.md)
+- [Idioma del portal](idioma.md)
+- [Despliegue](despliegue.md)

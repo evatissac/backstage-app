@@ -1,10 +1,12 @@
-# [Backstage](https://backstage.io)
+# Portal de Desarrollo HRL
 
-This is your newly scaffolded Backstage App, Good Luck!
+Portal [Backstage](https://backstage.io) del Hospital Regional de Loreto: catálogo
+de sistemas, responsables y documentación técnica de los repos de `DevHRL`.
 
-To start the app, run:
-
-```sh
-yarn install
-yarn start
+```powershell
+yarn install      # la primera vez
+.\iniciar.ps1     # Docker Desktop encendido; abre http://localhost:3000
 ```
+
+Antes de cambiar nada, lee [docs/estado-y-pendientes.md](docs/estado-y-pendientes.md).
+El resto de la documentación está en [docs/](docs/index.md).

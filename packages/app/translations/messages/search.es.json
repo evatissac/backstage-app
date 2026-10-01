@@ -1,0 +1,9 @@
+{
+  "searchModal.viewFullResults": "Ver todos los resultados",
+  "searchType.tabs.allTitle": "Todo",
+  "searchType.allResults": "Todos los resultados",
+  "searchType.accordion.collapse": "Contraer",
+  "searchType.accordion.numberOfResults": "{{number}} resultados",
+  "searchType.accordion.allTitle": "Todo",
+  "sidebarSearchModal.title": "Buscar"
+}
