@@ -36,3 +36,4 @@ configuración del portal.
 - [Documentar un repo con TechDocs](techdocs.md)
 - [Idioma del portal](idioma.md)
 - [Despliegue](despliegue.md)
+- [Coolify: paso a paso](coolify-paso-a-paso.md)

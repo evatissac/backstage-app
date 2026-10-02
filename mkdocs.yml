@@ -6,6 +6,7 @@ nav:
   - Levantamiento local: levantamiento.md
   - Documentar un repo (TechDocs): techdocs.md
   - Idioma del portal: idioma.md
-  - Despliegue (pendiente): despliegue.md
+  - Despliegue: despliegue.md
+  - Coolify, paso a paso: coolify-paso-a-paso.md
 plugins:
   - techdocs-core

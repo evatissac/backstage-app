@@ -1,7 +1,9 @@
-# Despliegue (pendiente)
+# Despliegue
 
-Plan acordado para sacar el portal de local. **Aún no se ejecuta**: esta página
-reúne lo decidido y lo que falta para cuando se haga.
+**Estado (2026-10-01):** el primer despliegue provisional **ya está en marcha** en
+Coolify, en el PC de Andre, detrás de un túnel de Cloudflare. El procedimiento
+exacto está en [Coolify: paso a paso](coolify-paso-a-paso.md). Esta página reúne
+las decisiones y lo que falta para pasar a un servidor dedicado.
 
 ## Decisiones
 
@@ -76,36 +78,23 @@ servidor. Cada dirección nueva exige su URL de callback (ver abajo).
 - El invitado no aparece en la página de ingreso fuera de desarrollo, y el
   backend lo rechaza fuera de `NODE_ENV=development`.
 
+- **TechDocs en el contenedor:** MkDocs viene instalado en la imagen y la
+  documentación compilada se guarda en el volumen `/app/techdocs`
+  (`app-config.production.yaml`). **Sin probar todavía con un repo documentado.**
+  Cuando haya varios repos, conviene compilar en CI y publicar en un bucket
+  compatible con S3 (R2 o MinIO).
+- **Imagen:** el Dockerfile multietapa compila dentro de Docker; Coolify lo
+  construye directamente desde GitHub. Alternativa: GitHub Actions publicando en
+  `ghcr.io/devhrl/hrl-backstage`.
+
 ### Pendientes
 
-**TechDocs en el contenedor.** Hoy se compila con Docker (`runIn: docker`), que
-no está disponible dentro del contenedor. Para la versión provisional, lo más
-simple:
-
-```yaml
-techdocs:
-  builder: local
-  generator:
-    runIn: local          # mkdocs instalado en la propia imagen
-  publisher:
-    type: local           # carpeta en un volumen persistente
-```
-
-Requiere instalar en el Dockerfile Python, `mkdocs-techdocs-core` y montar un
-volumen en la carpeta de publicación. Cuando haya más repos documentados,
-pasar a compilar en CI y publicar en un bucket compatible con S3 (R2 o MinIO).
-
-**Compilar la imagen.** El Dockerfile espera el portal ya compilado fuera de
-Docker (`packages/backend/dist/*.tar.gz`). Opciones:
-
-- **Recomendado**: GitHub Actions ejecuta `yarn install --immutable`, `yarn tsc`,
-  `yarn build:backend` y `docker build`, y publica en
-  `ghcr.io/devhrl/hrl-backstage`. Coolify descarga la imagen.
-- Alternativa: Dockerfile multietapa que compile dentro de Docker. Coolify lo
-  hace solo, pero el equipo necesita ~4 GB libres para compilar.
-
-**SQLite fuera de la imagen.** Ya no se usa: se puede quitar `libsqlite3-dev`
-del Dockerfile y `better-sqlite3` de las dependencias del backend.
+- Pasar el despliegue de la rama `despliegue-coolify` a `main`.
+- **Respaldos** de Postgres y del volumen de TechDocs a Cloudflare R2 (aún no
+  configurados: si el PC falla, se pierden sesiones y preferencias; el catálogo se
+  reconstruye solo).
+- Quitar `better-sqlite3` y `libsqlite3-dev` si no se vuelven a necesitar.
+- Dirección fija: el túnel gratuito cambia de dirección al recrearse.
 
 ## 2. Recursos y credenciales a crear
 
@@ -143,11 +132,13 @@ del Dockerfile y `better-sqlite3` de las dependencias del backend.
 
 ## 5. Orden de ejecución
 
-1. Confirmar dónde corre Coolify (Linux, WSL2 o máquina virtual) y cómo se
-   llegará al portal (red local, `sslip.io`, DuckDNS o túnel).
-2. TechDocs en el contenedor y compilación de la imagen (sección 1).
-3. OAuth App para la dirección elegida.
-4. En Coolify: recurso Postgres, aplicación desde la imagen, variables, dominio
-   y health check.
-5. Configurar y **probar** los respaldos a R2.
-6. Probar ingreso, catálogo, descubrimiento, idioma y documentación.
+Hechos el 2026-10-01 (ver [Coolify: paso a paso](coolify-paso-a-paso.md)):
+Coolify en WSL2, recurso Postgres, aplicación desde la rama
+`despliegue-coolify`, OAuth App, variables y túnel de Cloudflare.
+
+Faltan:
+
+1. Probar el ingreso con GitHub y el flujo completo con el equipo.
+2. Configurar y **probar** los respaldos a R2.
+3. Probar la documentación (TechDocs) con un repo piloto.
+4. Mudar a un servidor dedicado con dirección fija.

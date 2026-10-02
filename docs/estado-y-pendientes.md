@@ -12,8 +12,10 @@ qué existe, qué se decidió, qué **no** se debe hacer todavía y qué sigue.
 - Los repos del hospital se están moviendo a la organización de GitHub **`DevHRL`**.
 - **Fase A terminada** (plantilla limpia, base de datos, idioma, diagramas). Sigue
   la fase B: personalización visual y subportales por proyecto.
-- **No se ha desplegado.** El primer despliegue será en **Coolify autoalojado**,
-  para presentar el catálogo, y todo gratuito. Ver [Despliegue](despliegue.md).
+- **Desplegado de forma provisional (2026-10-01):** Coolify autoalojado en el PC de
+  Andre (WSL2), detrás de un túnel gratuito de Cloudflare, para recibir feedback
+  del equipo. Ver [Coolify: paso a paso](coolify-paso-a-paso.md) y
+  [Despliegue](despliegue.md).
 - **Aún no se documenta ningún repo** ni se crean equipos. Ver sección 4.
 
 ## 2. Qué existe hoy
@@ -117,7 +119,7 @@ Cosas que ya dieron problemas:
 
 - **No documentar ningún repo** (ni `catalog-info.yaml`, ni `mkdocs.yml`, ni `docs/`).
 - **No crear equipos** en GitHub ni asignar miembros a los del catálogo.
-- **No desplegar** hasta preparar lo de la sección E; el destino ya está decidido.
+- **Mudar a un servidor definitivo** sin avisar: el despliegue actual es provisional.
 
 ## 5. Decisiones abiertas
 
@@ -182,7 +184,7 @@ Cosas que ya dieron problemas:
 - [ ] Ejecutar `npm install` con la URL nueva en los proyectos migrados: **no se
       probó**, solo se confía en la redirección de GitHub.
 
-### E. Despliegue en Coolify (solo cuando el usuario lo pida)
+### E. Despliegue en Coolify — ✅ primera versión en marcha
 
 Ver el detalle en [Despliegue](despliegue.md). Resumen: TechDocs dentro del
 contenedor → imagen publicada por GitHub Actions → OAuth App de la dirección
