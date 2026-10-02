@@ -1,17 +1,18 @@
 # Despliegue
 
-**Estado (2026-10-01):** el primer despliegue provisional **ya está en marcha** en
-Coolify, en el PC de Andre, detrás de un túnel de Cloudflare. El procedimiento
-exacto está en [Coolify: paso a paso](coolify-paso-a-paso.md). Esta página reúne
-las decisiones y lo que falta para pasar a un servidor dedicado.
+**Estado (2026-10-02):** el portal corre **solo en local**. Un despliegue de prueba
+en Coolify (PC de Andre + túnel de Cloudflare) funcionó el 2026-10-01 y se
+desmontó al día siguiente: el túnel gratuito cambiaba de dirección en cada
+reinicio. El hospital dará un servidor en unos días; el procedimiento probado está
+en [Coolify: paso a paso](coolify-paso-a-paso.md).
 
 ## Decisiones
 
 | Qué | Decisión | Por qué |
 |---|---|---|
 | **Presupuesto** | Todo gratuito | Requisito del proyecto |
-| **Dónde, por ahora** | **Coolify autoalojado** en un equipo de Andre, para presentar el catálogo | No depende de TI ni de una nube; la mudanza es barata (ver abajo) |
-| **Dónde, después** | Un servidor dedicado (idealmente del hospital) con el mismo Coolify | Un equipo personal se apaga cuando se apaga su dueño |
+| **Dónde** | **Servidor del hospital** con Coolify | Lo da el hospital. Probado antes en el PC de Andre y descartado: un equipo personal se apaga, y el túnel gratuito cambia de dirección |
+| **Mientras tanto** | Solo local | Sin servidor no hay dirección estable que compartir |
 | **Instancias** | **Una sola**, con un subportal por proyecto | Los proyectos pueden compartir base de datos; lo que importa es que la navegación deje claro en qué proyecto se está |
 | **Base de datos** | PostgreSQL 17 (`postgres:17-alpine`), también en local | Mismo motor en todas partes: no se cambia de base al migrar |
 | **Respaldos** | Fuera del equipo, en Cloudflare R2 (10 GB gratis) | Un respaldo en el mismo disco no protege si el equipo falla |
@@ -132,13 +133,11 @@ servidor. Cada dirección nueva exige su URL de callback (ver abajo).
 
 ## 5. Orden de ejecución
 
-Hechos el 2026-10-01 (ver [Coolify: paso a paso](coolify-paso-a-paso.md)):
-Coolify en WSL2, recurso Postgres, aplicación desde la rama
-`despliegue-coolify`, OAuth App, variables y túnel de Cloudflare.
+Probado el 2026-10-01 en el PC de Andre y desmontado el 2026-10-02 (ver
+[Coolify: paso a paso](coolify-paso-a-paso.md)). En el servidor del hospital:
 
-Faltan:
-
-1. Probar el ingreso con GitHub y el flujo completo con el equipo.
-2. Configurar y **probar** los respaldos a R2.
-3. Probar la documentación (TechDocs) con un repo piloto.
-4. Mudar a un servidor dedicado con dirección fija.
+1. Confirmar con TI: sistema operativo, recursos, acceso de red y dirección fija.
+2. Instalar Coolify y repetir el paso a paso, ya desde `main`.
+3. OAuth App y deploy key nuevas para ese servidor.
+4. Configurar y **probar** los respaldos a R2.
+5. Probar ingreso, catálogo, idioma y documentación (TechDocs con un repo piloto).

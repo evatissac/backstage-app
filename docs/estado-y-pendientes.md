@@ -12,10 +12,11 @@ qué existe, qué se decidió, qué **no** se debe hacer todavía y qué sigue.
 - Los repos del hospital se están moviendo a la organización de GitHub **`DevHRL`**.
 - **Fase A terminada** (plantilla limpia, base de datos, idioma, diagramas). Sigue
   la fase B: personalización visual y subportales por proyecto.
-- **Desplegado de forma provisional (2026-10-01):** Coolify autoalojado en el PC de
-  Andre (WSL2), detrás de un túnel gratuito de Cloudflare, para recibir feedback
-  del equipo. Ver [Coolify: paso a paso](coolify-paso-a-paso.md) y
-  [Despliegue](despliegue.md).
+- **Solo en local por ahora.** El 2026-10-01 se probó un despliegue provisional
+  (Coolify en WSL2 + túnel gratuito de Cloudflare) y el 2026-10-02 se **desmontó**:
+  la dirección del túnel cambiaba con cada reinicio y el hospital confirmó que
+  dará un **servidor en unos días**. El procedimiento probado queda en
+  [Coolify: paso a paso](coolify-paso-a-paso.md) para repetirlo allí.
 - **Aún no se documenta ningún repo** ni se crean equipos. Ver sección 4.
 
 ## 2. Qué existe hoy
@@ -106,7 +107,7 @@ Cosas que ya dieron problemas:
 | **Backstage**, no BookStack ni otros | Equipo de ~30 personas; se aceptó el costo de mantenerlo. |
 | **Login con GitHub** | La organización `DevHRL` es la fuente de usuarios. |
 | **Todo gratuito** | Alojamiento, dominio, base de datos y respaldos. |
-| **Alojamiento: Coolify autoalojado**, provisional | En un equipo de Andre, para presentar el catálogo; después, un servidor dedicado. Oracle Always Free y las nubes con capa gratis se descartaron (ver [Despliegue](despliegue.md)). |
+| **Alojamiento: servidor del hospital con Coolify** | El hospital lo dará en unos días. Mientras tanto, solo local. Se probó y desmontó Coolify en el PC de Andre; Oracle Always Free, las nubes con capa gratis y los dominios de pago se descartaron (ver [Despliegue](despliegue.md)). |
 | **Una sola instancia con subportales por proyecto** | Los proyectos comparten base de datos. Cada proyecto es un `System`, con su ruta (`/proyectos/<proyecto>`) y una cabecera que deja claro en qué proyecto se está. Nada se registra sin `spec.system`. |
 | **PostgreSQL 17 en todas partes** | También en local (Docker, puerto 5433): no se cambia de base al migrar. Se descartó SQLite en archivo. |
 | **Bilingüe: español por defecto, inglés opcional** | Con las herramientas oficiales de Backstage (`translations export/import`) y un glosario fijo. La documentación de los repos, solo en español. |
@@ -119,14 +120,14 @@ Cosas que ya dieron problemas:
 
 - **No documentar ningún repo** (ni `catalog-info.yaml`, ni `mkdocs.yml`, ni `docs/`).
 - **No crear equipos** en GitHub ni asignar miembros a los del catálogo.
-- **Mudar a un servidor definitivo** sin avisar: el despliegue actual es provisional.
+- **Desplegar** hasta que esté el servidor del hospital.
 
 ## 5. Decisiones abiertas
 
-1. **Coolify:** ¿en qué equipo y sistema corre (Linux, WSL2, máquina virtual)? ¿Ya
-   está instalado?
-2. **Acceso:** ¿basta la red local para presentar, o hace falta entrar desde fuera
-   (DuckDNS, túnel)?
+1. **Servidor del hospital:** sistema operativo, RAM y disco; si TI permite instalar
+   Coolify; si tendrá IP pública o solo red interna.
+2. **Dirección fija:** un subdominio del dominio del hospital (lo da TI, gratis) o
+   `.eu.org` (gratis, aprobación de hasta un mes). Sin gastar dinero.
 3. **Oncología:** fecha de corte para dejar de usar `evatissac/HIS_HRL` y desplegar
    desde `DevHRL/HIS_HRL`. Al cortar: resincronizar lo que entró al original, recrear
    los 5 issues abiertos, secretos y webhooks, y cambiar el origen del despliegue.
@@ -184,12 +185,17 @@ Cosas que ya dieron problemas:
 - [ ] Ejecutar `npm install` con la URL nueva en los proyectos migrados: **no se
       probó**, solo se confía en la redirección de GitHub.
 
-### E. Despliegue en Coolify — ✅ primera versión en marcha
+### E. Despliegue en el servidor del hospital (cuando llegue)
 
-Ver el detalle en [Despliegue](despliegue.md). Resumen: TechDocs dentro del
-contenedor → imagen publicada por GitHub Actions → OAuth App de la dirección
-elegida → recurso Postgres en Coolify → **respaldos a Cloudflare R2, probados** →
-pruebas. `app-config.production.yaml` y el Dockerfile ya están listos.
+Repetir [Coolify: paso a paso](coolify-paso-a-paso.md) en el servidor:
+Coolify → deploy key → OAuth App de la dirección definitiva → Postgres →
+aplicación → **respaldos a Cloudflare R2, probados** → pruebas. El Dockerfile y
+`app-config.production.yaml` ya están listos y probados.
+
+Antes de volver a desplegar:
+- Pasar la rama `despliegue-coolify` a `main`.
+- Volver a agregar la deploy key: la del montaje de prueba se borró.
+- Crear una OAuth App nueva para la dirección del servidor.
 
 ### F. Seguridad
 

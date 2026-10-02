@@ -1,7 +1,9 @@
 # Despliegue en Coolify: paso a paso
 
-Cómo se montó el primer despliegue del portal (2026-10-01), para poder repetirlo
-en el servidor dedicado. El plan y las decisiones están en
+Cómo se montó el despliegue de prueba del portal (2026-10-01), para repetirlo en
+el servidor del hospital. **Ese montaje se desmontó el 2026-10-02**: se borraron la
+distro de WSL, Coolify, el túnel y la deploy key. En el servidor, los pasos 1 y 7
+cambian (no hace falta WSL; con dirección fija no hace falta el túnel rápido). El plan y las decisiones están en
 [Despliegue](despliegue.md); esta página es el procedimiento.
 
 ## Resultado
