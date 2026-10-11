@@ -32,11 +32,11 @@ RUN --mount=type=cache,target=/home/node/.cache/yarn,sharing=locked,uid=1000,gid
 # Copy source code
 COPY --chown=node:node . .
 
-# Build frontend first (backend depends on it)
-RUN yarn workspace app build
+# Increase Node memory for build (Backstage builds are heavy)
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 
-# Build the backend
-RUN yarn build:backend
+# Build frontend and backend
+RUN yarn build:all
 
 # Stage 2: Production
 FROM node:22-bookworm-slim AS production
