@@ -32,6 +32,9 @@ RUN --mount=type=cache,target=/home/node/.cache/yarn,sharing=locked,uid=1000,gid
 # Copy source code
 COPY --chown=node:node . .
 
+# Build frontend first (backend depends on it)
+RUN yarn workspace app build
+
 # Build the backend
 RUN yarn build:backend
 
