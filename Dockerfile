@@ -32,8 +32,8 @@ COPY --chown=node:node . .
 # Increase Node memory for build (Backstage builds are heavy)
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 
-# Build frontend and backend
-RUN yarn build:all
+# Build frontend and backend (with error output)
+RUN yarn build:all 2>&1 || (echo "=== BUILD FAILED ===" && cat /tmp/*.log 2>/dev/null; exit 1)
 
 # Stage 2: Production
 FROM node:22-bookworm-slim AS production
