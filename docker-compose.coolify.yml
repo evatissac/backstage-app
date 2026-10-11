@@ -1,0 +1,45 @@
+# docker-compose para Coolify SIN repositorio Git
+# Usa imagen pre-construida de Docker Hub/GHCR
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-backstage}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-backstage}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-backstage}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backstage:
+    # CAMBIA ESTO por tu imagen en Docker Hub o GitHub Container Registry
+    image: tu-usuario/backstage-app:latest
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER:-backstage}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      APP_BASE_URL: ${APP_BASE_URL:-http://localhost:7007}
+      BACKEND_BASE_URL: ${BACKEND_BASE_URL:-http://localhost:7007}
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+    ports:
+      - "7007:7007"
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:7007/healthcheck', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+
+volumes:
+  postgres_data:
