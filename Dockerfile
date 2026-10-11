@@ -4,9 +4,7 @@
 # Stage 1: Build
 FROM node:22-bookworm-slim AS build
 
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    apt-get update && \
+RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     python3 \
     g++ \
@@ -26,8 +24,7 @@ COPY --chown=node:node packages/backend/package.json ./packages/backend/
 COPY --chown=node:node packages/app/package.json ./packages/app/
 
 # Install dependencies
-RUN --mount=type=cache,target=/home/node/.cache/yarn,sharing=locked,uid=1000,gid=1000 \
-    yarn install --immutable
+RUN yarn install --immutable
 
 # Copy source code
 COPY --chown=node:node . .
@@ -41,9 +38,7 @@ RUN yarn build:all
 # Stage 2: Production
 FROM node:22-bookworm-slim AS production
 
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    apt-get update && \
+RUN apt-get update && \
     apt-get install -y --no-install-recommends libsqlite3-dev && \
     rm -rf /var/lib/apt/lists/*
 
@@ -61,8 +56,7 @@ COPY --chown=node:node --from=build /app/yarn.lock /app/package.json ./
 COPY --chown=node:node --from=build /app/packages/backend/dist/skeleton.tar.gz ./
 RUN tar xzf skeleton.tar.gz && rm skeleton.tar.gz
 
-RUN --mount=type=cache,target=/home/node/.cache/yarn,sharing=locked,uid=1000,gid=1000 \
-    yarn workspaces focus --all --production
+RUN yarn workspaces focus --all --production
 
 # Copy examples for catalog
 COPY --chown=node:node examples ./examples
