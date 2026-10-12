@@ -32,6 +32,8 @@ services:
       # URLs - Coolify will set these
       APP_BASE_URL: ${APP_BASE_URL:-http://localhost:7007}
       BACKEND_BASE_URL: ${BACKEND_BASE_URL:-http://localhost:7007}
+      # Node memory for catalog processing
+      NODE_OPTIONS: "--max-old-space-size=1536"
     ports:
       - "7007:7007"
     healthcheck:
@@ -39,7 +41,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 60s
+      start_period: 180s
 
 volumes:
   postgres_data:
