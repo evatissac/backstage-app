@@ -25,7 +25,8 @@ backend:
 
 auth:
   providers:
-    guest: {}
+    guest:
+      dangerouslyAllowOutsideDevelopment: true
 
 # Override integrations - remove GitHub if no token provided
 # Set GITHUB_TOKEN in environment to enable GitHub integration
