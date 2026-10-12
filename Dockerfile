@@ -39,8 +39,12 @@ RUN yarn build:all 2>&1 || (echo "=== BUILD FAILED ===" && cat /tmp/*.log 2>/dev
 FROM node:22-bookworm-slim AS production
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends libsqlite3-dev && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get install -y --no-install-recommends \
+    python3 \
+    g++ \
+    build-essential \
+    libsqlite3-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 USER node
 WORKDIR /app
