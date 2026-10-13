@@ -1,5 +1,6 @@
-# Base de datos local del portal. La levanta iniciar.ps1; no hace falta
-# ejecutarlo a mano. Misma imagen que el recurso PostgreSQL de Coolify, para
+# Alternativa a la base local: el portal usa el PostgreSQL de Windows. Sirve en
+# un equipo sin Postgres instalado (docker compose up -d --wait y, en .env,
+# POSTGRES_PORT=5433). Misma imagen que el recurso PostgreSQL de Coolify, para
 # que lo que funciona aquí funcione allá.
 #
 # Puerto 5433 y solo en 127.0.0.1: el 5432 lo ocupa el PostgreSQL de Windows,
@@ -8,7 +9,7 @@ name: hrl-backstage
 
 services:
   postgres:
-    image: postgres:17-alpine
+    image: postgres:18-alpine
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-backstage}
@@ -16,7 +17,9 @@ services:
     ports:
       - '127.0.0.1:5433:5432'
     volumes:
-      - datos:/var/lib/postgresql/data
+      # Desde la 18 la imagen guarda los datos en /var/lib/postgresql/18/docker:
+      # el volumen se monta en la carpeta padre, no en .../data.
+      - datos-pg18:/var/lib/postgresql
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER}']
       interval: 2s
@@ -24,4 +27,4 @@ services:
       retries: 30
 
 volumes:
-  datos:
+  datos-pg18:

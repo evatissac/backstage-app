@@ -1,6 +1,6 @@
 # Estado y pendientes
 
-**Última actualización:** 2026-09-30. Léelo completo antes de tocar nada: explica
+**Última actualización:** 2026-10-13. Léelo completo antes de tocar nada: explica
 qué existe, qué se decidió, qué **no** se debe hacer todavía y qué sigue.
 
 ## 1. Resumen en 30 segundos
@@ -55,7 +55,7 @@ Detalles que importan:
 | Descubrimiento de repos | ✅ Cada 30 min busca `catalog-info.yaml` en la raíz de cada repo de `DevHRL`. Hoy solo el portal lo tiene |
 | Importación de miembros | ✅ Cada 60 min. Trae 9 usuarios con usuario, nombre y avatar. Sin correo |
 | Equipos (Groups) | ⚠️ Los 3 de `catalog/hrl.yaml` existen pero **sin miembros** (ver sección 4) |
-| Base de datos | ✅ PostgreSQL 17 en Docker (`compose.yaml`, `127.0.0.1:5433`); la levanta `iniciar.ps1`. Sesiones y preferencias ya no se pierden |
+| Base de datos | ✅ PostgreSQL 18 de Windows (`127.0.0.1:5432`, rol `backstage`); `iniciar.ps1` comprueba que responda. Sesiones y preferencias ya no se pierden |
 | Búsqueda | ✅ Motor de Postgres (antes, índice en memoria) |
 | Idioma | ✅ Español por defecto e inglés en *Ajustes*. ~800 textos traducidos con glosario. Quedan huecos conocidos: ver [Idioma](idioma.md) |
 | TechDocs | ✅ Compila en local con Docker. Mermaid **no** se dibuja (decisión: draw.io) |
@@ -70,12 +70,13 @@ Detalles que importan:
 
 ```powershell
 cd C:\Users\Andre\Desktop\hrl-backstage
-.\iniciar.ps1          # levanta Postgres y el portal: http://localhost:3000 (frontend), :7007 (backend)
+.\iniciar.ps1          # comprueba Postgres y levanta el portal: http://localhost:3000 (frontend), :7007 (backend)
 ```
 
-Requisitos: **Docker Desktop encendido** (ahora es obligatorio: ahí vive la base;
-el script se detiene si está apagado), `.env` con las credenciales (copia de
-`.env.example`) y Yarn activado con Corepack. Detalle en
+Requisitos: el **servicio `postgresql-x64-18`** en marcha con el rol `backstage`
+(el script se detiene si la base no responde), **Docker Desktop** para compilar
+TechDocs, `.env` con las credenciales (copia de `.env.example`) y Yarn activado
+con Corepack. Detalle en
 [Levantamiento local](levantamiento.md).
 
 Cosas que ya dieron problemas:
@@ -109,7 +110,7 @@ Cosas que ya dieron problemas:
 | **Todo gratuito** | Alojamiento, dominio, base de datos y respaldos. |
 | **Alojamiento: servidor del hospital con Coolify** | El hospital lo dará en unos días. Mientras tanto, solo local. Se probó y desmontó Coolify en el PC de Andre; Oracle Always Free, las nubes con capa gratis y los dominios de pago se descartaron (ver [Despliegue](despliegue.md)). |
 | **Una sola instancia con subportales por proyecto** | Los proyectos comparten base de datos. Cada proyecto es un `System`, con su ruta (`/proyectos/<proyecto>`) y una cabecera que deja claro en qué proyecto se está. Nada se registra sin `spec.system`. |
-| **PostgreSQL 17 en todas partes** | También en local (Docker, puerto 5433): no se cambia de base al migrar. Se descartó SQLite en archivo. |
+| **PostgreSQL 18 en todas partes** | En local, el Postgres de Windows; en Coolify, `postgres:18-alpine`. No se cambia de versión al migrar. Se descartó SQLite en archivo. |
 | **Bilingüe: español por defecto, inglés opcional** | Con las herramientas oficiales de Backstage (`translations export/import`) y un glosario fijo. La documentación de los repos, solo en español. |
 | **Diagramas: draw.io como `.drawio.svg`** | Con el addon LightBox para zoom y arrastre. **No instalar el plugin de Mermaid** salvo que no haya mejor alternativa. |
 | **RotaPass fuera** | Es un proyecto aislado: no entra en `DevHRL` ni en el portal. |
@@ -140,7 +141,7 @@ Cosas que ya dieron problemas:
 
 ### A. Preparar el portal — ✅ terminada
 
-- [x] Base de datos local: Postgres 17 en Docker.
+- [x] Base de datos local: Postgres 18 de Windows (antes, 17 en Docker).
 - [x] Limpiar la plantilla: portada, Kubernetes, plantilla de ejemplo y `examples/`.
 - [x] Idioma bilingüe, con comprobación automática de claves y marcadores.
 - [x] Probar el LightBox con un `.drawio.svg` real.

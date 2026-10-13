@@ -6,7 +6,8 @@
 |---|---|---|
 | Node.js | 22 o 24 | Ejecuta el portal |
 | Yarn | 4 (lo trae el repo en `.yarn/releases`) | Gestor de paquetes; se activa con Corepack |
-| Docker Desktop | Encendido | Base de datos (Postgres) y compilación de la documentación (imagen `spotify/techdocs`) |
+| PostgreSQL | 18, el de Windows (servicio `postgresql-x64-18`) | Base de datos del portal |
+| Docker Desktop | Encendido | Compilación de la documentación (imagen `spotify/techdocs`) |
 | GitHub CLI (`gh`) | Con sesión iniciada | Da el token de lectura de la organización |
 
 Activar Yarn sin permisos de administrador:
@@ -20,7 +21,7 @@ corepack enable --install-directory "$env:APPDATA\corepack-bin"
 
 ```powershell
 yarn install      # solo la primera vez o al cambiar dependencias
-.\iniciar.ps1     # levanta Postgres, toma el token de gh y arranca frontend y backend
+.\iniciar.ps1     # comprueba Postgres, toma el token de gh y arranca frontend y backend
 ```
 
 - Frontend: <http://localhost:3000>
@@ -31,22 +32,22 @@ se guarda en ningún archivo.
 
 ## Base de datos
 
-PostgreSQL 17 en Docker, definido en `compose.yaml`: la misma imagen que usará el
-recurso de Coolify, para no cambiar de motor al desplegar. `iniciar.ps1` lo levanta
-y espera a que esté listo; si Docker está apagado, se detiene.
+El PostgreSQL 18 instalado en Windows (`127.0.0.1:5432`). `iniciar.ps1` lee
+`POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER` y `POSTGRES_PASSWORD` de `.env`
+y se detiene si la base no responde.
 
-- Escucha solo en `127.0.0.1:5433`: el 5432 lo ocupa el PostgreSQL de Windows.
-- Usuario y contraseña: `POSTGRES_USER` y `POSTGRES_PASSWORD` de `.env`; si faltan,
-  `backstage` / `backstage` (no es un secreto: no sale del equipo).
-- Los datos viven en el volumen `hrl-backstage_datos` y sobreviven a los
-  reinicios. Backstage crea una base por plugin (`backstage_plugin_catalog`, …).
+El portal usa su propio rol, `backstage`, con permiso para crear bases: Backstage
+crea una por plugin (`backstage_plugin_catalog`, …). Se crea una sola vez, con la
+contraseña que está en `.env`, desde una consola con el usuario `postgres`:
 
 ```powershell
-docker compose logs postgres          # ver qué pasa si no arranca
-docker compose down                   # detener la base (los datos se conservan)
-docker compose down -v                # borrar también los datos: el catálogo se
-                                      # reconstruye solo, pero se pierden sesiones y preferencias
+& "C:\Program Files\PostgreSQL\18\bin\psql.exe" -h 127.0.0.1 -U postgres `
+  -c "CREATE ROLE backstage LOGIN CREATEDB PASSWORD '<POSTGRES_PASSWORD de .env>'"
 ```
+
+`compose.yaml` queda como alternativa (Postgres 18 en Docker, puerto 5433) para
+un equipo sin Postgres instalado: `docker compose up -d --wait` y en `.env`
+`POSTGRES_PORT=5433`.
 
 ## Idioma
 

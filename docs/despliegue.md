@@ -14,7 +14,7 @@ en [Coolify: paso a paso](coolify-paso-a-paso.md).
 | **Dónde** | **Servidor del hospital** con Coolify | Lo da el hospital. Probado antes en el PC de Andre y descartado: un equipo personal se apaga, y el túnel gratuito cambia de dirección |
 | **Mientras tanto** | Solo local | Sin servidor no hay dirección estable que compartir |
 | **Instancias** | **Una sola**, con un subportal por proyecto | Los proyectos pueden compartir base de datos; lo que importa es que la navegación deje claro en qué proyecto se está |
-| **Base de datos** | PostgreSQL 17 (`postgres:17-alpine`), también en local | Mismo motor en todas partes: no se cambia de base al migrar |
+| **Base de datos** | PostgreSQL 18 (`postgres:18-alpine`), también en local | Mismo motor en todas partes: no se cambia de base al migrar |
 | **Respaldos** | Fuera del equipo, en Cloudflare R2 (10 GB gratis) | Un respaldo en el mismo disco no protege si el equipo falla |
 | **Login** | GitHub, solo miembros de `DevHRL` | Sin invitado en producción |
 
@@ -37,7 +37,7 @@ en [Coolify: paso a paso](coolify-paso-a-paso.md).
 ```
 Equipo con Coolify
   ├── contenedor Backstage   (imagen construida desde este repo)
-  ├── PostgreSQL 17          (recurso de Coolify, volumen persistente)
+  ├── PostgreSQL 18          (recurso de Coolify, volumen persistente)
   └── volumen de TechDocs    (documentación compilada)
             │
             └── respaldo diario ──> Cloudflare R2
@@ -103,7 +103,7 @@ servidor. Cada dirección nueva exige su URL de callback (ver abajo).
 |---|---|---|
 | **OAuth App para esta dirección** | github.com/organizations/DevHRL/settings/applications | Login. Callback: `<PORTAL_URL>/api/auth/github/handler/frame`. Una OAuth App admite una sola callback |
 | **GitHub App de DevHRL** (después, reemplaza al token y a las OAuth Apps) | github.com/organizations/DevHRL/settings/apps | Admite hasta 10 callbacks, así que sirve para todas las direcciones. Permisos: *Contents: Read*, *Metadata: Read*, *Members: Read* |
-| **Recurso PostgreSQL** | Coolify → Databases, imagen `postgres:17-alpine` | Catálogo, sesiones y preferencias. El usuario debe poder crear bases (Backstage crea una por plugin) |
+| **Recurso PostgreSQL** | Coolify → Databases, imagen `postgres:18-alpine` | Catálogo, sesiones y preferencias. El usuario debe poder crear bases (Backstage crea una por plugin). Desde la 18 el volumen va en `/var/lib/postgresql`, no en `.../data` |
 | **Secreto del backend** | `openssl rand -base64 32` | `BACKEND_SECRET` |
 | **Bucket de respaldos** | Cloudflare R2 | Respaldos diarios de Postgres y del volumen de TechDocs |
 

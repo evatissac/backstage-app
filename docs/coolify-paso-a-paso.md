@@ -15,7 +15,7 @@ Internet ──> Cloudflare Quick Tunnel (contenedor cloudflared)
        Ubuntu 24.04 en WSL2 (PC de Andre)
          ├── Coolify 4.3.23        panel en http://localhost:8000
          ├── portal-hrl            imagen construida desde la rama despliegue-coolify, puerto 7100
-         └── portal-hrl-db         PostgreSQL 17, volumen persistente
+         └── portal-hrl-db         PostgreSQL 18, volumen persistente
 ```
 
 ## 1. Una distro Linux aislada (WSL2)
@@ -85,8 +85,7 @@ distinta necesita su propia callback: una OAuth App admite una sola.
 ## 5. Base de datos
 
 En Coolify: proyecto **Portal HRL** → entorno *production* → *New* →
-**PostgreSQL 17** (`postgres:17-alpine`, la misma imagen que se usa en local con
-`compose.yaml`). Se guarda y se inicia. Su contraseña está en la ficha de la base,
+**PostgreSQL 18** (`postgres:18-alpine`, la misma versión que el Postgres local). Se guarda y se inicia. Su contraseña está en la ficha de la base,
 bloque *Credentials*.
 
 El portal la alcanza por el nombre interno del contenedor (el identificador de la

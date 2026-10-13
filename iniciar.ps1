@@ -21,16 +21,19 @@ if (-not $env:AUTH_GITHUB_CLIENT_ID -or -not $env:AUTH_GITHUB_CLIENT_SECRET) {
   Write-Warning 'Faltan AUTH_GITHUB_CLIENT_ID / AUTH_GITHUB_CLIENT_SECRET en .env: solo funcionará el ingreso como invitado.'
 }
 
-# Credenciales de la base local: si .env no las trae, las mismas que usa
-# compose.yaml por defecto. Solo escucha en 127.0.0.1, no es un secreto.
-if (-not $env:POSTGRES_USER) { $env:POSTGRES_USER = 'backstage' }
-if (-not $env:POSTGRES_PASSWORD) { $env:POSTGRES_PASSWORD = 'backstage' }
+# Base local: el PostgreSQL de Windows (servicio postgresql-x64-18). Usuario y
+# contraseña en .env; el rol se crea una vez (ver docs/levantamiento.md).
+if (-not $env:POSTGRES_HOST) { $env:POSTGRES_HOST = '127.0.0.1' }
+if (-not $env:POSTGRES_PORT) { $env:POSTGRES_PORT = '5432' }
+if (-not $env:POSTGRES_USER -or -not $env:POSTGRES_PASSWORD) { throw 'Faltan POSTGRES_USER / POSTGRES_PASSWORD en .env.' }
+
+$tcp = New-Object Net.Sockets.TcpClient
+try { $tcp.Connect($env:POSTGRES_HOST, [int]$env:POSTGRES_PORT) }
+catch { throw "PostgreSQL no responde en $($env:POSTGRES_HOST):$($env:POSTGRES_PORT). Revisa el servicio postgresql-x64-18." }
+finally { $tcp.Dispose() }
 
 # cmd /c evita que PowerShell 5.1 convierta la salida de error de docker en un error fatal.
 cmd /c "docker info >nul 2>&1"
-if ($LASTEXITCODE -ne 0) { throw 'Docker no está encendido: lo necesitan la base de datos y la compilación de TechDocs.' }
-
-cmd /c "docker compose up -d --wait 2>&1"
-if ($LASTEXITCODE -ne 0) { throw 'No se pudo levantar Postgres (compose.yaml). Revisa: docker compose logs postgres' }
+if ($LASTEXITCODE -ne 0) { Write-Warning 'Docker no está encendido: la documentación (TechDocs) no se podrá compilar.' }
 
 yarn start
