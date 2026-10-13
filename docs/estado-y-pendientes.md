@@ -64,7 +64,7 @@ Detalles que importan:
 | Plantilla de ejemplo | ✅ Quitada, con la carpeta `examples/`. El Scaffolder sigue instalado, sin plantillas |
 | Kubernetes | ✅ Quitado |
 | Permisos | ⚠️ «Permitir todo» |
-| Logo y colores | ⚠️ Los de Backstage (fase B) |
+| Logo y colores | ⚠️ Colores de Backstage UI (`modules/tema`); el logo sigue siendo el de Backstage (fase B) |
 
 ## 3. Cómo retomar el trabajo
 
@@ -148,7 +148,10 @@ Cosas que ya dieron problemas:
 
 ### B. Personalización y subportales
 
-- [ ] Tema con colores y fuentes de `hrl-core-ui`, y revisar el modo oscuro.
+- [~] Tema con el estilo de Backstage UI (es un portal para desarrolladores; `hrl-core-ui`
+      es para el personal del hospital): `packages/app/src/modules/tema`. Probado en
+      claro y oscuro. Faltan detalles: algunas tarjetas aún con sombra, cabeceras de
+      la tabla del catálogo en mayúsculas y el panel de filtros gris en modo claro.
 - [ ] Logo, favicon y título (hoy dice «Backstage» en la barra lateral).
 - [ ] Portada propia (reemplaza los títulos de tarjeta que siguen en inglés).
 - [ ] **Subportales por proyecto**: página `/proyectos` con una tarjeta por
