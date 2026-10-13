@@ -1,4 +1,5 @@
 app:
+  # Production configuration for Backstage
   # Coolify sets APP_BASE_URL automatically
   baseUrl: ${APP_BASE_URL}
 
