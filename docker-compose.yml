@@ -1,0 +1,59 @@
+# Despliegue en Coolify (aplicación con build pack Docker Compose). Coolify crea
+# las variables de entorno a partir de este archivo: las ${...} sin valor se
+# rellenan en Environment Variables, y las SERVICE_PASSWORD_* las genera Coolify.
+#
+# Para la base local se usa compose.yaml, que docker compose prefiere si están
+# los dos.
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${SERVICE_PASSWORD_POSTGRES}
+    volumes:
+      # Desde la 18 la imagen guarda los datos en /var/lib/postgresql/18/docker:
+      # el volumen se monta en la carpeta padre, no en .../data.
+      - portal-db:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backstage:
+    build:
+      context: .
+      dockerfile: packages/backend/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PORTAL_URL: ${PORTAL_URL:-https://backstage.nuiti.org}
+      BACKEND_SECRET: ${SERVICE_PASSWORD_64_BACKEND}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${SERVICE_PASSWORD_POSTGRES}
+      AUTH_GITHUB_CLIENT_ID: ${AUTH_GITHUB_CLIENT_ID}
+      AUTH_GITHUB_CLIENT_SECRET: ${AUTH_GITHUB_CLIENT_SECRET}
+      GITHUB_TOKEN: ${GITHUB_TOKEN}
+      # --no-node-snapshot lo pide el Scaffolder; repetirlo porque esta variable
+      # reemplaza la del Dockerfile.
+      NODE_OPTIONS: '--no-node-snapshot --max-old-space-size=1536'
+    expose:
+      - '7007'
+    volumes:
+      - techdocs:/app/techdocs
+    healthcheck:
+      test: ['CMD', 'node', '-e', "require('http').get('http://localhost:7007/.backstage/health/v1/readiness', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 180s
+
+volumes:
+  portal-db:
+  techdocs:
