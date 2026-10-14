@@ -1,9 +1,9 @@
 # Estructura del Hospital Regional de Loreto en el catálogo.
 # Por ahora solo hay un proyecto publicado: el Sistema de Reporte Estadístico.
 # Los demás (Oncología, Plataforma) se agregan cuando estén listos para mostrarse.
-# Aquí solo va lo que no pertenece a un repo concreto: el dominio, los sistemas
-# y los equipos. Cada repo declara sus componentes en su propio catalog-info.yaml
-# y los cuelga de uno de estos sistemas con `spec.system`.
+# Aquí solo va lo que no pertenece a un repo concreto: el dominio, los sistemas,
+# sus recursos y los equipos. Cada repo declara sus componentes en su propio
+# catalog-info.yaml y los cuelga de uno de estos sistemas con `spec.system`.
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Domain
@@ -34,6 +34,25 @@ metadata:
 spec:
   owner: equipo-estadistica
   domain: salud-hrl
+---
+# Infraestructura de un proyecto que no vive en un repositorio. Los componentes
+# que la usan lo declaran en su catalog-info.yaml con
+# `dependsOn: [resource:bd-reporte-estadistico]`.
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: bd-reporte-estadistico
+  title: Base de datos del Reporte Estadístico
+  description: >-
+    PostgreSQL con los reportes, sus estados, constancias y valores. La provee
+    el servidor del hospital, fuera del repositorio. Solo cifras agregadas: sin
+    datos de pacientes.
+  tags:
+    - postgresql
+spec:
+  type: database
+  owner: equipo-estadistica
+  system: reporte-estadistico
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Group

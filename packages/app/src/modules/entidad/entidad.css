@@ -82,3 +82,97 @@
   background: rgb(255 255 255 / 92%);
   color: #0a1312;
 }
+
+/* Tarjetas de la ficha (Tarjetas.tsx). */
+.hrl-contexto dl {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.hrl-contexto__dato {
+  display: grid;
+  grid-template-columns: minmax(96px, 38%) 1fr;
+  gap: var(--bui-space-3);
+  align-items: center;
+  padding: var(--bui-space-2) 0;
+  border-top: 1px solid var(--bui-border-1);
+}
+
+.hrl-contexto__dato:first-child {
+  border-top: 0;
+}
+
+.hrl-contexto__dato dt {
+  color: var(--bui-fg-secondary);
+  font-size: var(--bui-font-size-2);
+}
+
+.hrl-contexto__dato dd {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--bui-space-1);
+  margin: 0;
+  font-size: var(--bui-font-size-3);
+  text-align: right;
+}
+
+.hrl-contexto__dato a {
+  color: var(--hrl-acento-texto);
+}
+
+.hrl-contexto__proyecto {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--bui-space-2);
+  font-weight: var(--bui-font-weight-bold);
+  text-decoration: none;
+}
+
+.hrl-contexto__monograma {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--bui-radius-2);
+  color: var(--hrl-heroe-texto);
+  font-size: var(--bui-font-size-1);
+  font-weight: var(--bui-font-weight-bold);
+}
+
+.hrl-contexto__enlaces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--bui-space-2);
+}
+
+.hrl-contexto__enlaces .bui-ButtonLink {
+  min-height: 40px;
+}
+
+.hrl-contexto__acciones {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bui-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hrl-contexto__acciones .bui-ButtonLink {
+  justify-content: flex-start;
+  width: 100%;
+  min-height: 44px;
+}
+
+.hrl-contexto + .hrl-contexto {
+  margin-top: var(--bui-space-4);
+}
+
+.hrl-comprobaciones__cabecera {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--bui-space-3);
+}

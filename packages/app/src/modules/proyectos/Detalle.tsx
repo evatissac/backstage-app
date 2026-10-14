@@ -1,17 +1,23 @@
 import { ReactNode } from 'react';
-import { Link, NavLink, Route, Routes, useParams } from 'react-router-dom';
+import {
+  Link,
+  Navigate,
+  NavLink,
+  Route,
+  Routes,
+  useParams,
+} from 'react-router-dom';
 import {
   Alert,
   Avatar,
   ButtonLink,
+  Cell,
   CellText,
   Skeleton,
-  Table,
   Text,
 } from '@backstage/ui';
 import { useTranslationRef } from '@backstage/frontend-plugin-api';
 import WidgetsIcon from '@material-ui/icons/WidgetsOutlined';
-import ApiIcon from '@material-ui/icons/SettingsEthernetOutlined';
 import DocIcon from '@material-ui/icons/DescriptionOutlined';
 import GroupIcon from '@material-ui/icons/GroupOutlined';
 import LinkIcon from '@material-ui/icons/LaunchOutlined';
@@ -39,29 +45,48 @@ import {
   PestanaTecnologias,
 } from './PestanasFicha';
 import { ResumenCalidad, TablaCalidad, useCalidad } from '../calidad';
+import { TablaHRL } from '../comun/TablaHRL';
+import { Etiqueta, estiloCiclo } from '../comun/Etiqueta';
+import { Migas } from '../comun/Migas';
 import './proyectos.css';
 
 const specDe = (e: Entidad) =>
   (e.spec ?? {}) as { type?: string; lifecycle?: string; owner?: string };
 
-/** Tabla de componentes o APIs: el nombre es el enlace a su ficha. */
-const TablaEntidades = (props: { entidades: Entidad[]; vacio: ReactNode }) => {
+const responsablesDe = (e: Entidad) =>
+  relaciones(e, 'ownedBy')
+    .map(r => partesRef(r).name)
+    .join(', ');
+
+/**
+ * Componentes, APIs y recursos del proyecto en una sola tabla. El nombre es
+ * el enlace a su ficha y la última columna repite el acceso como botón.
+ */
+const TablaPiezas = (props: { entidades: Entidad[]; vacio: ReactNode }) => {
   const { t } = useTranslationRef(textosHrl);
-  if (props.entidades.length === 0) return <>{props.vacio}</>;
-  const filas = props.entidades.map(e => ({
-    id: e.metadata.uid ?? e.metadata.name,
-    e,
-  }));
+  const clase = (e: Entidad) => {
+    const k = e.kind.toLowerCase();
+    return k === 'component' || k === 'api' || k === 'resource'
+      ? t(`proyecto.clase.${k}` as const)
+      : e.kind;
+  };
   return (
-    <Table
-      data={filas}
-      pagination={{ type: 'none' }}
-      columnConfig={[
+    <TablaHRL
+      id="proyecto-piezas"
+      titulo={t('proyecto.pestanaPiezas')}
+      filas={props.entidades.map(e => ({
+        id: e.metadata.uid ?? `${e.kind}:${e.metadata.name}`,
+        e,
+      }))}
+      vacio={props.vacio}
+      agruparPorDefecto="clase"
+      columnas={[
         {
           id: 'nombre',
-          label: t('proyecto.columnaNombre'),
-          isRowHeader: true,
-          cell: ({ e }) => (
+          etiqueta: t('proyecto.columnaNombre'),
+          principal: true,
+          valor: ({ e }) => tituloDe(e),
+          celda: ({ e }) => (
             <CellText
               title={tituloDe(e)}
               description={e.metadata.description}
@@ -71,32 +96,53 @@ const TablaEntidades = (props: { entidades: Entidad[]; vacio: ReactNode }) => {
           ),
         },
         {
+          id: 'clase',
+          etiqueta: t('proyecto.columnaClase'),
+          filtrable: true,
+          agrupable: true,
+          valor: ({ e }) => clase(e),
+          celda: ({ e }) => <CellText title={clase(e)} />,
+        },
+        {
           id: 'tipo',
-          label: t('proyecto.columnaTipo'),
-          cell: ({ e }) => <CellText title={specDe(e).type ?? '—'} />,
+          etiqueta: t('proyecto.columnaTipo'),
+          filtrable: true,
+          agrupable: true,
+          valor: ({ e }) => specDe(e).type ?? '',
+          celda: ({ e }) => <CellText title={specDe(e).type ?? '—'} />,
         },
         {
           id: 'ciclo',
-          label: t('proyecto.columnaCiclo'),
-          cell: ({ e }) => <CellText title={specDe(e).lifecycle ?? '—'} />,
+          etiqueta: t('proyecto.columnaCiclo'),
+          filtrable: true,
+          agrupable: true,
+          valor: ({ e }) => specDe(e).lifecycle ?? '',
+          celda: ({ e }) => {
+            const ciclo = specDe(e).lifecycle;
+            return ciclo ? (
+              <Cell>
+                <Etiqueta texto={ciclo} {...estiloCiclo(ciclo)} />
+              </Cell>
+            ) : (
+              <CellText title="—" />
+            );
+          },
         },
         {
           id: 'responsable',
-          label: t('proyecto.columnaResponsable'),
-          cell: ({ e }) => (
-            <CellText
-              title={
-                relaciones(e, 'ownedBy')
-                  .map(r => partesRef(r).name)
-                  .join(', ') || '—'
-              }
-            />
-          ),
+          etiqueta: t('proyecto.columnaResponsable'),
+          filtrable: true,
+          agrupable: true,
+          valor: ({ e }) => responsablesDe(e),
+          celda: ({ e }) => <CellText title={responsablesDe(e) || '—'} />,
         },
         {
           id: 'docs',
-          label: t('proyecto.columnaDocs'),
-          cell: ({ e }) =>
+          etiqueta: t('proyecto.columnaDocs'),
+          filtrable: true,
+          valor: ({ e }) =>
+            tieneDocs(e) ? t('proyecto.conDocs') : t('proyecto.sinDocs'),
+          celda: ({ e }) =>
             tieneDocs(e) ? (
               <CellText
                 title={t('proyecto.abrirDocs')}
@@ -108,6 +154,16 @@ const TablaEntidades = (props: { entidades: Entidad[]; vacio: ReactNode }) => {
             ),
         },
       ]}
+      acciones={({ e }) => (
+        <ButtonLink
+          href={rutaEntidad(e)}
+          variant="tertiary"
+          size="small"
+          aria-label={t('proyecto.abrirFicha', { nombre: tituloDe(e) })}
+        >
+          {t('proyecto.abrir')}
+        </ButtonLink>
+      )}
     />
   );
 };
@@ -140,7 +196,10 @@ const Stack = (props: { entidades: Entidad[]; base: string }) => {
       <Text as="p" variant="body-x-small" color="secondary">
         {t('proyecto.stackNota')}
       </Text>
-      <Link to={`${props.base}/tecnologias`} className="hrl-enlace-flecha">
+      <Link
+        to={`${props.base}/ficha/tecnologias`}
+        className="hrl-enlace-flecha"
+      >
         {t('proyecto.verTecnologias')}
       </Link>
     </section>
@@ -234,12 +293,13 @@ const Resumen = ({ d }: { d: DetalleProyecto }) => {
   );
 };
 
-const Documentacion = ({ d }: { d: DetalleProyecto }) => {
+const DocsTecnicos = ({ d }: { d: DetalleProyecto }) => {
   const { t } = useTranslationRef(textosHrl);
   const documentos = [d.sistema, ...d.componentes, ...d.apis].filter(tieneDocs);
   if (documentos.length === 0) {
     return (
       <EstadoVacio
+        compacto
         icono={<DocIcon />}
         titulo={t('proyecto.sinDocsTitulo')}
         descripcion={t('proyecto.sinDocsDescripcion')}
@@ -261,6 +321,53 @@ const Documentacion = ({ d }: { d: DetalleProyecto }) => {
           </Text>
         </Link>
       ))}
+    </div>
+  );
+};
+
+/**
+ * Documentación técnica (TechDocs de cada pieza) y, debajo, los documentos
+ * institucionales del proyecto (ficha.json). Antes eran dos pestañas.
+ */
+const Documentacion = ({ d }: { d: DetalleProyecto }) => {
+  const { t } = useTranslationRef(textosHrl);
+  return (
+    <div className="hrl-seccion">
+      <section className="hrl-seccion" aria-labelledby="hrl-docs-tecnicos">
+        <div className="hrl-intro">
+          <Text
+            as="h2"
+            id="hrl-docs-tecnicos"
+            variant="title-small"
+            weight="bold"
+          >
+            {t('proyecto.docsTecnicos')}
+          </Text>
+          <Text as="p" variant="body-small" color="secondary">
+            {t('proyecto.docsTecnicosAyuda')}
+          </Text>
+        </div>
+        <DocsTecnicos d={d} />
+      </section>
+      <section
+        className="hrl-seccion"
+        aria-labelledby="hrl-docs-institucionales"
+      >
+        <div className="hrl-intro">
+          <Text
+            as="h2"
+            id="hrl-docs-institucionales"
+            variant="title-small"
+            weight="bold"
+          >
+            {t('proyecto.docsInstitucionales')}
+          </Text>
+          <Text as="p" variant="body-small" color="secondary">
+            {t('proyecto.docsInstitucionalesAyuda')}
+          </Text>
+        </div>
+        <PestanaDocumentos sistema={d.sistema.metadata.name} />
+      </section>
     </div>
   );
 };
@@ -335,28 +442,75 @@ const CalidadProyecto = ({ nombre }: { nombre: string }) => {
   );
 };
 
+const SECCIONES_FICHA = [
+  'arquitectura',
+  'tecnologias',
+  'despliegue',
+  'procesos',
+] as const;
+
+/**
+ * Ficha técnica: una sola pestaña con sus cuatro secciones como
+ * subnavegación, para que la fila de pestañas no se desborde.
+ */
+const FichaTecnica = (props: { base: string; sistema: string }) => {
+  const { t } = useTranslationRef(textosHrl);
+  const titulos = {
+    arquitectura: t('proyecto.pestanaArquitectura'),
+    tecnologias: t('proyecto.pestanaTecnologias'),
+    despliegue: t('proyecto.pestanaDespliegue'),
+    procesos: t('proyecto.pestanaProcesos'),
+  };
+  return (
+    <div className="hrl-seccion">
+      <nav className="hrl-subnav" aria-label={t('proyecto.seccionesFicha')}>
+        {SECCIONES_FICHA.map(s => (
+          <NavLink key={s} to={`${props.base}/ficha/${s}`}>
+            {titulos[s]}
+          </NavLink>
+        ))}
+      </nav>
+      <Routes>
+        <Route index element={<Navigate to="arquitectura" replace />} />
+        <Route
+          path="arquitectura"
+          element={<PestanaArquitectura sistema={props.sistema} />}
+        />
+        <Route
+          path="tecnologias"
+          element={<PestanaTecnologias sistema={props.sistema} />}
+        />
+        <Route
+          path="despliegue"
+          element={<PestanaDespliegue sistema={props.sistema} />}
+        />
+        <Route
+          path="procesos"
+          element={<PestanaProcesos sistema={props.sistema} />}
+        />
+        <Route path="*" element={<Navigate to="arquitectura" replace />} />
+      </Routes>
+    </div>
+  );
+};
+
 const Pestanas = (props: { base: string; d: DetalleProyecto }) => {
   const { t } = useTranslationRef(textosHrl);
   const { d } = props;
   const documentos = [d.sistema, ...d.componentes, ...d.apis].filter(tieneDocs);
   const pestanas = [
     { ruta: '', texto: t('proyecto.pestanaResumen') },
-    { ruta: 'arquitectura', texto: t('proyecto.pestanaArquitectura') },
-    { ruta: 'tecnologias', texto: t('proyecto.pestanaTecnologias') },
-    { ruta: 'despliegue', texto: t('proyecto.pestanaDespliegue') },
-    { ruta: 'procesos', texto: t('proyecto.pestanaProcesos') },
+    { ruta: 'ficha', texto: t('proyecto.pestanaFicha') },
     {
       ruta: 'componentes',
-      texto: t('proyecto.pestanaComponentes'),
-      cuenta: d.componentes.length,
+      texto: t('proyecto.pestanaPiezas'),
+      cuenta: d.componentes.length + d.apis.length + d.recursos.length,
     },
-    { ruta: 'apis', texto: t('proyecto.pestanaApis'), cuenta: d.apis.length },
     {
       ruta: 'documentacion',
       texto: t('proyecto.pestanaDocumentacion'),
       cuenta: documentos.length,
     },
-    { ruta: 'documentos', texto: t('proyecto.pestanaDocumentos') },
     {
       ruta: 'equipo',
       texto: t('proyecto.pestanaEquipo'),
@@ -370,7 +524,8 @@ const Pestanas = (props: { base: string; d: DetalleProyecto }) => {
         <NavLink
           key={p.ruta}
           to={p.ruta ? `${props.base}/${p.ruta}` : props.base}
-          end
+          // La ficha técnica tiene subrutas: su pestaña sigue activa en ellas.
+          end={p.ruta !== 'ficha'}
         >
           {p.texto}
           {p.cuenta !== undefined && (
@@ -438,6 +593,13 @@ export const Detalle = () => {
       style={{ ['--hrl-proyecto' as string]: color }}
     >
       <section className="hrl-identidad hrl-subportal__heroe">
+        <Migas
+          claro
+          migas={[
+            { texto: t('paginas.proyectos'), href: '/proyectos' },
+            { texto: titulo },
+          ]}
+        />
         <span className="hrl-identidad__equipo">
           {d.dominio ? tituloDe(d.dominio) : t('proyectos.titulo')}
         </span>
@@ -494,30 +656,32 @@ export const Detalle = () => {
         <Routes>
           <Route path="" element={<Resumen d={d} />} />
           <Route
-            path="arquitectura"
-            element={<PestanaArquitectura sistema={d.sistema.metadata.name} />}
+            path="ficha/*"
+            element={
+              <FichaTecnica base={base} sistema={d.sistema.metadata.name} />
+            }
           />
+          {/* Rutas de antes de agrupar pestañas: los enlaces guardados siguen sirviendo. */}
+          {SECCIONES_FICHA.map(s => (
+            <Route
+              key={s}
+              path={s}
+              element={<Navigate to={`${base}/ficha/${s}`} replace />}
+            />
+          ))}
           <Route
-            path="tecnologias"
-            element={<PestanaTecnologias sistema={d.sistema.metadata.name} />}
-          />
-          <Route
-            path="despliegue"
-            element={<PestanaDespliegue sistema={d.sistema.metadata.name} />}
-          />
-          <Route
-            path="procesos"
-            element={<PestanaProcesos sistema={d.sistema.metadata.name} />}
+            path="apis"
+            element={<Navigate to={`${base}/componentes`} replace />}
           />
           <Route
             path="documentos"
-            element={<PestanaDocumentos sistema={d.sistema.metadata.name} />}
+            element={<Navigate to={`${base}/documentacion`} replace />}
           />
           <Route
             path="componentes"
             element={
-              <TablaEntidades
-                entidades={d.componentes}
+              <TablaPiezas
+                entidades={[...d.componentes, ...d.apis, ...d.recursos]}
                 vacio={
                   <EstadoVacio
                     icono={<WidgetsIcon />}
@@ -529,21 +693,6 @@ export const Detalle = () => {
             }
           />
           <Route path="documentacion" element={<Documentacion d={d} />} />
-          <Route
-            path="apis"
-            element={
-              <TablaEntidades
-                entidades={d.apis}
-                vacio={
-                  <EstadoVacio
-                    icono={<ApiIcon />}
-                    titulo={t('proyecto.sinApisTitulo')}
-                    descripcion={t('proyecto.sinApisDescripcion')}
-                  />
-                }
-              />
-            }
-          />
           <Route path="equipo" element={<Equipo d={d} />} />
           <Route
             path="calidad"

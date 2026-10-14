@@ -47,6 +47,9 @@ export const textosHrl = createTranslationRef({
       contraer: 'Collapse sidebar',
       expandir: 'Expand sidebar',
       tusProyectos: 'Projects',
+      explorar: 'Explore',
+      hacer: 'Actions',
+      estandares: 'Standards',
     },
     // Títulos de las páginas en la barra lateral (modules/nav/BarraLateral.tsx).
     paginas: {
@@ -57,6 +60,8 @@ export const textosHrl = createTranslationRef({
       'api-docs': 'APIs',
       'catalog-graph': 'Catalog Graph',
       techdocs: 'Docs',
+      autoservicio: 'Self-service',
+      mapa: 'Map',
       'catalog-import': 'Register a component',
       notifications: 'Notifications',
       'app-visualizer': 'Visualizer',
@@ -65,6 +70,29 @@ export const textosHrl = createTranslationRef({
       guia: 'Getting started',
     },
     portada: {
+      cifraPiezas: 'Components and APIs',
+      cifraDocumentadas: 'With documentation',
+      cifraBronce: 'At Bronze level or above',
+      ayudaProyectos:
+        'Systems published in the portal (catalog/hrl.yaml). Each one has its own page.',
+      ayudaPiezas:
+        'Components plus APIs that belong to a published project. Something without spec.system is not counted.',
+      ayudaDocumentadas:
+        'Share of components and APIs that publish TechDocs. «No data» means there is nothing to measure yet, not 0 %.',
+      ayudaBronce:
+        'Share of components and APIs that meet the three Bronze checks: owner, project and description.',
+      pendiente: 'Pending for you',
+      pendienteAyuda:
+        'Components and APIs of your teams that are not Gold yet, with the next thing they need.',
+      pendienteVacioTitulo: 'Nothing pending',
+      pendienteVacioDescripcion:
+        'Everything your teams own is at Gold level, or they do not own anything yet.',
+      pendienteSinEquipoTitulo: 'You are not in any team yet',
+      pendienteSinEquipoDescripcion:
+        'This list shows what your teams own. Teams are imported from GitHub (DevHRL) once they are created there.',
+      queFalta: 'What is missing',
+      verQueFalta: 'What is missing in {{nombre}}',
+      accesoAutoservicio: 'Create a repository or document one',
       saludoManana: 'Good morning, {{nombre}}',
       saludoTarde: 'Good afternoon, {{nombre}}',
       saludoNoche: 'Good evening, {{nombre}}',
@@ -169,12 +197,30 @@ export const textosHrl = createTranslationRef({
       pestanaProcesos: 'Processes',
       pestanaDocumentos: 'Documents',
       verTecnologias: 'Versions and purpose of each technology',
+      pestanaFicha: 'Technical sheet',
+      pestanaPiezas: 'Components and APIs',
+      seccionesFicha: 'Technical sheet sections',
+      columnaClase: 'Kind',
+      clase: {
+        component: 'Component',
+        api: 'API',
+        resource: 'Resource',
+      },
+      conDocs: 'Published',
+      abrir: 'Open',
+      abrirFicha: 'Open {{nombre}}',
+      docsTecnicos: 'Technical documentation',
+      docsTecnicosAyuda:
+        'Published from each repository with TechDocs (mkdocs.yml and docs/).',
+      docsInstitucionales: 'Institutional documents',
+      docsInstitucionalesAyuda:
+        'Regulations, forms, manuals and minutes of the project, kept in the institutional Drive.',
     },
     calidad: {
       titulo: 'Quality',
       intro:
-        'Each component and API earns a level as it meets basic practices: an owner, documentation, a linked repository. Like Soundcheck, but measured only with what the catalog knows.',
-      nota: 'The checks read the catalog-info.yaml of each repository; they do not inspect the code. To raise a level, edit that file and wait up to 30 minutes for the portal to read it again.',
+        'Each component and API earns a level as it meets basic practices: an owner, documentation, a README, no credentials in the repository. The server evaluates them and keeps the history.',
+      nota: 'The checks read the catalog-info.yaml of each repository (every 30 minutes) and some files of the repository itself (every 6 hours); they do not run the code.',
       filtroProyecto: 'Filter by project',
       todos: 'All',
       errorCarga: 'Could not evaluate quality',
@@ -261,7 +307,47 @@ export const textosHrl = createTranslationRef({
           porque: 'Gold is for what the hospital already uses every day.',
           arreglo: 'When it is in use, change spec.lifecycle to production.',
         },
+        readme: {
+          titulo: 'Has a README',
+          porque:
+            'It is the first thing anyone opens: what it is, how to run it and who to ask.',
+          arreglo:
+            'Add README.md at the root of the repository with those three answers.',
+        },
+        sinCredenciales: {
+          titulo: 'No credentials in the repository',
+          porque:
+            'A password in git stays in the history even after deleting the file, and anyone with access can read it.',
+          arreglo:
+            'Rotate the exposed keys first, then remove the file and add it to .gitignore. Keep values in the server environment, never in the repository.',
+        },
+        codeowners: {
+          titulo: 'Has CODEOWNERS',
+          porque:
+            'GitHub asks the right people to review each change automatically.',
+          arreglo:
+            'Add CODEOWNERS at the root, in .github/ or in docs/, e.g. «* @DevHRL/equipo-estadistica».',
+        },
+        kitFijado: {
+          titulo: 'UI kit pinned to a version',
+          porque:
+            'With @hrl/core-ui pinned to a tag, a kit change never reaches the system until someone decides it.',
+          arreglo:
+            'Use the dependency with a tag (…hrl-core-ui.git#v1.2.3) and update it with npx hrl-core-ui upgrade.',
+        },
       },
+      sinEvaluar: 'Not evaluated',
+      sinEvaluarRegla: '(not evaluated yet)',
+      sinEvaluarAyuda:
+        'There is no data for this check yet. The portal reads the catalog every 30 minutes and repositories every 6 hours; if it persists, the repository could not be read.',
+      vistas: 'Quality views',
+      vistaComponentes: 'By component',
+      vistaReglas: 'By check',
+      columnaRegla: 'Check',
+      columnaCumplen: 'Meet it',
+      cumplenDe: '{{cumplen}} of {{total}}',
+      columnaSinEvaluar: 'Not evaluated',
+      columnaArreglo: 'How to meet it',
     },
     guia: {
       listaTitulo: 'Getting started',
@@ -315,6 +401,18 @@ export const textosHrl = createTranslationRef({
       p6Regla3: 'Every repository has an owning team.',
     },
     entidad: {
+      contexto: 'Context',
+      clase: 'Kind',
+      tecnologias: 'Technologies',
+      nivel: 'Quality level',
+      verDocumentacion: 'Documentation',
+      verCodigo: 'Source code',
+      editarFicha: 'Edit catalog entry',
+      acciones: 'Actions',
+      comprobaciones: 'Checks',
+      comprobacionesSiguiente:
+        '{{cumplidas}} of {{total}} checks for {{nivel}}',
+      verCalidad: 'All checks and how to meet them',
       proyecto: 'Project',
       sinProyecto: 'Not part of any project',
       ciclo: 'Lifecycle',
@@ -413,6 +511,107 @@ export const textosHrl = createTranslationRef({
       faltaEnlace: 'Missing Drive link',
       pistaMovil:
         'On a small screen the diagram is hard to read: open it full screen to zoom in.',
+    },
+    tabla: {
+      herramientas: 'Table tools',
+      buscar: 'Search…',
+      buscarEtiqueta: 'Search in {{tabla}}',
+      filtrarPor: 'Filter by {{columna}}',
+      todos: '{{columna}}: all',
+      agruparPor: 'Group by',
+      sinAgrupar: 'No grouping',
+      agruparPorColumna: 'Group by {{columna}}',
+      columnas: 'Show or hide columns',
+      columnasVisibles: 'Visible columns',
+      exportar: 'Export to CSV (what is shown)',
+      acciones: 'Actions',
+      sinValor: 'No value',
+      resultados: '{{cuenta}} of {{total}} results',
+      cargando: 'Loading…',
+      rango: '{{desde}}–{{hasta}} of {{total}}',
+      limpiar: 'Clear filters',
+      sinCoincidenciasTitulo: 'Nothing matches the filters',
+      sinCoincidenciasDescripcion:
+        'There are records, but none matches the search or the selected filters. Clear them to see everything.',
+    },
+    migas: {
+      etiqueta: 'Breadcrumb',
+    },
+    cifra: {
+      sinDatos: 'No data',
+      queEs: 'What does «{{cifra}}» count?',
+    },
+    autoservicio: {
+      titulo: 'Self-service',
+      intro:
+        'What you can do on your own, without asking anyone: each action opens a short form and leaves a record in the run history.',
+      historial: 'Run history',
+      buscar: 'Search actions',
+      empezar: 'Start',
+      documentacion: 'How it works',
+      masOpciones: 'More options for {{accion}}',
+      copiarEnlace: 'Copy link to the form',
+      enlaceCopiado: 'Link to the form copied',
+      verEnCatalogo: 'View the template in the catalog',
+      categoria: {
+        proyecto: 'Create',
+        documentacion: 'Document',
+      },
+      errorCarga: 'Could not load the actions',
+      vacioTitulo: 'There are no actions yet',
+      vacioDescripcion:
+        'Actions are scaffolder templates registered in the catalog. Add one under plantillas/ in the portal repository and register it in app-config.yaml.',
+      sinResultadosTitulo: 'No action matches the search',
+      sinResultadosDescripcion:
+        'Search by what you want to do (create, document) or by technology.',
+      accionesDe: 'Actions for {{nombre}}',
+      verTodas: 'All self-service actions',
+    },
+    mapa: {
+      titulo: 'Map',
+      intro:
+        'How the hospital projects relate to their components, APIs, resources and teams. Everything comes from the catalog.',
+      vistas: 'Map views',
+      grafo: 'Graph',
+      tarjetas: 'Cards',
+      pista:
+        'Click a node to open its entry. Click the graph to enable zoom with the mouse wheel.',
+      mostrarEquipos: 'Show teams',
+      errorCarga: 'Could not load the map',
+      sinDominioTitulo: 'The hospital domain is not in the catalog',
+      sinDominioDescripcion:
+        'The map starts from the salud-hrl domain declared in catalog/hrl.yaml. Check that the file is registered in app-config.yaml.',
+      clases: {
+        domain: {
+          titulo: 'Domains',
+          ayuda:
+            'The big area the systems belong to. Today there is one: the hospital systems.',
+        },
+        system: {
+          titulo: 'Projects',
+          ayuda:
+            'Each system the hospital builds (System in the catalog). Each one has its own page.',
+        },
+        component: {
+          titulo: 'Components',
+          ayuda:
+            'A piece of software with its own repository or folder: a website, a service, a library.',
+        },
+        api: {
+          titulo: 'APIs',
+          ayuda:
+            'An interface a component offers to others, described with its definition (OpenAPI).',
+        },
+        resource: {
+          titulo: 'Resources',
+          ayuda: 'Infrastructure a project needs: databases, servers, storage.',
+        },
+        group: {
+          titulo: 'Teams',
+          ayuda:
+            'Teams that own projects and components. They come from GitHub (DevHRL) or catalog/hrl.yaml.',
+        },
+      },
     },
   },
 });
@@ -546,9 +745,9 @@ const es = {
   'proyecto.pestanaCalidad': 'Calidad',
   'calidad.titulo': 'Calidad',
   'calidad.intro':
-    'Cada componente y API sube de nivel a medida que cumple prácticas básicas: un responsable, documentación, el repositorio enlazado. Como Soundcheck, pero medido solo con lo que sabe el catálogo.',
+    'Cada componente y API sube de nivel a medida que cumple prácticas básicas: un responsable, documentación, un README, nada de credenciales en el repositorio. Las evalúa el servidor y guarda el historial.',
   'calidad.nota':
-    'Las comprobaciones leen el catalog-info.yaml de cada repositorio; no revisan el código. Para subir de nivel, edita ese archivo y espera hasta 30 minutos a que el portal lo vuelva a leer.',
+    'Las comprobaciones leen el catalog-info.yaml de cada repositorio (cada 30 minutos) y algunos archivos del propio repositorio (cada 6 horas); no ejecutan el código.',
   'calidad.filtroProyecto': 'Filtrar por proyecto',
   'calidad.todos': 'Todos',
   'calidad.errorCarga': 'No se pudo evaluar la calidad',
@@ -625,6 +824,38 @@ const es = {
     'El Oro es para lo que el hospital ya usa todos los días.',
   'calidad.reglas.produccion.arreglo':
     'Cuando esté en uso, cambia spec.lifecycle a production.',
+  'calidad.reglas.readme.titulo': 'Tiene README',
+  'calidad.reglas.readme.porque':
+    'Es lo primero que cualquiera abre: qué es, cómo se ejecuta y a quién preguntar.',
+  'calidad.reglas.readme.arreglo':
+    'Agrega README.md en la raíz del repositorio con esas tres respuestas.',
+  'calidad.reglas.sinCredenciales.titulo': 'Sin credenciales en el repositorio',
+  'calidad.reglas.sinCredenciales.porque':
+    'Una contraseña en git queda en el historial aunque se borre el archivo, y cualquiera con acceso puede leerla.',
+  'calidad.reglas.sinCredenciales.arreglo':
+    'Primero rota las claves expuestas, luego quita el archivo y agrégalo a .gitignore. Los valores van en el entorno del servidor, nunca en el repositorio.',
+  'calidad.reglas.codeowners.titulo': 'Tiene CODEOWNERS',
+  'calidad.reglas.codeowners.porque':
+    'GitHub pide revisión a las personas correctas en cada cambio, sin que nadie tenga que acordarse.',
+  'calidad.reglas.codeowners.arreglo':
+    'Agrega CODEOWNERS en la raíz, en .github/ o en docs/, p. ej. «* @DevHRL/equipo-estadistica».',
+  'calidad.reglas.kitFijado.titulo': 'Kit de UI fijado a una versión',
+  'calidad.reglas.kitFijado.porque':
+    'Con @hrl/core-ui fijado a un tag, un cambio del kit no llega al sistema hasta que alguien lo decide.',
+  'calidad.reglas.kitFijado.arreglo':
+    'Usa la dependencia con un tag (…hrl-core-ui.git#v1.2.3) y actualízala con npx hrl-core-ui upgrade.',
+  'calidad.sinEvaluar': 'Sin evaluar',
+  'calidad.sinEvaluarRegla': '(aún sin evaluar)',
+  'calidad.sinEvaluarAyuda':
+    'Todavía no hay datos para esta comprobación. El portal lee el catálogo cada 30 minutos y los repositorios cada 6 horas; si sigue así, no se pudo leer el repositorio.',
+  'calidad.vistas': 'Vistas de calidad',
+  'calidad.vistaComponentes': 'Por componente',
+  'calidad.vistaReglas': 'Por comprobación',
+  'calidad.columnaRegla': 'Comprobación',
+  'calidad.columnaCumplen': 'La cumplen',
+  'calidad.cumplenDe': '{{cumplen}} de {{total}}',
+  'calidad.columnaSinEvaluar': 'Sin evaluar',
+  'calidad.columnaArreglo': 'Cómo cumplirla',
   'guia.listaTitulo': 'Primeros pasos',
   'guia.listaProgreso': '{{hechos}} de {{total}} hechos',
   'guia.verGuia': 'Ver la guía',
@@ -776,6 +1007,138 @@ const es = {
   'ficha.faltaEnlace': 'Falta el enlace del Drive',
   'ficha.pistaMovil':
     'En una pantalla pequeña el diagrama se lee mal: ábrelo en pantalla completa para ampliarlo.',
+  'tabla.herramientas': 'Herramientas de la tabla',
+  'tabla.buscar': 'Buscar…',
+  'tabla.buscarEtiqueta': 'Buscar en {{tabla}}',
+  'tabla.filtrarPor': 'Filtrar por {{columna}}',
+  'tabla.todos': '{{columna}}: todos',
+  'tabla.agruparPor': 'Agrupar por',
+  'tabla.sinAgrupar': 'Sin agrupar',
+  'tabla.agruparPorColumna': 'Agrupar por {{columna}}',
+  'tabla.columnas': 'Mostrar u ocultar columnas',
+  'tabla.columnasVisibles': 'Columnas visibles',
+  'tabla.exportar': 'Exportar a CSV (lo que se ve)',
+  'tabla.acciones': 'Acciones',
+  'tabla.sinValor': 'Sin valor',
+  'tabla.resultados': '{{cuenta}} de {{total}} resultados',
+  'tabla.cargando': 'Cargando…',
+  'tabla.rango': '{{desde}}–{{hasta}} de {{total}}',
+  'tabla.limpiar': 'Quitar filtros',
+  'tabla.sinCoincidenciasTitulo': 'Nada coincide con los filtros',
+  'tabla.sinCoincidenciasDescripcion':
+    'Hay registros, pero ninguno coincide con la búsqueda o los filtros elegidos. Quítalos para ver todo.',
+  'cifra.sinDatos': 'Sin datos',
+  'cifra.queEs': '¿Qué cuenta «{{cifra}}»?',
+  'proyecto.pestanaFicha': 'Ficha técnica',
+  'proyecto.pestanaPiezas': 'Componentes y APIs',
+  'proyecto.seccionesFicha': 'Secciones de la ficha técnica',
+  'proyecto.columnaClase': 'Clase',
+  'proyecto.clase.component': 'Componente',
+  'proyecto.clase.api': 'API',
+  'proyecto.clase.resource': 'Recurso',
+  'proyecto.conDocs': 'Publicada',
+  'proyecto.abrir': 'Abrir',
+  'proyecto.abrirFicha': 'Abrir {{nombre}}',
+  'proyecto.docsTecnicos': 'Documentación técnica',
+  'proyecto.docsTecnicosAyuda':
+    'Se publica desde cada repositorio con TechDocs (mkdocs.yml y docs/).',
+  'proyecto.docsInstitucionales': 'Documentos institucionales',
+  'proyecto.docsInstitucionalesAyuda':
+    'Normativa, formatos, manuales y actas del proyecto, guardados en el Drive institucional.',
+  'migas.etiqueta': 'Ruta de navegación',
+  'barra.explorar': 'Explorar',
+  'barra.hacer': 'Acciones',
+  'barra.estandares': 'Estándares',
+  'paginas.autoservicio': 'Autoservicio',
+  'paginas.mapa': 'Mapa',
+  'autoservicio.titulo': 'Autoservicio',
+  'autoservicio.intro':
+    'Lo que puedes hacer por tu cuenta, sin pedírselo a nadie: cada acción abre un formulario corto y deja constancia en el historial de ejecuciones.',
+  'autoservicio.historial': 'Historial de ejecuciones',
+  'autoservicio.buscar': 'Buscar acciones',
+  'autoservicio.empezar': 'Empezar',
+  'autoservicio.documentacion': 'Cómo funciona',
+  'autoservicio.masOpciones': 'Más opciones de {{accion}}',
+  'autoservicio.copiarEnlace': 'Copiar enlace al formulario',
+  'autoservicio.enlaceCopiado': 'Enlace al formulario copiado',
+  'autoservicio.verEnCatalogo': 'Ver la plantilla en el catálogo',
+  'autoservicio.categoria.proyecto': 'Crear',
+  'autoservicio.categoria.documentacion': 'Documentar',
+  'autoservicio.errorCarga': 'No se pudieron cargar las acciones',
+  'autoservicio.vacioTitulo': 'Todavía no hay acciones',
+  'autoservicio.vacioDescripcion':
+    'Las acciones son plantillas del scaffolder registradas en el catálogo. Agrega una en plantillas/ del repositorio del portal y regístrala en app-config.yaml.',
+  'autoservicio.sinResultadosTitulo': 'Ninguna acción coincide con la búsqueda',
+  'autoservicio.sinResultadosDescripcion':
+    'Busca por lo que quieres hacer (crear, documentar) o por tecnología.',
+  'autoservicio.accionesDe': 'Acciones de {{nombre}}',
+  'autoservicio.verTodas': 'Todas las acciones de Autoservicio',
+  'entidad.contexto': 'Contexto',
+  'entidad.clase': 'Clase',
+  'entidad.tecnologias': 'Tecnologías',
+  'entidad.nivel': 'Nivel de calidad',
+  'entidad.verDocumentacion': 'Documentación',
+  'entidad.verCodigo': 'Código fuente',
+  'entidad.editarFicha': 'Editar la ficha',
+  'entidad.acciones': 'Acciones',
+  'entidad.comprobaciones': 'Comprobaciones',
+  'entidad.comprobacionesSiguiente':
+    '{{cumplidas}} de {{total}} comprobaciones para {{nivel}}',
+  'entidad.verCalidad': 'Todas las comprobaciones y cómo cumplirlas',
+  'portada.cifraPiezas': 'Componentes y APIs',
+  'portada.cifraDocumentadas': 'Con documentación',
+  'portada.cifraBronce': 'Con nivel Bronce o más',
+  'portada.ayudaProyectos':
+    'Sistemas publicados en el portal (catalog/hrl.yaml). Cada uno tiene su propia página.',
+  'portada.ayudaPiezas':
+    'Componentes más APIs que pertenecen a un proyecto publicado. Lo que no tiene spec.system no se cuenta.',
+  'portada.ayudaDocumentadas':
+    'Parte de los componentes y APIs que publican TechDocs. «Sin datos» significa que aún no hay nada que medir, no 0 %.',
+  'portada.ayudaBronce':
+    'Parte de los componentes y APIs que cumplen las tres comprobaciones de Bronce: responsable, proyecto y descripción.',
+  'portada.pendiente': 'Pendiente para ti',
+  'portada.pendienteAyuda':
+    'Componentes y APIs de tus equipos que aún no llegan a Oro, con lo siguiente que les falta.',
+  'portada.pendienteVacioTitulo': 'Nada pendiente',
+  'portada.pendienteVacioDescripcion':
+    'Todo lo de tus equipos está en nivel Oro, o todavía no son responsables de nada.',
+  'portada.pendienteSinEquipoTitulo': 'Aún no estás en ningún equipo',
+  'portada.pendienteSinEquipoDescripcion':
+    'Esta lista muestra lo que es de tus equipos. Los equipos se importan de GitHub (DevHRL) cuando se crean allí.',
+  'portada.queFalta': 'Qué falta',
+  'portada.verQueFalta': 'Qué le falta a {{nombre}}',
+  'portada.accesoAutoservicio': 'Crear un repositorio o documentar uno',
+  'mapa.titulo': 'Mapa',
+  'mapa.intro':
+    'Cómo se relacionan los proyectos del hospital con sus componentes, APIs, recursos y equipos. Todo sale del catálogo.',
+  'mapa.vistas': 'Vistas del mapa',
+  'mapa.grafo': 'Grafo',
+  'mapa.tarjetas': 'Tarjetas',
+  'mapa.pista':
+    'Haz clic en un nodo para abrir su ficha. Haz clic en el grafo para activar el zoom con la rueda.',
+  'mapa.mostrarEquipos': 'Mostrar equipos',
+  'mapa.errorCarga': 'No se pudo cargar el mapa',
+  'mapa.sinDominioTitulo': 'El dominio del hospital no está en el catálogo',
+  'mapa.sinDominioDescripcion':
+    'El mapa parte del dominio salud-hrl declarado en catalog/hrl.yaml. Revisa que el archivo esté registrado en app-config.yaml.',
+  'mapa.clases.domain.titulo': 'Dominios',
+  'mapa.clases.domain.ayuda':
+    'El área grande a la que pertenecen los sistemas. Hoy hay uno: los sistemas del hospital.',
+  'mapa.clases.system.titulo': 'Proyectos',
+  'mapa.clases.system.ayuda':
+    'Cada sistema que construye el hospital (System en el catálogo). Cada uno tiene su propia página.',
+  'mapa.clases.component.titulo': 'Componentes',
+  'mapa.clases.component.ayuda':
+    'Una pieza de software con su propio repositorio o carpeta: un sitio web, un servicio, una biblioteca.',
+  'mapa.clases.api.titulo': 'APIs',
+  'mapa.clases.api.ayuda':
+    'Una interfaz que un componente ofrece a otros, descrita con su definición (OpenAPI).',
+  'mapa.clases.resource.titulo': 'Recursos',
+  'mapa.clases.resource.ayuda':
+    'Infraestructura que necesita un proyecto: bases de datos, servidores, almacenamiento.',
+  'mapa.clases.group.titulo': 'Equipos',
+  'mapa.clases.group.ayuda':
+    'Equipos responsables de proyectos y componentes. Vienen de GitHub (DevHRL) o de catalog/hrl.yaml.',
 } as const;
 
 export const textosHrlEs = createTranslationResource({

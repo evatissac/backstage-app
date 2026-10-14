@@ -30,6 +30,7 @@ import {
 } from '../comun/entidades';
 import { Insignia } from '../calidad';
 import { useCalidadEntidad } from '../calidad/datos';
+import { MenuAcciones } from '../autoservicio';
 import './entidad.css';
 
 // Sin proyecto: verde agua oscuro, para que el texto blanco se lea en ambos temas.
@@ -54,7 +55,7 @@ const NivelCalidad = ({ entidad }: { entidad: Entidad }) => {
   if (carga.estado !== 'listo') return null;
   return (
     <Link to={`${rutaEntidad(entidad)}/calidad`} className="hrl-entidad__nivel">
-      <Insignia nivel={carga.datos.nivel} />
+      <Insignia nivel={carga.datos.nivel} sinEvaluar={carga.datos.sinEvaluar} />
     </Link>
   );
 };
@@ -85,6 +86,7 @@ const Acciones = ({ entidad }: { entidad: Entidad }) => {
 
   return (
     <>
+      <MenuAcciones entidad={entidad} />
       <ButtonIcon
         variant="secondary"
         aria-label={

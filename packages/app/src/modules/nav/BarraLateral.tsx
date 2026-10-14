@@ -31,14 +31,27 @@ import {
 import { Marca } from './Marca';
 import { useMarco } from './Marco';
 
-// Orden y agrupación de las páginas. Lo que no está aquí cae en «Herramientas».
-const PRINCIPALES = [
-  'page:home',
-  'page:proyectos',
-  'page:catalog',
-  'page:techdocs',
-  'page:api-docs',
-  'page:calidad',
+// Grupos de la barra, como las áreas de Port: explorar lo que existe, hacer
+// algo con ello y ver si cumple los estándares. Lo que no está aquí ni en
+// OCULTAS cae en «Herramientas».
+const GRUPOS = [
+  { titulo: null, ids: ['page:home'] },
+  {
+    titulo: 'barra.explorar',
+    ids: ['page:proyectos', 'page:catalog', 'page:techdocs', 'page:mapa'],
+  },
+  { titulo: 'barra.hacer', ids: ['page:autoservicio'] },
+  { titulo: 'barra.estandares', ids: ['page:calidad'] },
+] as const;
+
+// Páginas que existen pero no van en la barra: se llega a ellas desde otra
+// página (Primeros pasos desde la portada, Crear desde Autoservicio) o son
+// herramientas de desarrollo.
+const OCULTAS = [
+  'page:guia',
+  'page:scaffolder',
+  'page:catalog-graph',
+  'page:app-visualizer',
 ];
 
 const esMac =
@@ -148,8 +161,10 @@ const ProyectosBarra = () => {
   );
 };
 
+type Grupo = { titulo: string | null; items: NavContentNavItem[] };
+
 const Barra = (props: {
-  principales: NavContentNavItem[];
+  grupos: Grupo[];
   herramientas: NavContentNavItem[];
   notificaciones?: NavContentNavItem;
   ajustes?: NavContentNavItem;
@@ -232,7 +247,12 @@ const Barra = (props: {
         </button>
 
         <div className="hrl-nav__desplazable">
-          <ul className="hrl-nav__grupo">{props.principales.map(enlace)}</ul>
+          {props.grupos.map((g, i) => (
+            <div key={g.titulo ?? i}>
+              {g.titulo && <p className="hrl-nav__titulo">{g.titulo}</p>}
+              <ul className="hrl-nav__grupo">{g.items.map(enlace)}</ul>
+            </div>
+          ))}
 
           <ProyectosBarra />
 
@@ -307,6 +327,8 @@ export const SidebarContent = NavContentBlueprint.make({
         'page:notifications': t('paginas.notifications'),
         'page:app-visualizer': t('paginas.app-visualizer'),
         'page:user-settings': t('paginas.user-settings'),
+        'page:autoservicio': t('paginas.autoservicio'),
+        'page:mapa': t('paginas.mapa'),
       };
 
       // `take` consume elementos de la colección: se trabaja sobre una copia
@@ -316,9 +338,13 @@ export const SidebarContent = NavContentBlueprint.make({
       // Notificaciones y ajustes van al pie, junto al perfil.
       const notificaciones = items.take('page:notifications');
       const ajustes = items.take('page:user-settings');
-      const principales = PRINCIPALES.map(id => items.take(id)).filter(
-        (i): i is NavContentNavItem => Boolean(i),
-      );
+      OCULTAS.forEach(id => items.take(id));
+      const grupos: Grupo[] = GRUPOS.map(g => ({
+        titulo: g.titulo ? t(g.titulo) : null,
+        items: g.ids
+          .map(id => items.take(id))
+          .filter((i): i is NavContentNavItem => Boolean(i)),
+      })).filter(g => g.items.length > 0);
       const herramientas = [...items.rest()].sort((a, b) =>
         (titulos[a.node.spec.id] ?? a.title).localeCompare(
           titulos[b.node.spec.id] ?? b.title,
@@ -327,7 +353,7 @@ export const SidebarContent = NavContentBlueprint.make({
 
       return (
         <Barra
-          principales={principales}
+          grupos={grupos}
           herramientas={herramientas}
           notificaciones={notificaciones}
           ajustes={ajustes}

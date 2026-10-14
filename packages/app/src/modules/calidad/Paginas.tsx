@@ -12,6 +12,7 @@ import {
   Progreso,
   ResumenCalidad,
   TablaCalidad,
+  TablaReglas,
 } from './componentes';
 import '../comun/comun.css';
 import './calidad.css';
@@ -43,7 +44,15 @@ export const PaginaCalidad = () => {
   const { t } = useTranslationRef(textosHrl);
   const [params] = useSearchParams();
   const proyecto = params.get('proyecto') ?? undefined;
+  const vista = params.get('vista') === 'reglas' ? 'reglas' : 'componentes';
   const carga = useCalidad(proyecto);
+  const conVista = (v: string) => {
+    const siguiente = new URLSearchParams(params);
+    if (v === 'componentes') siguiente.delete('vista');
+    else siguiente.set('vista', v);
+    const q = siguiente.toString();
+    return q ? `/calidad?${q}` : '/calidad';
+  };
 
   return (
     <div className="hrl-pagina">
@@ -57,7 +66,28 @@ export const PaginaCalidad = () => {
       </div>
       <FiltroProyecto actual={proyecto} />
       {carga.estado === 'listo' && <ResumenCalidad datos={carga.datos} />}
-      <TablaCalidad carga={carga} mostrarProyecto={!proyecto} />
+      {/* Como Scorecards y Rules en Port: por entidad o por regla. */}
+      <nav className="hrl-subnav" aria-label={t('calidad.vistas')}>
+        <Link
+          to={conVista('componentes')}
+          aria-current={vista === 'componentes' ? 'page' : undefined}
+          className={vista === 'componentes' ? 'active' : undefined}
+        >
+          {t('calidad.vistaComponentes')}
+        </Link>
+        <Link
+          to={conVista('reglas')}
+          aria-current={vista === 'reglas' ? 'page' : undefined}
+          className={vista === 'reglas' ? 'active' : undefined}
+        >
+          {t('calidad.vistaReglas')}
+        </Link>
+      </nav>
+      {vista === 'reglas' ? (
+        <TablaReglas carga={carga} />
+      ) : (
+        <TablaCalidad carga={carga} mostrarProyecto={!proyecto} />
+      )}
       <Text as="p" variant="body-small" color="secondary">
         {t('calidad.nota')}
       </Text>
@@ -91,7 +121,7 @@ export const PestanaCalidad = () => {
           <Text as="p" variant="body-small" color="secondary">
             {t('calidad.nivelActual')}
           </Text>
-          <Insignia nivel={r.nivel} grande />
+          <Insignia nivel={r.nivel} sinEvaluar={r.sinEvaluar} grande />
         </div>
         <Progreso r={r} />
       </div>

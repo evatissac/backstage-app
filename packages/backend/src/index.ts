@@ -63,6 +63,14 @@ backend.add(import('@backstage/plugin-user-settings-backend'));
 backend.add(import('@backstage/plugin-notifications-backend'));
 backend.add(import('@backstage/plugin-signals-backend'));
 
+// Calidad (Bronce, Plata, Oro) calculada en el servidor con Tech Insights:
+// los datos los recoge modules/calidad.ts y las reglas están en app-config.yaml.
+backend.add(import('@backstage-community/plugin-tech-insights-backend'));
+backend.add(
+  import('@backstage-community/plugin-tech-insights-backend-module-jsonfc'),
+);
+backend.add(import('./modules/calidad'));
+
 // mcp actions plugin
 backend.add(import('@backstage/plugin-mcp-actions-backend'));
 

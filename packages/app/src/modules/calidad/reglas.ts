@@ -1,9 +1,11 @@
-import { Entidad, relaciones, tieneDocs } from '../comun/entidades';
+import { Entidad } from '../comun/entidades';
 
 /**
- * Comprobaciones de calidad, al estilo de Soundcheck de Spotify, calculadas
- * solo con lo que el catálogo ya sabe de cada entidad. No leen el contenido
- * del repositorio: para eso haría falta un backend (Tech Insights).
+ * Comprobaciones de calidad, al estilo de Soundcheck de Spotify o de los
+ * scorecards de Port. Las evalúa el backend con Tech Insights
+ * (packages/backend/src/modules/calidad.ts y techInsights en app-config.yaml):
+ * aquí solo se declara a qué nivel pertenece cada una, y su texto está en
+ * modules/idioma. El id debe ser el mismo en los tres sitios.
  *
  * Cada nivel exige los anteriores: no se llega a Plata sin cumplir Bronce.
  */
@@ -11,107 +13,73 @@ import { Entidad, relaciones, tieneDocs } from '../comun/entidades';
 export type Nivel = 'bronce' | 'plata' | 'oro';
 export const NIVELES: Nivel[] = ['bronce', 'plata', 'oro'];
 
-/** Datos que no están en la entidad y hay que buscar aparte. */
-export type Contexto = {
-  /** Grupos (ref en minúsculas) con al menos un miembro. */
-  gruposConMiembros: Set<string>;
-};
-
-export type Regla = {
-  id: string;
-  nivel: Nivel;
-  cumple: (e: Entidad, ctx: Contexto) => boolean;
-};
-
-const spec = (e: Entidad) =>
-  (e.spec ?? {}) as { owner?: string; system?: string; lifecycle?: string };
-
-const anotacion = (e: Entidad, clave: string) =>
-  Boolean(e.metadata.annotations?.[clave]);
+export type Regla = { id: string; nivel: Nivel };
 
 export const REGLAS: Regla[] = [
   // Bronce: se sabe qué es y quién responde por él.
-  {
-    id: 'responsable',
-    nivel: 'bronce',
-    cumple: e => relaciones(e, 'ownedBy').length > 0,
-  },
-  {
-    id: 'proyecto',
-    nivel: 'bronce',
-    cumple: e =>
-      Boolean(spec(e).system) ||
-      relaciones(e, 'partOf').some(r => r.startsWith('system:')),
-  },
-  {
-    id: 'descripcion',
-    nivel: 'bronce',
-    cumple: e => (e.metadata.description ?? '').trim().length >= 10,
-  },
+  { id: 'responsable', nivel: 'bronce' },
+  { id: 'proyecto', nivel: 'bronce' },
+  { id: 'descripcion', nivel: 'bronce' },
   // Plata: alguien nuevo puede trabajar con él sin preguntar.
-  { id: 'documentacion', nivel: 'plata', cumple: e => tieneDocs(e) },
-  {
-    id: 'repositorio',
-    nivel: 'plata',
-    cumple: e =>
-      anotacion(e, 'backstage.io/source-location') ||
-      anotacion(e, 'github.com/project-slug'),
-  },
-  {
-    id: 'cicloDeVida',
-    nivel: 'plata',
-    cumple: e => Boolean(spec(e).lifecycle),
-  },
+  { id: 'documentacion', nivel: 'plata' },
+  { id: 'repositorio', nivel: 'plata' },
+  { id: 'cicloDeVida', nivel: 'plata' },
+  { id: 'readme', nivel: 'plata' },
+  { id: 'sinCredenciales', nivel: 'plata' },
   // Oro: listo para producción y con un equipo real detrás.
-  {
-    id: 'etiquetas',
-    nivel: 'oro',
-    cumple: e => (e.metadata.tags ?? []).length > 0,
-  },
-  {
-    id: 'equipo',
-    nivel: 'oro',
-    cumple: (e, ctx) =>
-      relaciones(e, 'ownedBy').some(r =>
-        ctx.gruposConMiembros.has(r.toLowerCase()),
-      ),
-  },
-  {
-    id: 'produccion',
-    nivel: 'oro',
-    cumple: e => spec(e).lifecycle === 'production',
-  },
+  { id: 'etiquetas', nivel: 'oro' },
+  { id: 'equipo', nivel: 'oro' },
+  { id: 'produccion', nivel: 'oro' },
+  { id: 'codeowners', nivel: 'oro' },
+  { id: 'kitFijado', nivel: 'oro' },
 ];
+
+/**
+ * `true` cumple, `false` no cumple y `undefined` aún no se evaluó (el
+ * backend todavía no recogió sus datos o no pudo leer el repositorio). Lo
+ * no evaluado no se da por cumplido ni por fallido.
+ */
+export type EstadoRegla = boolean | undefined;
 
 export type Resultado = {
   entidad: Entidad;
-  /** id de regla → cumple. */
-  reglas: Record<string, boolean>;
+  reglas: Record<string, EstadoRegla>;
   /** El nivel más alto con todas sus reglas (y las de los anteriores) cumplidas. */
   nivel?: Nivel;
   cumplidas: number;
   total: number;
+  /** Ninguna regla tiene resultado todavía. */
+  sinEvaluar: boolean;
 };
 
-export const evaluar = (entidad: Entidad, ctx: Contexto): Resultado => {
-  const reglas = Object.fromEntries(
-    REGLAS.map(r => [r.id, r.cumple(entidad, ctx)]),
-  );
+export const resultado = (
+  entidad: Entidad,
+  reglas: Record<string, EstadoRegla>,
+): Resultado => {
   let nivel: Nivel | undefined;
   for (const n of NIVELES) {
-    if (REGLAS.filter(r => r.nivel === n).every(r => reglas[r.id])) nivel = n;
-    else break;
+    if (REGLAS.filter(r => r.nivel === n).every(r => reglas[r.id] === true)) {
+      nivel = n;
+    } else break;
   }
-  const cumplidas = Object.values(reglas).filter(Boolean).length;
-  return { entidad, reglas, nivel, cumplidas, total: REGLAS.length };
+  return {
+    entidad,
+    reglas,
+    nivel,
+    cumplidas: REGLAS.filter(r => reglas[r.id] === true).length,
+    total: REGLAS.length,
+    sinEvaluar: REGLAS.every(r => reglas[r.id] === undefined),
+  };
 };
 
-/** Lo siguiente que falta para subir de nivel. */
+/** Lo siguiente que falta para subir de nivel (incluye lo no evaluado). */
 export const pendientes = (r: Resultado) => {
   const siguiente = r.nivel
     ? NIVELES[NIVELES.indexOf(r.nivel) + 1]
     : NIVELES[0];
   return siguiente
-    ? REGLAS.filter(regla => regla.nivel === siguiente && !r.reglas[regla.id])
+    ? REGLAS.filter(
+        regla => regla.nivel === siguiente && r.reglas[regla.id] !== true,
+      )
     : [];
 };

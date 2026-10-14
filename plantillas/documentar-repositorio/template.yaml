@@ -9,6 +9,13 @@ metadata:
   description: >-
     Abre un pull request con catalog-info.yaml, mkdocs.yml y docs/ en un
     repositorio de DevHRL que aún no aparece en el portal.
+  annotations:
+    # Cómo se presenta en Autoservicio (modules/autoservicio/datos.ts).
+    hrl/verbo: Documentar
+    # En la ficha de un proyecto aparece como acción ⚡, con el proyecto y su
+    # equipo ya elegidos.
+    hrl/aplica-a: system
+    hrl/prellenar: sistema=sistema,responsable=responsable
   tags:
     - golden-path
     - documentacion

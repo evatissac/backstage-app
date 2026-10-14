@@ -1,6 +1,13 @@
 import { ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { SearchField, Skeleton, Text } from '@backstage/ui';
+import {
+  ButtonLink,
+  Cell,
+  CellText,
+  SearchField,
+  Skeleton,
+  Text,
+} from '@backstage/ui';
 import {
   identityApiRef,
   useApi,
@@ -14,7 +21,8 @@ import { visitsApiRef } from '@backstage/plugin-home';
 import FolderIcon from '@material-ui/icons/FolderSpecialOutlined';
 import CatalogIcon from '@material-ui/icons/AppsOutlined';
 import DocIcon from '@material-ui/icons/MenuBookOutlined';
-import ApiIcon from '@material-ui/icons/SettingsEthernetOutlined';
+import AccionIcon from '@material-ui/icons/FlashOnOutlined';
+import TareaIcon from '@material-ui/icons/AssignmentTurnedInOutlined';
 import StarIcon from '@material-ui/icons/StarBorderOutlined';
 import HistoryIcon from '@material-ui/icons/HistoryOutlined';
 import ShieldIcon from '@material-ui/icons/VerifiedUserOutlined';
@@ -23,10 +31,19 @@ import { textosHrl } from '../idioma';
 import { Carga, useCarga } from '../comun/useCarga';
 import { EstadoVacio } from '../comun/EstadoVacio';
 import { IconoTipo } from '../comun/iconos';
-import { partesRef, rutaEntidad, tituloDe } from '../comun/entidades';
+import {
+  partesRef,
+  relaciones,
+  rutaEntidad,
+  tituloDe,
+} from '../comun/entidades';
+import { Cifra } from '../comun/Cifra';
+import { TablaHRL } from '../comun/TablaHRL';
 import { RejillaProyectos } from '../proyectos';
 import { ListaPrimerosPasos } from '../guia';
-import { ResumenCalidad, useCalidad } from '../calidad';
+import { Insignia, useCalidad } from '../calidad';
+import { textoRegla } from '../calidad/componentes';
+import { pendientes, Resultado } from '../calidad/reglas';
 import { ResumenCatalogo, useResumenCatalogo } from '../proyectos/datos';
 import '../comun/comun.css';
 import './portada.css';
@@ -37,7 +54,35 @@ const saludo = (hora: number) => {
   return 'portada.saludoNoche' as const;
 };
 
-const Heroe = ({ resumen }: { resumen: Carga<ResumenCatalogo> }) => {
+const Panel = (props: {
+  titulo: string;
+  icono: ReactNode;
+  children: ReactNode;
+}) => (
+  <section className="hrl-tarjeta hrl-panel">
+    <h2 className="hrl-panel__titulo">
+      <span aria-hidden>{props.icono}</span>
+      <Text variant="title-x-small" weight="bold">
+        {props.titulo}
+      </Text>
+    </h2>
+    {props.children}
+  </section>
+);
+
+const CargandoLista = () => (
+  <div className="hrl-lista" aria-busy>
+    {[0, 1, 2].map(i => (
+      <Skeleton key={i} width="100%" height={36} style={{ margin: '4px 0' }} />
+    ))}
+  </div>
+);
+
+/**
+ * Héroe compacto: saludo y búsqueda en una franja. Las cifras salen a su
+ * propia fila para que lo importante quede a la vista sin desplazarse.
+ */
+const Heroe = () => {
   const { t } = useTranslationRef(textosHrl);
   const navigate = useNavigate();
   const identityApi = useApi(identityApiRef);
@@ -47,24 +92,8 @@ const Heroe = ({ resumen }: { resumen: Carga<ResumenCatalogo> }) => {
       ? (perfil.datos.displayName ?? '').split(' ')[0]
       : '';
 
-  const cifras =
-    resumen.estado === 'listo'
-      ? [
-          {
-            valor: resumen.datos.proyectos.length,
-            texto: t('portada.cifraProyectos'),
-          },
-          {
-            valor: resumen.datos.componentes,
-            texto: t('portada.cifraComponentes'),
-          },
-          { valor: resumen.datos.apis, texto: t('portada.cifraApis') },
-          { valor: resumen.datos.personas, texto: t('portada.cifraPersonas') },
-        ]
-      : undefined;
-
   return (
-    <section className="hrl-heroe">
+    <section className="hrl-heroe hrl-heroe--compacto">
       <div className="hrl-heroe__contenido">
         <p className="hrl-heroe__antetitulo">{t('portal.title')}</p>
         <h1 className="hrl-heroe__titulo">
@@ -72,30 +101,204 @@ const Heroe = ({ resumen }: { resumen: Carga<ResumenCatalogo> }) => {
             ? t(saludo(new Date().getHours()), { nombre })
             : t('portada.saludoSinNombre')}
         </h1>
-        <p className="hrl-heroe__sub">{t('portada.subtitulo')}</p>
-        <div className="hrl-heroe__busqueda">
-          <SearchField
-            aria-label={t('portada.buscarEtiqueta')}
-            placeholder={t('portada.buscarPlaceholder')}
-            onSubmit={valor =>
-              navigate(`/search?query=${encodeURIComponent(valor)}`)
-            }
-          />
-        </div>
+      </div>
+      <div className="hrl-heroe__busqueda">
+        <SearchField
+          aria-label={t('portada.buscarEtiqueta')}
+          placeholder={t('portada.buscarPlaceholder')}
+          onSubmit={valor =>
+            navigate(`/search?query=${encodeURIComponent(valor)}`)
+          }
+        />
         <p className="hrl-heroe__pista">{t('portada.buscarPista')}</p>
       </div>
-      <dl className="hrl-heroe__cifras" aria-busy={!cifras}>
-        {(
-          cifras ??
-          [1, 2, 3, 4].map(i => ({ valor: undefined, texto: String(i) }))
-        ).map(c => (
-          <div key={c.texto} className="hrl-heroe__cifra">
-            <dd>{c.valor ?? '·'}</dd>
-            <dt>{cifras ? c.texto : ' '}</dt>
-          </div>
-        ))}
-      </dl>
     </section>
+  );
+};
+
+/** Porcentaje, o null si no hay nada que medir: 0 de 0 no es 0 %. */
+const porcentaje = (parte: number, total: number) =>
+  total === 0 ? null : `${Math.round((parte / total) * 100)} %`;
+
+/** Cifras del catálogo, cada una con lo que cuenta exactamente. */
+const Cifras = ({ resumen }: { resumen: Carga<ResumenCatalogo> }) => {
+  const { t } = useTranslationRef(textosHrl);
+  const calidad = useCalidad();
+  const r = resumen.estado === 'listo' ? resumen.datos : undefined;
+  const piezas = r ? r.componentes + r.apis : 0;
+  const documentadas = r
+    ? r.proyectos.reduce((n, p) => n + p.documentos, 0)
+    : 0;
+  const conBronce =
+    calidad.estado === 'listo'
+      ? porcentaje(
+          calidad.datos.filter(d => d.nivel).length,
+          calidad.datos.length,
+        )
+      : null;
+  return (
+    <div className="hrl-cifras2 hrl-portada__cifras">
+      <Cifra
+        icono={<FolderIcon />}
+        etiqueta={t('portada.cifraProyectos')}
+        ayuda={t('portada.ayudaProyectos')}
+        valor={r?.proyectos.length}
+        cargando={!r}
+        href="/proyectos"
+      />
+      <Cifra
+        icono={<CatalogIcon />}
+        etiqueta={t('portada.cifraPiezas')}
+        ayuda={t('portada.ayudaPiezas')}
+        valor={r ? piezas : undefined}
+        cargando={!r}
+        href="/catalog"
+      />
+      <Cifra
+        icono={<DocIcon />}
+        etiqueta={t('portada.cifraDocumentadas')}
+        ayuda={t('portada.ayudaDocumentadas')}
+        valor={r ? porcentaje(documentadas, piezas) : undefined}
+        cargando={!r}
+        href="/docs"
+      />
+      <Cifra
+        icono={<ShieldIcon />}
+        etiqueta={t('portada.cifraBronce')}
+        ayuda={t('portada.ayudaBronce')}
+        valor={conBronce}
+        cargando={calidad.estado === 'cargando'}
+        href="/calidad"
+      />
+    </div>
+  );
+};
+
+/**
+ * «Pendiente para ti»: los componentes y APIs de tus equipos que aún no
+ * llegan a Oro, con lo siguiente que les falta. Es la tabla de trabajo de la
+ * portada, como la cola de revisión de Port.
+ */
+const Pendiente = () => {
+  const { t } = useTranslationRef(textosHrl);
+  const identityApi = useApi(identityApiRef);
+  const identidad = useCarga(
+    () => identityApi.getBackstageIdentity(),
+    [identityApi],
+  );
+  const calidad = useCalidad();
+  const propios = new Set(
+    identidad.estado === 'listo'
+      ? identidad.datos.ownershipEntityRefs.map(r => r.toLowerCase())
+      : [],
+  );
+  const filas =
+    calidad.estado === 'listo' && identidad.estado === 'listo'
+      ? calidad.datos
+          .filter(
+            r =>
+              r.nivel !== 'oro' &&
+              relaciones(r.entidad, 'ownedBy').some(o =>
+                propios.has(o.toLowerCase()),
+              ),
+          )
+          .map(r => ({
+            id: r.entidad.metadata.uid ?? r.entidad.metadata.name,
+            r,
+          }))
+      : undefined;
+  const sinEquipo =
+    identidad.estado === 'listo' &&
+    !identidad.datos.ownershipEntityRefs.some(r => r.startsWith('group:'));
+  const siguientes = (r: Resultado) =>
+    pendientes(r)
+      .map(regla => textoRegla(t, regla.id, 'titulo'))
+      .join(' · ');
+
+  return (
+    <Panel titulo={t('portada.pendiente')} icono={<TareaIcon />}>
+      <Text as="p" variant="body-small" color="secondary">
+        {t('portada.pendienteAyuda')}
+      </Text>
+      {calidad.estado === 'error' ? (
+        <Text variant="body-small" color="danger">
+          {calidad.error.message}
+        </Text>
+      ) : (
+        <TablaHRL
+          id="portada-pendiente"
+          titulo={t('portada.pendiente')}
+          filas={filas}
+          cargando={!filas}
+          porPagina={5}
+          vacio={
+            <EstadoVacio
+              compacto
+              icono={<TareaIcon />}
+              titulo={
+                sinEquipo
+                  ? t('portada.pendienteSinEquipoTitulo')
+                  : t('portada.pendienteVacioTitulo')
+              }
+              descripcion={
+                sinEquipo
+                  ? t('portada.pendienteSinEquipoDescripcion')
+                  : t('portada.pendienteVacioDescripcion')
+              }
+            />
+          }
+          columnas={[
+            {
+              id: 'nombre',
+              etiqueta: t('proyecto.columnaNombre'),
+              principal: true,
+              valor: ({ r }) => tituloDe(r.entidad),
+              celda: ({ r }) => (
+                <CellText
+                  title={tituloDe(r.entidad)}
+                  href={rutaEntidad(r.entidad)}
+                  leadingIcon={<IconoTipo tipo={r.entidad.kind} />}
+                />
+              ),
+            },
+            {
+              id: 'nivel',
+              etiqueta: t('calidad.columnaNivel'),
+              filtrable: true,
+              valor: ({ r }) => {
+                if (r.sinEvaluar) return t('calidad.sinEvaluar');
+                return r.nivel
+                  ? t(`calidad.nivel.${r.nivel}` as const)
+                  : t('calidad.sinNivel');
+              },
+              celda: ({ r }) => (
+                <Cell>
+                  <Insignia nivel={r.nivel} sinEvaluar={r.sinEvaluar} />
+                </Cell>
+              ),
+            },
+            {
+              id: 'siguiente',
+              etiqueta: t('calidad.columnaSiguiente'),
+              valor: ({ r }) => siguientes(r),
+              celda: ({ r }) => <CellText title={siguientes(r)} />,
+            },
+          ]}
+          acciones={({ r }) => (
+            <ButtonLink
+              href={`${rutaEntidad(r.entidad)}/calidad`}
+              variant="tertiary"
+              size="small"
+              aria-label={t('portada.verQueFalta', {
+                nombre: tituloDe(r.entidad),
+              })}
+            >
+              {t('portada.queFalta')}
+            </ButtonLink>
+          )}
+        />
+      )}
+    </Panel>
   );
 };
 
@@ -144,38 +347,14 @@ const Accesos = () => {
         texto={t('portada.accesoDocs')}
       />
       <Acceso
-        href="/api-docs"
-        icono={<ApiIcon />}
-        titulo={t('paginas.api-docs')}
-        texto={t('portada.accesoApis')}
+        href="/autoservicio"
+        icono={<AccionIcon />}
+        titulo={t('paginas.autoservicio')}
+        texto={t('portada.accesoAutoservicio')}
       />
     </div>
   );
 };
-
-const Panel = (props: {
-  titulo: string;
-  icono: ReactNode;
-  children: ReactNode;
-}) => (
-  <section className="hrl-tarjeta hrl-panel">
-    <h2 className="hrl-panel__titulo">
-      <span aria-hidden>{props.icono}</span>
-      <Text variant="title-x-small" weight="bold">
-        {props.titulo}
-      </Text>
-    </h2>
-    {props.children}
-  </section>
-);
-
-const CargandoLista = () => (
-  <div className="hrl-lista" aria-busy>
-    {[0, 1, 2].map(i => (
-      <Skeleton key={i} width="100%" height={36} style={{ margin: '4px 0' }} />
-    ))}
-  </div>
-);
 
 const Favoritos = () => {
   const { t } = useTranslationRef(textosHrl);
@@ -311,37 +490,23 @@ const Recientes = () => {
   );
 };
 
-/** Cobertura del catálogo: lo que mide la página de calidad, resumido. */
-const SaludCatalogo = () => {
-  const { t } = useTranslationRef(textosHrl);
-  const calidad = useCalidad();
-  if (calidad.estado !== 'listo' || calidad.datos.length === 0) return null;
-  return (
-    <section className="hrl-seccion">
-      <div className="hrl-seccion__cabecera">
-        <Text as="h2" variant="title-small" weight="bold">
-          {t('portada.salud')}
-        </Text>
-        <Link to="/calidad" className="hrl-enlace-flecha">
-          {t('portada.verDetalle')} <ArrowIcon aria-hidden />
-        </Link>
-      </div>
-      <ResumenCalidad datos={calidad.datos} />
-    </section>
-  );
-};
-
 export const Portada = () => {
   const { t } = useTranslationRef(textosHrl);
-  // Una sola consulta al catálogo para las cifras del héroe y los proyectos.
+  // Una sola consulta al catálogo para las cifras y los proyectos.
   const resumen = useResumenCatalogo();
   return (
     <div className="hrl-portada">
-      <Heroe resumen={resumen} />
+      <Heroe />
       <div className="hrl-portada__cuerpo">
-        <Accesos />
+        <Cifras resumen={resumen} />
 
-        <ListaPrimerosPasos />
+        <div className="hrl-portada__trabajo">
+          <Pendiente />
+          <div className="hrl-seccion">
+            <Accesos />
+            <ListaPrimerosPasos />
+          </div>
+        </div>
 
         <section className="hrl-seccion">
           <div className="hrl-seccion__cabecera">
@@ -354,8 +519,6 @@ export const Portada = () => {
           </div>
           <RejillaProyectos resumen={resumen} limite={6} />
         </section>
-
-        <SaludCatalogo />
 
         <div className="hrl-portada__columnas">
           <Favoritos />

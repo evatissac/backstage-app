@@ -1,0 +1,80 @@
+/* TablaHRL: barra de herramientas, grupos y pie con el contador. */
+
+.hrl-tabla {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bui-space-3);
+  min-width: 0;
+}
+
+.hrl-tabla__barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--bui-space-2);
+}
+
+.hrl-tabla__buscar {
+  flex: 1 1 220px;
+  max-width: 320px;
+}
+
+.hrl-tabla__filtro {
+  flex: 0 1 190px;
+  min-width: 150px;
+}
+
+.hrl-tabla__espacio {
+  flex: 1 1 0;
+}
+
+/* Objetivo táctil mínimo de 40px en los botones de la barra. */
+.hrl-tabla__barra .bui-ButtonIcon {
+  min-width: 40px;
+  min-height: 40px;
+}
+
+.hrl-tabla__acciones {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--bui-space-1);
+  width: 100%;
+}
+
+.hrl-tabla__grupo {
+  display: flex;
+  align-items: center;
+  gap: var(--bui-space-2);
+  margin: var(--bui-space-3) 0 0;
+  font-size: var(--bui-font-size-3);
+  font-weight: var(--bui-font-weight-bold);
+}
+
+.hrl-tabla__grupo-cuenta {
+  padding: 0 var(--bui-space-2);
+  border-radius: var(--bui-radius-full);
+  background: var(--hrl-acento-suave);
+  color: var(--hrl-acento-texto);
+  font-size: var(--bui-font-size-1);
+}
+
+.hrl-tabla__pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bui-space-3);
+  min-height: 40px;
+}
+
+.hrl-tabla__pie p {
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .hrl-tabla__buscar,
+  .hrl-tabla__filtro {
+    flex-basis: 100%;
+    max-width: none;
+  }
+}

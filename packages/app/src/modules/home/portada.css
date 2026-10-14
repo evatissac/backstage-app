@@ -280,3 +280,74 @@
     transition: none;
   }
 }
+
+/* ---------- Rediseño estilo Port ---------- */
+
+/* Héroe compacto: saludo y búsqueda en una franja. Abajo deja sitio a la
+   fila de cifras, que sube sobre el degradado. */
+.hrl-heroe--compacto {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--bui-space-6);
+  padding: var(--bui-space-8) var(--bui-space-10)
+    calc(var(--bui-space-6) + var(--bui-space-12));
+}
+
+.hrl-heroe--compacto .hrl-heroe__contenido {
+  flex: 1 1 320px;
+  max-width: none;
+}
+
+.hrl-heroe--compacto .hrl-heroe__titulo {
+  font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.25rem);
+}
+
+.hrl-heroe--compacto .hrl-heroe__busqueda {
+  display: flex;
+  flex: 1 1 380px;
+  flex-direction: column;
+  gap: var(--bui-space-2);
+  max-width: 560px;
+  margin-top: 0;
+}
+
+.hrl-heroe--compacto .hrl-heroe__busqueda .bui-SearchFieldInputWrapper {
+  height: 48px;
+}
+
+@media (max-width: 768px) {
+  .hrl-heroe--compacto {
+    padding: var(--bui-space-6) var(--bui-space-4) var(--bui-space-6);
+  }
+}
+
+.hrl-portada__cifras {
+  margin-top: calc(var(--bui-space-12) * -1);
+}
+
+@media (max-width: 768px) {
+  .hrl-portada__cifras {
+    margin-top: 0;
+  }
+}
+
+/* Los accesos ya no suben sobre el héroe: ahora lo hacen las cifras. */
+.hrl-portada__trabajo .hrl-accesos {
+  grid-template-columns: minmax(0, 1fr);
+  margin-top: 0;
+}
+
+.hrl-portada__trabajo {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  gap: var(--bui-space-5);
+  align-items: start;
+}
+
+@media (max-width: 1100px) {
+  .hrl-portada__trabajo {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

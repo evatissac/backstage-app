@@ -35,7 +35,7 @@ const TablaCatalogo = () => {
   const clave = PLURALES[tipo as keyof typeof PLURALES];
   const plural = clave ? t(clave) : filters.kind?.label ?? tipo;
   const quien = filters.user?.value;
-  let base = t('catalogo.tituloTodos', { tipo: plural });
+  let base: string = t('catalogo.tituloTodos', { tipo: plural });
   if (quien === 'owned') base = t('catalogo.tituloPropios', { tipo: plural });
   if (quien === 'starred') {
     base = t('catalogo.tituloFavoritos', { tipo: plural });

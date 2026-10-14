@@ -1,0 +1,22 @@
+/* Mapa: grafo del dominio del hospital. */
+
+.hrl-mapa {
+  gap: var(--bui-space-3);
+}
+
+.hrl-mapa__barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bui-space-3);
+  min-height: 40px;
+}
+
+.hrl-mapa__barra p {
+  margin: 0;
+}
+
+.hrl-mapa__grafo {
+  min-height: 520px;
+}

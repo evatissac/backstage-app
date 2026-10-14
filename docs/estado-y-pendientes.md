@@ -1,6 +1,6 @@
 # Estado y pendientes
 
-**Última actualización:** 2026-10-13. Léelo completo antes de tocar nada: explica
+**Última actualización:** 2026-10-14. Léelo completo antes de tocar nada: explica
 qué existe, qué se decidió, qué **no** se debe hacer todavía y qué sigue.
 
 ## 1. Resumen en 30 segundos
@@ -194,6 +194,56 @@ Cosas que ya dieron problemas:
       el sistema; si no, añadirlo al indexar).
 - [ ] Regla en el backend que rechace entidades sin `spec.system`.
 - [ ] Probar `theme.language: es` en `mkdocs.yml` para traducir «Table of contents».
+
+### B2. Rediseño inspirado en Port (2026-10-14, sin subir)
+
+Se estudió la demo pública de Port (demo.port.io) con el skill REA y se tomó
+su idea central: todo se arma con cuatro piezas (entidad, tabla, widget y
+acción). Repo oficial ahora: `evatissac/backstage-app` (**público**); la rama
+`backstage-1phase` tiene el estado anterior al rediseño. El rediseño está en
+local: el usuario indicará en qué rama subirlo.
+
+- [x] **Piezas comunes** (`modules/comun`): `TablaHRL` (búsqueda, filtros por
+      columna, columnas ocultables, agrupar, exportar CSV y contador; la vista
+      se guarda en las preferencias del usuario), `Etiqueta` (chip con tono e
+      icono), `Cifra` (cifra con su explicación; «Sin datos» si no hay nada
+      que medir) y `Migas`.
+- [x] **Ficha del proyecto: de 11 a 6 pestañas.** _Ficha técnica_ agrupa
+      Arquitectura, Tecnologías, Despliegue y Procesos como subnavegación;
+      _Componentes y APIs_ incluye recursos; _Documentación_ junta TechDocs y
+      documentos. Las rutas antiguas redirigen.
+- [x] **Barra lateral por áreas:** Explorar (Proyectos, Catálogo,
+      Documentación, Mapa) · Acciones (Autoservicio) · Estándares (Calidad).
+      Fuera del menú: Primeros pasos, Crear, el grafo genérico y el
+      visualizador. **Registro manual desactivado** (`page:catalog-import`).
+- [x] **Autoservicio** (`/autoservicio`, `modules/autoservicio`): plantillas
+      como acciones, agrupadas por `spec.type`. Cada plantilla se presenta con
+      anotaciones: `hrl/verbo` (texto del botón), `hrl/aplica-a` (clases en
+      cuya ficha aparece como ⚡) y `hrl/prellenar` (campos que llegan
+      completos). Las dos plantillas aplican a `system`.
+- [x] **Ficha de entidad:** botón ⚡ en la cabecera; tarjetas _Contexto_
+      (reemplaza a «Acerca de»), _Acciones_ y _Comprobaciones_
+      (`modules/entidad/Tarjetas.tsx`).
+- [x] **Portada:** héroe compacto, fila de cifras, «Pendiente para ti» (lo de
+      tus equipos que no llega a Oro) y accesos con Autoservicio.
+- [x] **Calidad en el servidor con Tech Insights** (`@backstage-community`,
+      backend 3.1.0 + jsonfc 0.10.0; `backend-defaults` fijado a la 0.18 con
+      una resolución). Datos en `packages/backend/src/modules/calidad.ts`
+      (`hrlCatalogo` cada 30 min, `hrlRepositorio` cada 6 h: README,
+      CODEOWNERS, credenciales versionadas, kit fijado a un tag); 13 reglas en
+      `techInsights` de `app-config.yaml`. Una regla sin datos se muestra
+      «Sin evaluar», nunca como fallida. `/calidad` tiene vistas _Por
+      componente_ y _Por comprobación_.
+- [x] **Mapa** (`/mapa`): grafo desde el dominio `salud-hrl` (con equipos
+      opcionales) y vista de tarjetas con cuántas entidades hay de cada clase.
+- [x] **Recurso** `bd-reporte-estadistico` en `catalog/hrl.yaml` (y `Resource`
+      permitido en esa ubicación).
+- [ ] Acciones del día a día que abren issues: **el usuario pidió no
+      integrarlas todavía**.
+- [ ] Ordenar las tarjetas del resumen: _Comprobaciones_ sale al final porque
+      Backstage las ordena por registro.
+- [ ] Probar el ⚡ de punta a punta: el formulario se abre prellenado, pero la
+      plantilla sigue sin ejecutarse de verdad (ver arriba).
 
 ### C. Catálogo (cuando el usuario lo autorice)
 

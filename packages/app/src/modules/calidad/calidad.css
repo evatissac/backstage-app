@@ -200,3 +200,17 @@
 .hrl-calidad-entidad__cabecera p {
   margin: 0;
 }
+
+/* Sin evaluar: el backend aún no tiene datos. No es lo mismo que «no cumple». */
+.hrl-insignia[data-nivel='sin-evaluar'] {
+  background: var(--bui-bg-info);
+  color: var(--bui-fg-info-on-bg);
+}
+
+.hrl-regla[data-ok='false'] .hrl-regla__icono {
+  color: var(--bui-fg-warning);
+}
+
+.hrl-regla[data-ok='sin-evaluar'] .hrl-regla__icono {
+  color: var(--bui-fg-info);
+}

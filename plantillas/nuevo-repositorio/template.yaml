@@ -9,6 +9,13 @@ metadata:
   description: >-
     Crea un repositorio en DevHRL con su ficha del catálogo, su documentación
     y su responsable. Es la forma recomendada de empezar cualquier proyecto.
+  annotations:
+    # Cómo se presenta en Autoservicio (modules/autoservicio/datos.ts).
+    hrl/verbo: Crear repositorio
+    # En la ficha de un proyecto aparece como acción ⚡, con el proyecto y su
+    # equipo ya elegidos.
+    hrl/aplica-a: system
+    hrl/prellenar: sistema=sistema,responsable=responsable
   tags:
     - golden-path
     - recomendado

@@ -342,3 +342,226 @@ a.hrl-tarjeta:focus-visible {
 .hrl-enlace-flecha svg {
   font-size: 16px;
 }
+
+/* Etiqueta: chip con tono semántico. Los tokens de estado de BUI se invierten
+   solos con el tema, así que el texto sigue legible en modo oscuro. */
+.hrl-etiqueta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--bui-space-1);
+  padding: 2px var(--bui-space-2);
+  border: 1px solid transparent;
+  border-radius: var(--bui-radius-full);
+  font-size: var(--bui-font-size-2);
+  font-weight: var(--bui-font-weight-bold);
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.hrl-etiqueta__icono {
+  display: inline-flex;
+}
+
+.hrl-etiqueta__icono svg {
+  font-size: 14px;
+}
+
+.hrl-etiqueta[data-tono='neutro'] {
+  background: var(--hrl-superficie-2);
+  border-color: var(--bui-border-1);
+  color: var(--bui-fg-secondary);
+}
+
+.hrl-etiqueta[data-tono='acento'] {
+  background: var(--hrl-acento-suave);
+  border-color: var(--hrl-acento-borde);
+  color: var(--hrl-acento-texto);
+}
+
+.hrl-etiqueta[data-tono='ok'] {
+  background: var(--bui-bg-success);
+  border-color: var(--bui-border-success);
+  color: var(--bui-fg-success-on-bg);
+}
+
+.hrl-etiqueta[data-tono='aviso'] {
+  background: var(--bui-bg-warning);
+  border-color: var(--bui-border-warning);
+  color: var(--bui-fg-warning-on-bg);
+}
+
+.hrl-etiqueta[data-tono='peligro'] {
+  background: var(--bui-bg-danger);
+  border-color: var(--bui-border-danger);
+  color: var(--bui-fg-danger-on-bg);
+}
+
+.hrl-etiqueta[data-tono='info'] {
+  background: var(--bui-bg-info);
+  border-color: var(--bui-border-info);
+  color: var(--bui-fg-info-on-bg);
+}
+
+/* Cifra: tarjeta de una sola cifra con su explicación (como las de Port). */
+.hrl-cifras2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--bui-space-3);
+}
+
+.hrl-cifra2 {
+  position: relative;
+  border: 1px solid var(--bui-border-1);
+  border-radius: var(--bui-radius-4);
+  background: var(--hrl-superficie);
+  box-shadow: var(--hrl-sombra);
+}
+
+.hrl-cifra2__enlace {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bui-space-3);
+  height: 100%;
+  padding: var(--bui-space-4) var(--bui-space-5);
+  padding-right: var(--bui-space-10);
+  border-radius: inherit;
+  color: inherit;
+  text-decoration: none;
+}
+
+a.hrl-cifra2__enlace:hover {
+  background: var(--hrl-superficie-2);
+}
+
+a.hrl-cifra2__enlace:focus-visible {
+  outline: 2px solid var(--bui-ring);
+  outline-offset: 2px;
+}
+
+.hrl-cifra2__cabecera {
+  display: flex;
+  align-items: center;
+  gap: var(--bui-space-2);
+}
+
+.hrl-cifra2__icono {
+  display: inline-flex;
+  color: var(--hrl-acento-texto);
+}
+
+.hrl-cifra2__icono svg {
+  font-size: 18px;
+}
+
+.hrl-cifra2__etiqueta {
+  color: var(--bui-fg-secondary);
+  font-size: var(--bui-font-size-2);
+  font-weight: var(--bui-font-weight-bold);
+}
+
+.hrl-cifra2__valor {
+  font-size: var(--bui-font-size-7);
+  font-weight: var(--bui-font-weight-bold);
+  line-height: 1;
+}
+
+.hrl-cifra2__valor[data-sin-datos='true'] {
+  color: var(--bui-fg-secondary);
+  font-size: var(--bui-font-size-4);
+}
+
+.hrl-cifra2__ayuda {
+  position: absolute;
+  top: var(--bui-space-2);
+  right: var(--bui-space-2);
+  min-width: 40px;
+  min-height: 40px;
+}
+
+/* Migas de pan. Sobre un héroe de color se usa la variante clara. */
+.hrl-migas ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--bui-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--bui-font-size-2);
+}
+
+.hrl-migas li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--bui-space-1);
+  color: var(--bui-fg-secondary);
+}
+
+.hrl-migas li + li::before {
+  content: '/';
+  opacity: 0.6;
+}
+
+.hrl-migas a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.hrl-migas a:hover {
+  color: var(--bui-fg-primary);
+  text-decoration: underline;
+}
+
+.hrl-migas [aria-current='page'] {
+  color: var(--bui-fg-primary);
+  font-weight: var(--bui-font-weight-bold);
+}
+
+.hrl-migas--claro li,
+.hrl-migas--claro a:hover,
+.hrl-migas--claro [aria-current='page'] {
+  color: var(--hrl-heroe-texto);
+}
+
+.hrl-migas--claro li {
+  opacity: 0.85;
+}
+
+/* Subnavegación en segmentos: secciones de una pestaña o vistas de una página. */
+.hrl-subnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--bui-space-1);
+  align-self: flex-start;
+  padding: var(--bui-space-1);
+  border: 1px solid var(--bui-border-1);
+  border-radius: var(--bui-radius-4);
+  background: var(--hrl-superficie-2);
+}
+
+.hrl-subnav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 var(--bui-space-4);
+  border-radius: var(--bui-radius-3);
+  color: var(--bui-fg-secondary);
+  font-size: var(--bui-font-size-3);
+  text-decoration: none;
+}
+
+.hrl-subnav a:hover {
+  color: var(--bui-fg-primary);
+}
+
+.hrl-subnav a:focus-visible {
+  outline: 2px solid var(--bui-ring);
+  outline-offset: 2px;
+}
+
+.hrl-subnav a.active {
+  background: var(--hrl-superficie);
+  box-shadow: var(--hrl-sombra);
+  color: var(--bui-fg-primary);
+  font-weight: var(--bui-font-weight-bold);
+}

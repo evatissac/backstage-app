@@ -1,24 +1,58 @@
-import { useApi } from '@backstage/frontend-plugin-api';
+import {
+  discoveryApiRef,
+  fetchApiRef,
+  useApi,
+} from '@backstage/frontend-plugin-api';
 import { catalogApiRef } from '@backstage/plugin-catalog-react';
 import { Entidad, refDe, relaciones } from '../comun/entidades';
 import { useCarga } from '../comun/useCarga';
-import { Contexto, evaluar, Resultado } from './reglas';
+import { EstadoRegla, REGLAS, Resultado, resultado } from './reglas';
 
-/** Grupos con al menos un miembro: la regla «equipo» los necesita. */
-const cargarContexto = async (
-  catalogo: typeof catalogApiRef.T,
-): Promise<Contexto> => {
-  const grupos = await catalogo.getEntities({
-    filter: { kind: 'Group' },
-    fields: ['kind', 'metadata.name', 'metadata.namespace', 'relations'],
+type RespuestaEntidad = {
+  entity: string;
+  results: { check: { id: string }; result: boolean }[];
+  error?: { message?: string };
+};
+
+/**
+ * Pide a Tech Insights el resultado de todas las reglas para estas
+ * entidades. Una regla sin datos no aparece en la respuesta: queda sin
+ * evaluar.
+ */
+const evaluar = async (
+  discovery: typeof discoveryApiRef.T,
+  fetchApi: typeof fetchApiRef.T,
+  entidades: Entidad[],
+): Promise<Resultado[]> => {
+  // Con la lista vacía el backend evaluaría todo lo que conoce.
+  if (entidades.length === 0) return [];
+  const base = await discovery.getBaseUrl('tech-insights');
+  const respuesta = await fetchApi.fetch(`${base}/checks/run`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      checks: REGLAS.map(r => r.id),
+      entities: entidades.map(refDe),
+    }),
   });
-  return {
-    gruposConMiembros: new Set(
-      grupos.items
-        .filter(g => relaciones(g, 'hasMember').length > 0)
-        .map(refDe),
-    ),
-  };
+  if (!respuesta.ok) {
+    throw new Error(
+      `Tech Insights respondió ${respuesta.status} ${respuesta.statusText}`,
+    );
+  }
+  const porEntidad = new Map(
+    ((await respuesta.json()) as RespuestaEntidad[]).map(r => [
+      r.entity.toLowerCase(),
+      r,
+    ]),
+  );
+  return entidades.map(e => {
+    const reglas: Record<string, EstadoRegla> = {};
+    for (const r of porEntidad.get(refDe(e))?.results ?? []) {
+      reglas[r.check.id] = r.result;
+    }
+    return resultado(e, reglas);
+  });
 };
 
 /**
@@ -27,6 +61,8 @@ const cargarContexto = async (
  */
 export const useCalidad = (sistema?: string) => {
   const catalogo = useApi(catalogApiRef);
+  const discovery = useApi(discoveryApiRef);
+  const fetchApi = useApi(fetchApiRef);
   return useCarga<Resultado[]>(async () => {
     const filtro: Record<string, string | string[]> = {
       kind: ['Component', 'API'],
@@ -34,12 +70,11 @@ export const useCalidad = (sistema?: string) => {
     if (sistema) {
       filtro['relations.partOf'] = `system:default/${sistema}`.toLowerCase();
     }
-    const [entidades, ctx, sistemas] = await Promise.all([
+    const [entidades, sistemas] = await Promise.all([
       catalogo.getEntities({
         filter: filtro,
         order: { field: 'metadata.name', order: 'asc' },
       }),
-      cargarContexto(catalogo),
       catalogo.getEntities({
         filter: { kind: 'System' },
         fields: ['kind', 'metadata.name', 'metadata.namespace'],
@@ -47,19 +82,22 @@ export const useCalidad = (sistema?: string) => {
     ]);
     // Solo lo que pertenece a un proyecto publicado (catalog/hrl.yaml).
     const publicados = new Set(sistemas.items.map(refDe));
-    return entidades.items
-      .filter(e =>
+    return evaluar(
+      discovery,
+      fetchApi,
+      entidades.items.filter(e =>
         relaciones(e, 'partOf').some(r => publicados.has(r.toLowerCase())),
-      )
-      .map(e => evaluar(e, ctx));
-  }, [catalogo, sistema]);
+      ),
+    );
+  }, [catalogo, discovery, fetchApi, sistema]);
 };
 
 /** Una sola entidad (la pestaña «Calidad» de su ficha). */
 export const useCalidadEntidad = (entidad: Entidad) => {
-  const catalogo = useApi(catalogApiRef);
+  const discovery = useApi(discoveryApiRef);
+  const fetchApi = useApi(fetchApiRef);
   return useCarga<Resultado>(
-    async () => evaluar(entidad, await cargarContexto(catalogo)),
-    [catalogo, refDe(entidad)],
+    async () => (await evaluar(discovery, fetchApi, [entidad]))[0],
+    [discovery, fetchApi, refDe(entidad)],
   );
 };

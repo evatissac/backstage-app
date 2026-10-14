@@ -56,7 +56,11 @@ export const ListaPrimerosPasos = () => {
       href: '/calidad',
       hecho: visito(/^\/calidad|\/calidad$/),
     },
-    { id: 'plantilla', href: '/create', hecho: visito(/^\/create\/tasks\//) },
+    {
+      id: 'plantilla',
+      href: '/autoservicio',
+      hecho: visito(/^\/create\/tasks\//),
+    },
   ];
   const hechos = pasos.filter(p => p.hecho).length;
 
