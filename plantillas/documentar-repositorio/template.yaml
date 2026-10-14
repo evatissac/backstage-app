@@ -1,0 +1,111 @@
+# Camino dorado para lo que ya existe: abre un pull request que agrega la
+# ficha del catálogo y el esqueleto de la documentación a un repositorio de
+# DevHRL. No toca nada más; al fusionarlo, el portal lo descubre solo.
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: documentar-repositorio-hrl
+  title: Documentar un repositorio existente
+  description: >-
+    Abre un pull request con catalog-info.yaml, mkdocs.yml y docs/ en un
+    repositorio de DevHRL que aún no aparece en el portal.
+  tags:
+    - golden-path
+    - documentacion
+spec:
+  owner: equipo-plataforma
+  type: documentacion
+
+  parameters:
+    - title: Repositorio
+      required: [repoUrl]
+      properties:
+        repoUrl:
+          title: Repositorio que se va a documentar
+          type: string
+          description: Debe existir. El pull request se abre contra su rama principal.
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts: [github.com]
+            allowedOwners: [DevHRL]
+
+    - title: Qué es
+      required: [nombre, titulo, descripcion, tipo, sistema, responsable]
+      properties:
+        nombre:
+          title: Nombre corto
+          type: string
+          pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
+          ui:help: 'Ejemplo: estadistica-web'
+        titulo:
+          title: Título
+          type: string
+        descripcion:
+          title: Descripción
+          type: string
+          minLength: 10
+        tipo:
+          title: Tipo
+          type: string
+          default: website
+          enum: [website, service, library]
+          enumNames:
+            - Sitio web (interfaz)
+            - Servicio (API, bot, proceso)
+            - Biblioteca (código compartido)
+        sistema:
+          title: Proyecto
+          type: string
+          ui:field: EntityPicker
+          ui:options:
+            catalogFilter:
+              kind: System
+        responsable:
+          title: Equipo responsable
+          type: string
+          ui:field: OwnerPicker
+          ui:options:
+            catalogFilter:
+              kind: Group
+        etiquetas:
+          title: Tecnologías
+          type: array
+          items:
+            type: string
+
+  steps:
+    - id: plantilla
+      name: Preparar los archivos
+      action: fetch:template
+      input:
+        url: ./esqueleto
+        values:
+          nombre: ${{ parameters.nombre }}
+          titulo: ${{ parameters.titulo }}
+          descripcion: ${{ parameters.descripcion }}
+          tipo: ${{ parameters.tipo }}
+          sistema: ${{ parameters.sistema }}
+          responsable: ${{ parameters.responsable }}
+          etiquetas: ${{ parameters.etiquetas or [] }}
+          repo: ${{ (parameters.repoUrl | parseRepoUrl).repo }}
+          organizacion: ${{ (parameters.repoUrl | parseRepoUrl).owner }}
+
+    - id: pr
+      name: Abrir el pull request
+      action: publish:github:pull-request
+      input:
+        repoUrl: ${{ parameters.repoUrl }}
+        branchName: portal/documentar-${{ parameters.nombre }}
+        title: 'docs: registrar ${{ parameters.titulo }} en el Portal de Desarrollo HRL'
+        description: |
+          Agrega la ficha del catálogo (`catalog-info.yaml`) y el esqueleto de la
+          documentación (`mkdocs.yml`, `docs/`). Al fusionarlo, el portal lo
+          descubre en un máximo de 30 minutos.
+
+          Antes de fusionar, completa `docs/index.md` y revisa que no haya datos
+          de pacientes.
+
+  output:
+    links:
+      - title: Ver el pull request
+        url: ${{ steps['pr'].output.remoteUrl }}

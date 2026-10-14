@@ -1,0 +1,344 @@
+/* Piezas compartidas por las páginas propias del portal. */
+
+.hrl-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--bui-space-3);
+  padding: var(--bui-space-10) var(--bui-space-6);
+  text-align: center;
+  border: 1px dashed var(--bui-border-1);
+  border-radius: var(--bui-radius-4);
+  background: var(--hrl-superficie-2);
+}
+
+.hrl-vacio p {
+  margin: 0;
+  max-width: 46ch;
+}
+
+.hrl-vacio--compacto {
+  padding: var(--bui-space-6) var(--bui-space-4);
+}
+
+.hrl-vacio__icono {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--bui-radius-full);
+  background: var(--hrl-acento-suave);
+  color: var(--hrl-acento-texto);
+}
+
+.hrl-vacio__icono svg {
+  font-size: 22px;
+}
+
+/* Tarjeta base: superficie, borde y sombra suave que crece al pasar. */
+.hrl-tarjeta {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--bui-space-3);
+  padding: var(--bui-space-5);
+  border: 1px solid var(--bui-border-1);
+  border-radius: var(--bui-radius-5);
+  background: var(--hrl-superficie);
+  box-shadow: var(--hrl-sombra);
+  color: inherit;
+  text-decoration: none;
+  transition: transform 160ms ease, box-shadow 160ms ease,
+    border-color 160ms ease;
+}
+
+a.hrl-tarjeta:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--hrl-sombra-elevada);
+  border-color: var(--hrl-acento-borde);
+}
+
+a.hrl-tarjeta:focus-visible {
+  outline: 2px solid var(--bui-ring);
+  outline-offset: 2px;
+}
+
+.hrl-tarjeta p {
+  margin: 0;
+}
+
+/* Título de sección con acción opcional a la derecha. */
+.hrl-seccion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bui-space-4);
+}
+
+.hrl-seccion__cabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--bui-space-3);
+}
+
+.hrl-seccion__cabecera h2 {
+  margin: 0;
+}
+
+/* Monograma de un proyecto: iniciales sobre su color. */
+.hrl-monograma {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--bui-radius-4);
+  color: #ffffff;
+  font-weight: var(--bui-font-weight-bold);
+  font-size: var(--bui-font-size-3);
+  letter-spacing: 0.02em;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 18%);
+}
+
+.hrl-monograma--grande {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--bui-radius-5);
+  font-size: var(--bui-font-size-5);
+}
+
+/* Lista de enlaces dentro de una tarjeta. */
+.hrl-lista {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hrl-lista__item {
+  display: flex;
+  align-items: center;
+  gap: var(--bui-space-3);
+  min-height: 44px;
+  padding: var(--bui-space-2) var(--bui-space-2);
+  border-radius: var(--bui-radius-3);
+  color: inherit;
+  text-decoration: none;
+}
+
+.hrl-lista__item:hover {
+  background: var(--hrl-acento-suave);
+}
+
+.hrl-lista__item:focus-visible {
+  outline: 2px solid var(--bui-ring);
+  outline-offset: -2px;
+}
+
+.hrl-lista__item svg {
+  flex-shrink: 0;
+  color: var(--bui-fg-secondary);
+  font-size: 18px;
+}
+
+.hrl-lista__texto {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.hrl-lista__texto > * {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hrl-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--bui-space-1);
+  padding: 2px var(--bui-space-2);
+  border-radius: var(--bui-radius-full);
+  background: var(--hrl-acento-suave);
+  color: var(--hrl-acento-texto);
+  font-size: var(--bui-font-size-2);
+  font-weight: var(--bui-font-weight-bold);
+  white-space: nowrap;
+}
+
+/* ---------- Página propia del portal ---------- */
+
+.hrl-pagina {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bui-space-8);
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--bui-space-8) var(--bui-space-8) var(--bui-space-12);
+}
+
+@media (max-width: 768px) {
+  .hrl-pagina {
+    gap: var(--bui-space-6);
+    padding: var(--bui-space-5) var(--bui-space-4) var(--bui-space-10);
+  }
+}
+
+.hrl-intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bui-space-2);
+  max-width: 70ch;
+}
+
+.hrl-intro h1,
+.hrl-intro p {
+  margin: 0;
+}
+
+/* Cifras en tarjetas. */
+.hrl-cifras {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: var(--bui-space-4);
+}
+
+.hrl-cifra {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bui-space-1);
+  padding: var(--bui-space-4) var(--bui-space-5);
+  border: 1px solid var(--bui-border-1);
+  border-radius: var(--bui-radius-4);
+  background: var(--hrl-superficie);
+}
+
+.hrl-cifra__valor {
+  font-size: var(--bui-font-size-7);
+  font-weight: var(--bui-font-weight-bold);
+  line-height: 1;
+}
+
+.hrl-cifra__etiqueta {
+  color: var(--bui-fg-secondary);
+  font-size: var(--bui-font-size-2);
+}
+
+.hrl-cifra__ayuda {
+  color: var(--bui-fg-secondary);
+  font-size: var(--bui-font-size-1);
+  line-height: 1.4;
+}
+
+/* Solo para lectores de pantalla. */
+.hrl-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/*
+ * Identidad de proyecto, al estilo de los «golden paths» de Spotify: el color
+ * del proyecto (--hrl-proyecto) con dos formas en diagonal encima. El texto
+ * va a la izquierda, sobre la parte más oscura, para que se lea en blanco.
+ */
+.hrl-identidad {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  background: linear-gradient(
+    115deg,
+    color-mix(in srgb, var(--hrl-proyecto, #0f6661) 70%, #000000) 0%,
+    var(--hrl-proyecto, #0f6661) 55%,
+    color-mix(in srgb, var(--hrl-proyecto, #0f6661) 75%, #ffffff) 100%
+  );
+  color: #ffffff;
+  isolation: isolate;
+}
+
+.hrl-identidad::before,
+.hrl-identidad::after {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  content: '';
+  pointer-events: none;
+}
+
+/* Un rayo claro que cruza la mitad derecha. */
+.hrl-identidad::before {
+  background: rgb(255 255 255 / 14%);
+  clip-path: polygon(
+    58% 0,
+    100% 0,
+    100% 46%,
+    82% 30%,
+    92% 100%,
+    66% 100%,
+    74% 48%,
+    50% 62%
+  );
+}
+
+/* Una cuña oscura abajo, que da profundidad. */
+.hrl-identidad::after {
+  background: rgb(0 0 0 / 14%);
+  clip-path: polygon(34% 100%, 62% 34%, 70% 58%, 86% 18%, 100% 60%, 100% 100%);
+}
+
+.hrl-identidad__equipo {
+  color: rgb(255 255 255 / 82%);
+  font-family: var(--bui-font-monospace);
+  font-size: var(--bui-font-size-1);
+  letter-spacing: 0.06em;
+}
+
+.hrl-identidad__titulo {
+  margin: 2px 0 0;
+  color: #ffffff !important;
+  line-height: 1.25;
+}
+
+/* Stack técnico: etiquetas en monoespaciada, sin color de acento. */
+.hrl-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.hrl-stack__item {
+  padding: 2px 8px;
+  border: 1px solid var(--bui-border-1);
+  border-radius: var(--bui-radius-2);
+  background: var(--hrl-superficie-2);
+  color: var(--bui-fg-primary);
+  font-family: var(--bui-font-monospace);
+  font-size: var(--bui-font-size-1);
+  line-height: 1.6;
+}
+
+/* Enlace de texto con flecha («Ver todos», «Ver detalle»). */
+.hrl-enlace-flecha {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--bui-space-1);
+  color: var(--hrl-acento-texto);
+  font-size: var(--bui-font-size-3);
+  font-weight: var(--bui-font-weight-bold);
+  text-decoration: none;
+}
+
+.hrl-enlace-flecha:hover {
+  text-decoration: underline;
+}
+
+.hrl-enlace-flecha svg {
+  font-size: 16px;
+}

@@ -23,13 +23,13 @@ qué existe, qué se decidió, qué **no** se debe hacer todavía y qué sigue.
 
 ### Repos y su ubicación
 
-| Proyecto | Repo actual | Situación |
-|---|---|---|
-| Portal Backstage | `DevHRL/hrl-backstage` | Creado. Carpeta local: `Desktop\hrl-backstage` |
-| Kit de UI `hrl-core-ui` | `DevHRL/hrl-core-ui` | **Transferido** desde `GiancarloChavez` (el nombre antiguo redirige) |
-| Reporte Estadístico y Nutrición | `DevHRL/Estadistica_hrl` | **Transferido** desde `evatissac`. Ramas `main`, `prototype`, `feature/backend-nucleo` |
-| Oncología | `DevHRL/HIS_HRL` | **Espejo**, no transferencia. El original `evatissac/HIS_HRL` sigue desplegado desde `main` |
-| `SIGH-FRONTEND`, `SIGH-BACKEND` | `DevHRL` | Ya estaban en la organización; no se han revisado |
+| Proyecto                        | Repo actual              | Situación                                                                                   |
+| ------------------------------- | ------------------------ | ------------------------------------------------------------------------------------------- |
+| Portal Backstage                | `DevHRL/hrl-backstage`   | Creado. Carpeta local: `Desktop\hrl-backstage`                                              |
+| Kit de UI `hrl-core-ui`         | `DevHRL/hrl-core-ui`     | **Transferido** desde `GiancarloChavez` (el nombre antiguo redirige)                        |
+| Reporte Estadístico y Nutrición | `DevHRL/Estadistica_hrl` | **Transferido** desde `evatissac`. Ramas `main`, `prototype`, `feature/backend-nucleo`      |
+| Oncología                       | `DevHRL/HIS_HRL`         | **Espejo**, no transferencia. El original `evatissac/HIS_HRL` sigue desplegado desde `main` |
+| `SIGH-FRONTEND`, `SIGH-BACKEND` | `DevHRL`                 | Ya estaban en la organización; no se han revisado                                           |
 
 RotaPass y RotaPass-Admin **no forman parte** del hospital ni de este portal.
 
@@ -47,24 +47,26 @@ Detalles que importan:
 
 ### El portal
 
-| Pieza | Estado |
-|---|---|
-| Login con GitHub | ✅ Solo entran los miembros de `DevHRL` (el usuario debe existir en el catálogo) |
-| Ingreso como invitado | ✅ Solo en local: la página de ingreso no lo muestra fuera de desarrollo y el backend lo rechaza |
-| Catálogo | ✅ Dominio `salud-hrl`, 3 sistemas (`vigilancia-oncologica`, `reporte-estadistico`, `plataforma-hrl`), definidos en `catalog/hrl.yaml` |
-| Descubrimiento de repos | ✅ Cada 30 min busca `catalog-info.yaml` en la raíz de cada repo de `DevHRL`. Hoy solo el portal lo tiene |
-| Importación de miembros | ✅ Cada 60 min. Trae 9 usuarios con usuario, nombre y avatar. Sin correo |
-| Equipos (Groups) | ⚠️ Los 3 de `catalog/hrl.yaml` existen pero **sin miembros** (ver sección 4) |
-| Base de datos | ✅ PostgreSQL 18 de Windows (`127.0.0.1:5432`, rol `backstage`); `iniciar.ps1` comprueba que responda. Sesiones y preferencias ya no se pierden |
-| Búsqueda | ✅ Motor de Postgres (antes, índice en memoria) |
-| Idioma | ✅ Español por defecto e inglés en *Ajustes*. ~800 textos traducidos con glosario. Quedan huecos conocidos: ver [Idioma](idioma.md) |
-| TechDocs | ✅ Compila en local con Docker. Mermaid **no** se dibuja (decisión: draw.io) |
-| Diagramas y zoom | ✅ Probado con un `.drawio.svg` real: el LightBox lo abre y amplía con la rueda. Ejemplo en `docs/img/catalogo.drawio.svg` |
-| Portada | ✅ Sin chistes, relojes ni enlaces a backstage.io. Tarjeta de bienvenida, favoritos y visitas. La portada propia llega en la fase B |
-| Plantilla de ejemplo | ✅ Quitada, con la carpeta `examples/`. El Scaffolder sigue instalado, sin plantillas |
-| Kubernetes | ✅ Quitado |
-| Permisos | ⚠️ «Permitir todo» |
-| Logo y colores | ⚠️ Colores de Backstage UI (`modules/tema`); el logo sigue siendo el de Backstage (fase B) |
+| Pieza                        | Estado                                                                                                                                                                                                                                                                                                                      |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Login con GitHub             | ✅ Solo entran los miembros de `DevHRL` (el usuario debe existir en el catálogo)                                                                                                                                                                                                                                            |
+| Ingreso como invitado        | ✅ Solo en local: la página de ingreso no lo muestra fuera de desarrollo y el backend lo rechaza                                                                                                                                                                                                                            |
+| Catálogo                     | ✅ Dominio `salud-hrl` y **un solo proyecto publicado**, `reporte-estadistico` (2026-10-14, a pedido del usuario: los demás se agregan cuando estén listos). En `catalog/hrl.yaml`. El componente del portal (`hrl-backstage`) sigue apuntando a `plataforma-hrl`, que ya no existe: no cuenta en proyectos ni en calidad   |
+| Descubrimiento de repos      | ✅ Cada 30 min busca `catalog-info.yaml` en la raíz de cada repo de `DevHRL`. Hoy solo el portal lo tiene                                                                                                                                                                                                                   |
+| Importación de miembros      | ✅ Cada 60 min. Trae 9 usuarios con usuario, nombre y avatar. Sin correo                                                                                                                                                                                                                                                    |
+| Equipos (Groups)             | ⚠️ Los 3 de `catalog/hrl.yaml` existen pero **sin miembros** (ver sección 4)                                                                                                                                                                                                                                                |
+| Base de datos                | ✅ PostgreSQL 18 de Windows (`127.0.0.1:5432`, rol `backstage`); `iniciar.ps1` comprueba que responda. Sesiones y preferencias ya no se pierden                                                                                                                                                                             |
+| Búsqueda                     | ✅ Motor de Postgres (antes, índice en memoria)                                                                                                                                                                                                                                                                             |
+| Idioma                       | ✅ Español por defecto e inglés en _Ajustes_. ~800 textos traducidos con glosario. Quedan huecos conocidos: ver [Idioma](idioma.md)                                                                                                                                                                                         |
+| TechDocs                     | ✅ Compila en local con Docker. Mermaid **no** se dibuja (decisión: draw.io)                                                                                                                                                                                                                                                |
+| Diagramas y zoom             | ✅ Probado con un `.drawio.svg` real: el LightBox lo abre y amplía con la rueda. Ejemplo en `docs/img/catalogo.drawio.svg`                                                                                                                                                                                                  |
+| Portada                      | ✅ Propia, en Backstage UI (`modules/home`): héroe con saludo, búsqueda y cifras; accesos, proyectos, favoritos y visitas. Es la página `/`                                                                                                                                                                                 |
+| Plantillas (caminos dorados) | ✅ Dos en `plantillas/`: _Nuevo repositorio HRL_ (crea el repo en DevHRL, registrado y documentado) y _Documentar un repositorio existente_ (abre un PR). **Ninguna se ejecutó de verdad**: el ensayo (dry-run) del scaffolder falla en Windows por un error de rutas de Backstage (`C:\C:\…`); probar en el servidor Linux |
+| Calidad                      | ✅ `/calidad`, pestaña _Calidad_ en cada componente/API y en cada proyecto: niveles Bronce, Plata y Oro calculados con el catálogo (`modules/calidad/reglas.ts`). No lee el contenido de los repos                                                                                                                          |
+| Primeros pasos               | ✅ Lista en la portada que se marca sola (visitas y favoritos) y guía en `/primeros-pasos`                                                                                                                                                                                                                                  |
+| Kubernetes                   | ✅ Quitado                                                                                                                                                                                                                                                                                                                  |
+| Permisos                     | ⚠️ «Permitir todo»                                                                                                                                                                                                                                                                                                          |
+| Logo y colores               | ⚠️ Paleta verde agua (`modules/tema/paleta.ts` y `tokens.css`). Sin logo: un sello «HRL» ocupa su lugar hasta que llegue (`modules/nav/Marca.tsx`)                                                                                                                                                                          |
 
 ## 3. Cómo retomar el trabajo
 
@@ -86,7 +88,7 @@ Cosas que ya dieron problemas:
 - **Un arranque con «IPC request timed out»**: varios plugins fallaron una vez.
   Reiniciar el portal lo resolvió; si se repite, investigar.
 - **Ver la página de ingreso**: si el navegador ya tiene sesión de invitado no
-  aparece. Usar ventana privada o cerrar sesión en *Ajustes*.
+  aparece. Usar ventana privada o cerrar sesión en _Ajustes_.
 - **Token de GitHub**: el importador de miembros necesita los permisos `repo`,
   `read:org`, `read:user` y `user:email`. Con menos, falla al leer el correo.
 - **Capturas de pantalla**: hay Edge instalado; Playwright puede usarlo con
@@ -98,24 +100,32 @@ Cosas que ya dieron problemas:
   en el portal hasta que se sube. Para probar en local, registrar una entidad
   temporal con `app-config.local.yaml` (git lo ignora) y **reiniciar** el portal:
   un archivo de configuración nuevo no se detecta en caliente.
+- **`app-config.local.yaml` reemplaza listas, no las suma**: si define
+  `catalog.locations`, las de `app-config.yaml` (incluidas las plantillas) dejan
+  de cargarse. Repetirlas allí.
+- **El backend no arranca y el log dice «la autentificación password falló para
+  el usuario backstage»** (2026-10-13): la contraseña del rol en el Postgres de
+  Windows no coincide con `.env`. Arreglo, como `postgres`:
+  `ALTER ROLE backstage PASSWORD '<POSTGRES_PASSWORD de .env>'`. Mientras tanto
+  sirve el Postgres de Docker (`docker compose up -d --wait`, puerto 5433).
 - **Añadir una dependencia al frontend**: declarar la versión que ya está en
   `yarn.lock` y revisar que el diff del lockfile no suba versiones.
 
 ## 4. Decisiones tomadas
 
-| Decisión | Detalle |
-|---|---|
-| **Backstage**, no BookStack ni otros | Equipo de ~30 personas; se aceptó el costo de mantenerlo. |
-| **Login con GitHub** | La organización `DevHRL` es la fuente de usuarios. |
-| **Todo gratuito** | Alojamiento, dominio, base de datos y respaldos. |
-| **Alojamiento: servidor del hospital con Coolify** | El hospital lo dará en unos días. Mientras tanto, solo local. Se probó y desmontó Coolify en el PC de Andre; Oracle Always Free, las nubes con capa gratis y los dominios de pago se descartaron (ver [Despliegue](despliegue.md)). |
-| **Una sola instancia con subportales por proyecto** | Los proyectos comparten base de datos. Cada proyecto es un `System`, con su ruta (`/proyectos/<proyecto>`) y una cabecera que deja claro en qué proyecto se está. Nada se registra sin `spec.system`. |
-| **PostgreSQL 18 en todas partes** | En local, el Postgres de Windows; en Coolify, `postgres:18-alpine`. No se cambia de versión al migrar. Se descartó SQLite en archivo. |
-| **Bilingüe: español por defecto, inglés opcional** | Con las herramientas oficiales de Backstage (`translations export/import`) y un glosario fijo. La documentación de los repos, solo en español. |
-| **Diagramas: draw.io como `.drawio.svg`** | Con el addon LightBox para zoom y arrastre. **No instalar el plugin de Mermaid** salvo que no haya mejor alternativa. |
-| **RotaPass fuera** | Es un proyecto aislado: no entra en `DevHRL` ni en el portal. |
-| **Commits del repo del portal** | A nombre de Andre (`Andre-pezo@outlook.es`), **sin** línea `Co-Authored-By` de Claude. |
-| **Empezar con el portal estándar** | Se personaliza poco a poco; no se hace fork de Backstage. |
+| Decisión                                            | Detalle                                                                                                                                                                                                                             |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Backstage**, no BookStack ni otros                | Equipo de ~30 personas; se aceptó el costo de mantenerlo.                                                                                                                                                                           |
+| **Login con GitHub**                                | La organización `DevHRL` es la fuente de usuarios.                                                                                                                                                                                  |
+| **Todo gratuito**                                   | Alojamiento, dominio, base de datos y respaldos.                                                                                                                                                                                    |
+| **Alojamiento: servidor del hospital con Coolify**  | El hospital lo dará en unos días. Mientras tanto, solo local. Se probó y desmontó Coolify en el PC de Andre; Oracle Always Free, las nubes con capa gratis y los dominios de pago se descartaron (ver [Despliegue](despliegue.md)). |
+| **Una sola instancia con subportales por proyecto** | Los proyectos comparten base de datos. Cada proyecto es un `System`, con su ruta (`/proyectos/<proyecto>`) y una cabecera que deja claro en qué proyecto se está. Nada se registra sin `spec.system`.                               |
+| **PostgreSQL 18 en todas partes**                   | En local, el Postgres de Windows; en Coolify, `postgres:18-alpine`. No se cambia de versión al migrar. Se descartó SQLite en archivo.                                                                                               |
+| **Bilingüe: español por defecto, inglés opcional**  | Con las herramientas oficiales de Backstage (`translations export/import`) y un glosario fijo. La documentación de los repos, solo en español.                                                                                      |
+| **Diagramas: draw.io como `.drawio.svg`**           | Con el addon LightBox para zoom y arrastre. **No instalar el plugin de Mermaid** salvo que no haya mejor alternativa.                                                                                                               |
+| **RotaPass fuera**                                  | Es un proyecto aislado: no entra en `DevHRL` ni en el portal.                                                                                                                                                                       |
+| **Commits del repo del portal**                     | A nombre de Andre (`Andre-pezo@outlook.es`), **sin** línea `Co-Authored-By` de Claude.                                                                                                                                              |
+| **Empezar con el portal estándar**                  | Se personaliza poco a poco; no se hace fork de Backstage.                                                                                                                                                                           |
 
 ### Cosas que el usuario pidió NO hacer todavía
 
@@ -148,16 +158,37 @@ Cosas que ya dieron problemas:
 
 ### B. Personalización y subportales
 
-- [~] Tema con el estilo de Backstage UI (es un portal para desarrolladores; `hrl-core-ui`
-      es para el personal del hospital): `packages/app/src/modules/tema`. Probado en
-      claro y oscuro. Faltan detalles: algunas tarjetas aún con sombra, cabeceras de
-      la tabla del catálogo en mayúsculas y el panel de filtros gris en modo claro.
-- [ ] Logo, favicon y título (hoy dice «Backstage» en la barra lateral).
-- [ ] Portada propia (reemplaza los títulos de tarjeta que siguen en inglés).
-- [ ] **Subportales por proyecto**: página `/proyectos` con una tarjeta por
-      sistema y `/proyectos/<proyecto>` con pestañas *Resumen · Componentes ·
-      Documentación · APIs · Equipo*; franja de color y nombre del proyecto en la
-      cabecera; selector de proyecto en la barra lateral.
+- [x] Rediseño al estilo de Portal de Spotify (2026-10-13), con paleta verde agua:
+      tema (`modules/tema`: `paleta.ts` para Material UI, `tokens.css` para BUI;
+      cambiar uno exige cambiar el otro), marco y barra lateral propios
+      (`modules/nav`, reemplazan `app/layout`; plegable, cajón en móvil, búsqueda
+      con Ctrl K), portada (`modules/home`), página de ingreso (`modules/signIn`)
+      y subportales (`modules/proyectos`). Cabeceras de tabla y panel de filtros
+      del catálogo corregidos en el tema. Revisado en Edge (Playwright), claro y
+      oscuro, escritorio y móvil.
+- [x] Caminos dorados, calidad y primeros pasos (2026-10-13). Ver la tabla de la
+      sección 2.
+- [x] **Ficha técnica del proyecto** (2026-10-14): pestañas _Arquitectura,
+      Tecnologías, Despliegue, Procesos y Documentos_, con cuatro diagramas
+      hechos con archify (arquitectura, despliegue, ciclo mensual, estados).
+      Lo que falta (respaldos, acceso, URL de producción, Drive y enlaces de
+      documentos) se muestra como pendiente. Cómo completarlo y regenerar los
+      diagramas: [Qué debe mostrar el portal](contenido-del-portal.md), §8.
+- [x] Página del catálogo propia (`modules/catalogo`) para traducir el título de
+      la tabla («Componentes (4)»); conserva los filtros del catálogo.
+- [ ] Logo y favicon (el título ya es «Portal de Desarrollo HRL»). El logo va en
+      `.hrl-marca__sello` (`modules/nav/Marca.tsx`) y en `.hrl-ingreso__sello`.
+- [x] Portada propia.
+- [x] **Subportales por proyecto**: `/proyectos` con una tarjeta por sistema y
+      `/proyectos/<proyecto>` con pestañas _Resumen · Componentes · Documentación ·
+      APIs · Equipo_. El color de cada proyecto sale de la anotación `hrl/color`
+      del sistema (`catalog/hrl.yaml`). Selector de proyecto en la barra lateral.
+- [x] Cabecera propia en la ficha de entidad (`modules/entidad`,
+      `EntityHeaderLayoutBlueprint`): franja con el proyecto y su color, nivel de
+      calidad, favorito y menú (inspeccionar, copiar enlace, dar de baja). Los
+      elementos de menú que agreguen otros plugins **no** aparecen en este menú.
+- [ ] Ejecutar de verdad las dos plantillas en el servidor (crea un repo y abre
+      un PR en DevHRL: pedir confirmación antes).
 - [ ] Addon de TechDocs que muestre el proyecto en la cabecera de cada documento.
 - [ ] Búsqueda filtrada por proyecto (comprobar si el índice de TechDocs incluye
       el sistema; si no, añadirlo al indexar).
@@ -197,33 +228,35 @@ aplicación → **respaldos a Cloudflare R2, probados** → pruebas. El Dockerfi
 `app-config.production.yaml` ya están listos y probados.
 
 Antes de volver a desplegar:
+
 - Pasar la rama `despliegue-coolify` a `main`.
 - Volver a agregar la deploy key: la del montaje de prueba se borró.
 - Crear una OAuth App nueva para la dirección del servidor.
 
 ### F. Seguridad
 
-- [ ] Los repos de Estadística y Nutrición tienen un `CREDENCIALES.txt` en la
-      carpeta local. El usuario dijo que los repos ya fueron verificados; aun así,
-      antes de abrir el portal a más gente conviene confirmar que no esté versionado
-      y, si lo estuvo, rotar esas claves.
+- [ ] **URGENTE (2026-10-14):** pendiente de seguridad en el repo de
+      Estadística. El detalle está en `notas-seguridad.privado.md` (local, no
+      versionado: este repositorio es público).
 - [ ] Reemplazar el token personal por una GitHub App de la organización (también
       resuelve las callbacks de varias direcciones).
 - [ ] Política de permisos distinta de «permitir todo» antes de abrir a los 30.
 
 ## 7. Dónde está cada cosa
 
-| Qué | Dónde |
-|---|---|
-| Configuración del portal | `app-config.yaml` (local), `app-config.production.yaml` (despliegue) |
-| Base de datos local | `compose.yaml` |
-| Backend (plugins) | `packages/backend/src/index.ts` |
-| Frontend (extensiones) | `packages/app/src/App.tsx` y `packages/app/src/modules/` |
-| Página de ingreso | `packages/app/src/modules/signIn/index.tsx` |
-| Barra lateral | `packages/app/src/modules/nav/Sidebar.tsx` |
-| Textos propios y traducciones | `packages/app/src/modules/idioma/` y `packages/app/translations/` |
-| Dominio, sistemas y equipos | `catalog/hrl.yaml` |
-| Arranque local | `iniciar.ps1` y `.env` (no versionado; ver `.env.example`) |
-| Plan de despliegue | `docs/despliegue.md` |
-| Idioma | `docs/idioma.md` |
-| Este documento | `docs/estado-y-pendientes.md` |
+| Qué                           | Dónde                                                                |
+| ----------------------------- | -------------------------------------------------------------------- |
+| Configuración del portal      | `app-config.yaml` (local), `app-config.production.yaml` (despliegue) |
+| Base de datos local           | `compose.yaml`                                                       |
+| Backend (plugins)             | `packages/backend/src/index.ts`                                      |
+| Frontend (extensiones)        | `packages/app/src/App.tsx` y `packages/app/src/modules/`             |
+| Página de ingreso             | `packages/app/src/modules/signIn/index.tsx`                          |
+| Marco y barra lateral         | `packages/app/src/modules/nav/` (`Marco.tsx`, `BarraLateral.tsx`)    |
+| Textos propios y traducciones | `packages/app/src/modules/idioma/` y `packages/app/translations/`    |
+| Dominio, sistemas y equipos   | `catalog/hrl.yaml`                                                   |
+| Plantillas (caminos dorados)  | `plantillas/` (registradas en `app-config*.yaml`)                    |
+| Reglas de calidad             | `packages/app/src/modules/calidad/reglas.ts`                         |
+| Arranque local                | `iniciar.ps1` y `.env` (no versionado; ver `.env.example`)           |
+| Plan de despliegue            | `docs/despliegue.md`                                                 |
+| Idioma                        | `docs/idioma.md`                                                     |
+| Este documento                | `docs/estado-y-pendientes.md`                                        |

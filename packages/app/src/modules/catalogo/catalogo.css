@@ -1,0 +1,13 @@
+/*
+ * La tabla del catálogo es de Material UI. Con muchas columnas, la del nombre
+ * (la primera, que es el enlace) se estrechaba hasta partir cada palabra.
+ */
+.hrl-catalogo table td:first-child,
+.hrl-catalogo table th:first-child {
+  min-width: 180px;
+}
+
+.hrl-catalogo table td {
+  overflow-wrap: normal;
+  word-break: normal;
+}

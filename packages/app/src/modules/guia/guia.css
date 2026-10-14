@@ -1,0 +1,234 @@
+/* Primeros pasos: lista en la portada y guía completa. */
+
+.hrl-pasos {
+  gap: var(--bui-space-4);
+}
+
+.hrl-pasos__cabecera {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--bui-space-3);
+}
+
+.hrl-pasos__icono {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--bui-radius-4);
+  background: var(--hrl-acento-suave);
+  color: var(--hrl-acento-texto);
+}
+
+.hrl-pasos__titulos {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hrl-pasos__titulos h2,
+.hrl-pasos__titulos p {
+  margin: 0;
+}
+
+.hrl-pasos__titulos a {
+  color: var(--hrl-acento-texto);
+  font-weight: var(--bui-font-weight-bold);
+}
+
+.hrl-pasos__cerrar {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: var(--bui-radius-3);
+  background: transparent;
+  color: var(--bui-fg-secondary);
+  cursor: pointer;
+}
+
+.hrl-pasos__cerrar:hover {
+  background: var(--bui-bg-neutral-2);
+  color: var(--bui-fg-primary);
+}
+
+.hrl-pasos__cerrar:focus-visible {
+  outline: 2px solid var(--bui-ring);
+  outline-offset: 2px;
+}
+
+.hrl-pasos__barra {
+  height: 6px;
+  overflow: hidden;
+  border-radius: var(--bui-radius-full);
+  background: var(--bui-bg-neutral-2);
+}
+
+.hrl-pasos__barra span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--hrl-acento);
+  transition: width 300ms ease;
+}
+
+.hrl-pasos__lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: var(--bui-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hrl-pasos__paso {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--bui-space-2);
+  height: 100%;
+  min-height: 44px;
+  padding: var(--bui-space-3);
+  border: 1px solid var(--bui-border-1);
+  border-radius: var(--bui-radius-3);
+  color: inherit;
+  font-size: var(--bui-font-size-3);
+  text-decoration: none;
+}
+
+.hrl-pasos__paso:hover {
+  border-color: var(--hrl-acento-borde);
+  background: var(--hrl-acento-suave);
+}
+
+.hrl-pasos__paso:focus-visible {
+  outline: 2px solid var(--bui-ring);
+  outline-offset: 2px;
+}
+
+.hrl-pasos__estado {
+  flex-shrink: 0;
+  color: var(--bui-fg-disabled);
+  font-size: 20px !important;
+}
+
+.hrl-pasos__lista li[data-hecho='true'] .hrl-pasos__estado {
+  color: var(--hrl-ok);
+}
+
+.hrl-pasos__lista li[data-hecho='true'] .hrl-pasos__texto {
+  color: var(--bui-fg-secondary);
+  text-decoration: line-through;
+}
+
+/* ---------- Guía ---------- */
+
+.hrl-guia {
+  max-width: 920px;
+}
+
+.hrl-guia__paso {
+  gap: var(--bui-space-4);
+}
+
+.hrl-guia__paso-cabecera {
+  display: flex;
+  align-items: center;
+  gap: var(--bui-space-3);
+}
+
+.hrl-guia__paso-cabecera h2 {
+  margin: 0;
+}
+
+.hrl-guia__numero {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--bui-radius-full);
+  background: var(--hrl-acento);
+  color: var(--bui-accent-fg);
+  font-weight: var(--bui-font-weight-bold);
+}
+
+.hrl-guia__cuerpo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--bui-space-3);
+  padding-left: calc(32px + var(--bui-space-3));
+  color: var(--bui-fg-primary);
+  font-size: var(--bui-font-size-3);
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .hrl-guia__cuerpo {
+    padding-left: 0;
+  }
+}
+
+.hrl-guia__cuerpo p,
+.hrl-guia__cuerpo ul {
+  margin: 0;
+}
+
+.hrl-guia__cuerpo ul {
+  padding-left: var(--bui-space-5);
+}
+
+.hrl-guia__opciones {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--bui-space-3);
+  width: 100%;
+}
+
+.hrl-guia__opcion {
+  gap: var(--bui-space-2);
+  padding: var(--bui-space-4);
+}
+
+.hrl-guia__opcion h3 {
+  margin: 0;
+}
+
+.hrl-guia__opcion .hrl-chip {
+  align-self: flex-start;
+}
+
+.hrl-guia__codigo {
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--bui-border-1);
+  border-radius: var(--bui-radius-4);
+  background: var(--hrl-superficie-2);
+}
+
+.hrl-guia__codigo figcaption {
+  padding: var(--bui-space-2) var(--bui-space-4);
+  border-bottom: 1px solid var(--bui-border-1);
+  color: var(--bui-fg-secondary);
+  font-family: var(--bui-font-monospace);
+  font-size: var(--bui-font-size-2);
+}
+
+.hrl-guia__codigo pre {
+  margin: 0;
+  padding: var(--bui-space-4);
+  overflow-x: auto;
+  font-family: var(--bui-font-monospace);
+  font-size: var(--bui-font-size-2);
+  line-height: 1.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hrl-pasos__barra span {
+    transition: none;
+  }
+}

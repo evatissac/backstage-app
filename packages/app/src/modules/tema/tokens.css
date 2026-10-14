@@ -1,0 +1,129 @@
+/*
+ * Tokens del portal sobre los de Backstage UI (BUI).
+ *
+ * BUI declara los suyos dentro de `@layer tokens`; estas reglas van fuera de
+ * cualquier capa, así que ganan sin necesidad de más especificidad. Solo se
+ * reemplaza lo que cambia: el acento pasa al verde agua y el modo oscuro usa
+ * superficies casi negras con un matiz verde, en lugar de grises.
+ *
+ * Los valores son los de paleta.ts (el tema de Material UI); si cambias uno,
+ * cambia el otro.
+ *
+ * Además define variables `--hrl-*` para lo que solo existe en este portal
+ * (barra lateral, portada, ingreso).
+ */
+
+:root,
+[data-theme-mode='light'] {
+  /* Poppins y JetBrains Mono se cargan en public/index.html. */
+  --bui-font-regular: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto,
+    Arial, sans-serif;
+  --bui-font-monospace: 'JetBrains Mono', ui-monospace, 'Cascadia Code',
+    Consolas, monospace;
+  --bui-ring: #2fbcae;
+
+  --bui-bg-app: #f3f6f6;
+  --bui-border-1: #e2e8e7;
+  --bui-fg-secondary: #5c6b69;
+
+  --bui-accent-bg: #0f6661;
+  --bui-accent-bg-hover: #11524f;
+  --bui-accent-bg-disabled: #94eadb;
+  --bui-accent-fg: #ffffff;
+  --bui-accent-fg-disabled: #0f6661;
+
+  /* Tokens obsoletos de BUI que algunos componentes aún leen. */
+  --bui-bg-solid: #0f6661;
+  --bui-bg-solid-hover: #11524f;
+  --bui-bg-solid-pressed: #123f3d;
+  --bui-bg-solid-disabled: #94eadb;
+  --bui-fg-solid: #ffffff;
+
+  /* Propios del portal */
+  --hrl-acento: #0f6661;
+  --hrl-acento-suave: #effcf9;
+  --hrl-acento-borde: #94eadb;
+  --hrl-acento-texto: #0f6661;
+  --hrl-superficie: #ffffff;
+  --hrl-superficie-2: #f7faf9;
+  --hrl-sombra: 0 1px 2px rgb(6 38 36 / 6%), 0 8px 24px -12px rgb(6 38 36 / 18%);
+  --hrl-sombra-elevada: 0 2px 4px rgb(6 38 36 / 6%),
+    0 18px 40px -16px rgb(6 38 36 / 30%);
+  --hrl-heroe: radial-gradient(
+      120% 140% at 100% 0%,
+      rgb(94 214 198 / 55%) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      90% 120% at 0% 100%,
+      rgb(14 116 144 / 45%) 0%,
+      transparent 60%
+    ),
+    linear-gradient(135deg, #062624 0%, #0f524f 45%, #0e7f78 100%);
+  --hrl-heroe-texto: #ffffff;
+  --hrl-heroe-texto-2: #c9f5ec;
+
+  --hrl-barra-fondo: #0a1312;
+  --hrl-barra-hover: #13221f;
+  --hrl-barra-activo-fondo: rgb(47 188 174 / 16%);
+  --hrl-barra-texto: #9db3b0;
+  --hrl-barra-texto-activo: #ffffff;
+  --hrl-barra-indicador: #5ed6c6;
+  --hrl-barra-borde: #17201f;
+  --hrl-barra-ancho: 264px;
+  --hrl-barra-ancho-plegada: 72px;
+
+  /* Niveles de calidad (modules/calidad). Fondo suave y texto legible. */
+  --hrl-bronce-fondo: #fbeee4;
+  --hrl-bronce-texto: #8a4b1f;
+  --hrl-plata-fondo: #eef1f4;
+  --hrl-plata-texto: #4b5563;
+  --hrl-oro-fondo: #fdf3d3;
+  --hrl-oro-texto: #8a6400;
+  --hrl-ok: #15803d;
+}
+
+[data-theme-mode='dark'] {
+  --bui-ring: #5ed6c6;
+
+  --bui-bg-app: #0e1514;
+  --bui-bg-neutral-1: #151e1d;
+  --bui-bg-neutral-2: #1c2726;
+  --bui-bg-neutral-3: #24302f;
+  --bui-bg-neutral-4: #2b3a38;
+  --bui-border-1: #2b3a38;
+  --bui-border-2: #4a5f5c;
+  --bui-fg-secondary: #9db3b0;
+  --bui-fg-disabled: #6b807d;
+  --bui-scrollbar-thumb: #3b4d4b;
+
+  --bui-accent-bg: #5ed6c6;
+  --bui-accent-bg-hover: #94eadb;
+  --bui-accent-bg-disabled: #11524f;
+  --bui-accent-fg: #062624;
+  --bui-accent-fg-disabled: #2fbcae;
+
+  --bui-bg-solid: #5ed6c6;
+  --bui-bg-solid-hover: #94eadb;
+  --bui-bg-solid-pressed: #94eadb;
+  --bui-bg-solid-disabled: #11524f;
+  --bui-fg-solid: #062624;
+
+  --hrl-acento: #5ed6c6;
+  --hrl-acento-suave: rgb(47 188 174 / 12%);
+  --hrl-acento-borde: #11524f;
+  --hrl-acento-texto: #5ed6c6;
+  --hrl-superficie: #151e1d;
+  --hrl-superficie-2: #1c2726;
+  --hrl-sombra: 0 1px 2px rgb(0 0 0 / 30%);
+  --hrl-sombra-elevada: 0 2px 4px rgb(0 0 0 / 30%),
+    0 18px 40px -16px rgb(0 0 0 / 60%);
+
+  --hrl-bronce-fondo: rgb(205 127 50 / 18%);
+  --hrl-bronce-texto: #e8a874;
+  --hrl-plata-fondo: rgb(203 213 225 / 14%);
+  --hrl-plata-texto: #cbd5e1;
+  --hrl-oro-fondo: rgb(234 179 8 / 16%);
+  --hrl-oro-texto: #fcd34d;
+  --hrl-ok: #4ade80;
+}

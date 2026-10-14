@@ -1,0 +1,197 @@
+{
+  "version": 1,
+  "proyecto": "reporte-estadistico",
+  "actualizado": "2026-10-14",
+  "fuentes": [
+    "frontend/package.json",
+    "servidor/api/pyproject.toml",
+    "Dockerfiles de frontend, api y bot",
+    "docker-compose.yml",
+    "docs/DESPLIEGUE.md",
+    "docs/CONTEXTO.md"
+  ],
+  "tecnologias": [
+    {
+      "capa": "frontend",
+      "nombre": "React",
+      "version": "19.2",
+      "uso": "Interfaz de las áreas, de Estadística y de las oficinas receptoras."
+    },
+    {
+      "capa": "frontend",
+      "nombre": "Vite",
+      "version": "8.2",
+      "uso": "Compila el frontend. Sin API configurada, arma el modo demo en memoria."
+    },
+    {
+      "capa": "frontend",
+      "nombre": "@hrl/core-ui",
+      "version": "v1.10.0-redesign.12",
+      "uso": "Kit de componentes y tokens del hospital."
+    },
+    {
+      "capa": "backend",
+      "nombre": "Python",
+      "version": "3.13",
+      "uso": "Lenguaje de la API."
+    },
+    {
+      "capa": "backend",
+      "nombre": "FastAPI",
+      "version": null,
+      "uso": "API REST bajo /api: reportes, transiciones, cargas, avisos y consolidado."
+    },
+    {
+      "capa": "backend",
+      "nombre": "Uvicorn",
+      "version": null,
+      "uso": "Servidor ASGI; corre con 2 workers (WEB_CONCURRENCY)."
+    },
+    {
+      "capa": "backend",
+      "nombre": "PyJWT · argon2",
+      "version": null,
+      "uso": "Sesión con token de 8 horas y contraseñas con hash argon2."
+    },
+    {
+      "capa": "base-de-datos",
+      "nombre": "PostgreSQL",
+      "version": null,
+      "uso": "Reportes, estados, constancias y valores. La provee el servidor, fuera de Docker."
+    },
+    {
+      "capa": "base-de-datos",
+      "nombre": "SQLAlchemy · psycopg",
+      "version": "≥ 2.0 · ≥ 3.2",
+      "uso": "Acceso a la base desde la API."
+    },
+    {
+      "capa": "microservicios",
+      "nombre": "Bot validador",
+      "version": "Node 22",
+      "uso": "Lee el Excel de cada área y aplica sus reglas. Servicio HTTP en :8787, sin dependencias externas; también va embebido en la web para el modo demo."
+    },
+    {
+      "capa": "infraestructura",
+      "nombre": "Docker Compose",
+      "version": "Engine ≥ 24",
+      "uso": "Levanta frontend, api y bot en una red interna."
+    },
+    {
+      "capa": "infraestructura",
+      "nombre": "nginx",
+      "version": "1.27",
+      "uso": "Sirve la compilación del frontend y reenvía /api a la API."
+    }
+  ],
+  "arquitectura": {
+    "diagrama": { "archivo": "arquitectura.html", "ancho": 1260, "alto": 700 },
+    "puntos": [
+      "Las diez áreas, la Oficina de Estadística y las oficinas receptoras entran por la misma web; cada una ve solo su ámbito.",
+      "La web habla con la API por /api con un token JWT. La API es la única que toca la base, el volumen de cargas y el bot.",
+      "Cada Excel que sube un área pasa por el bot validador antes de poder enviarse.",
+      "De la base salen el consolidado y los 22 indicadores que se remiten a DIRESA, y el boletín estadístico."
+    ]
+  },
+  "despliegue": {
+    "diagrama": { "archivo": "despliegue.html", "ancho": 1200, "alto": 650 },
+    "comandos": ["cp .env.example .env", "docker compose up -d --build"],
+    "entornos": [
+      {
+        "nombre": "Demo",
+        "descripcion": "Sin servidor: todo vive en memoria y se pierde al recargar. Sirve para ensayar.",
+        "url": null
+      },
+      {
+        "nombre": "Local",
+        "descripcion": "docker compose en el equipo de desarrollo, con un PostgreSQL local.",
+        "url": "http://localhost"
+      },
+      {
+        "nombre": "Producción",
+        "descripcion": "Servidor del hospital.",
+        "url": null,
+        "pendiente": "Falta la dirección del servidor."
+      }
+    ],
+    "expuesto": ["frontend · puerto 80 (PUERTO_WEB)"],
+    "interno": [
+      "api · :8000, solo dentro de la red de docker compose",
+      "bot · :8787, solo lo llama la API",
+      "/docs de la API (documentación interactiva)",
+      "PostgreSQL, fuera de Docker"
+    ],
+    "variables": [
+      {
+        "nombre": "DATABASE_URL",
+        "uso": "Conexión a PostgreSQL. Con la base en el mismo servidor, usa host.docker.internal."
+      },
+      { "nombre": "JWT_SECRETO", "uso": "Firma los tokens de sesión." },
+      {
+        "nombre": "PUERTO_WEB",
+        "uso": "Puerto que publica el frontend (80 por omisión)."
+      },
+      {
+        "nombre": "WEB_CONCURRENCY",
+        "uso": "Workers de la API (2 por omisión)."
+      }
+    ],
+    "guia": {
+      "titulo": "Guía completa de despliegue",
+      "componente": "estadistica-web",
+      "pagina": "DESPLIEGUE"
+    },
+    "respaldos": null,
+    "acceso": null
+  },
+  "procesos": [
+    {
+      "titulo": "Ciclo mensual del reporte",
+      "descripcion": "Cada área sube su Excel del mes cerrado; el bot lo valida y no deja enviar errores ni alertas sin justificar. Al enviarlo, llega a la vez a Estadística y a las oficinas que fija la matriz. Estadística consolida y remite a DIRESA.",
+      "diagrama": {
+        "archivo": "proceso-mensual.html",
+        "ancho": 1087,
+        "alto": 528
+      },
+      "pendientes": [
+        "Canal y día de la remisión a DIRESA (el prototipo supone el día 15 y exporta CSV)."
+      ]
+    },
+    {
+      "titulo": "Estados de un reporte",
+      "descripcion": "Un reporte solo guarda tres estados: no iniciado, en llenado y entregado. La validación del bot es un control al enviar, no un estado. Estadística puede rectificar un mes entregado; la remisión anterior se conserva como prueba.",
+      "diagrama": {
+        "archivo": "estados-reporte.html",
+        "ancho": 1040,
+        "alto": 660
+      },
+      "pendientes": []
+    }
+  ],
+  "documentos": {
+    "drive": null,
+    "lista": [
+      {
+        "titulo": "Campos del formato de servicios intermedios",
+        "descripcion": "Formato MINSA 2024 que se remite a DIRESA (196 columnas).",
+        "tipo": "formato",
+        "archivo": "pdf",
+        "url": null
+      },
+      {
+        "titulo": "Indicadores de gestión hospitalaria",
+        "descripcion": "Los 22 indicadores de GERESA Loreto, con numerador, denominador y fuente.",
+        "tipo": "normativa",
+        "archivo": "pdf",
+        "url": null
+      },
+      {
+        "titulo": "Oficios del HRL",
+        "descripcion": "Oficios de las áreas usados para modelar los formularios.",
+        "tipo": "oficio",
+        "archivo": "rar",
+        "url": null
+      }
+    ]
+  }
+}

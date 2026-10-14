@@ -55,3 +55,11 @@ catalog:
       target: ./catalog/hrl.yaml
       rules:
         - allow: [Domain, System, Group, User]
+    - type: file
+      target: ./plantillas/nuevo-repositorio/template.yaml
+      rules:
+        - allow: [Template]
+    - type: file
+      target: ./plantillas/documentar-repositorio/template.yaml
+      rules:
+        - allow: [Template]

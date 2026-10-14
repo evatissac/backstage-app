@@ -1,0 +1,123 @@
+# Camino dorado: un repositorio nuevo de DevHRL que nace conforme. Ya trae su
+# ficha del catálogo, documentación publicable y responsable, así que aparece
+# en el portal con nivel Plata desde el primer día.
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: nuevo-repositorio-hrl
+  title: Nuevo repositorio HRL
+  description: >-
+    Crea un repositorio en DevHRL con su ficha del catálogo, su documentación
+    y su responsable. Es la forma recomendada de empezar cualquier proyecto.
+  tags:
+    - golden-path
+    - recomendado
+spec:
+  owner: equipo-plataforma
+  type: proyecto
+
+  parameters:
+    - title: Qué vas a crear
+      required: [nombre, titulo, descripcion, tipo, sistema, responsable]
+      properties:
+        nombre:
+          title: Nombre corto
+          type: string
+          description: En minúsculas y con guiones. Será el nombre del repositorio y de la ficha.
+          pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
+          ui:autofocus: true
+          ui:help: 'Ejemplo: estadistica-reportes-api'
+        titulo:
+          title: Título
+          type: string
+          description: Cómo se mostrará en el portal.
+          ui:help: 'Ejemplo: Reporte Estadístico · Reportes API'
+        descripcion:
+          title: Descripción
+          type: string
+          description: Una frase que diga qué hace. Sin datos de pacientes.
+          minLength: 10
+        tipo:
+          title: Tipo
+          type: string
+          default: service
+          enum: [website, service, library]
+          enumNames:
+            - Sitio web (interfaz)
+            - Servicio (API, bot, proceso)
+            - Biblioteca (código compartido)
+        sistema:
+          title: Proyecto
+          type: string
+          description: El sistema del hospital al que pertenece.
+          ui:field: EntityPicker
+          ui:options:
+            catalogFilter:
+              kind: System
+        responsable:
+          title: Equipo responsable
+          type: string
+          ui:field: OwnerPicker
+          ui:options:
+            catalogFilter:
+              kind: Group
+        etiquetas:
+          title: Tecnologías
+          type: array
+          description: Por ejemplo react, fastapi, postgresql.
+          items:
+            type: string
+          ui:options:
+            orderable: false
+
+    - title: Repositorio
+      required: [repoUrl]
+      properties:
+        repoUrl:
+          title: Ubicación
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts: [github.com]
+            allowedOwners: [DevHRL]
+
+  steps:
+    - id: plantilla
+      name: Preparar los archivos
+      action: fetch:template
+      input:
+        url: ./esqueleto
+        values:
+          nombre: ${{ parameters.nombre }}
+          titulo: ${{ parameters.titulo }}
+          descripcion: ${{ parameters.descripcion }}
+          tipo: ${{ parameters.tipo }}
+          sistema: ${{ parameters.sistema }}
+          responsable: ${{ parameters.responsable }}
+          etiquetas: ${{ parameters.etiquetas or [] }}
+          repo: ${{ (parameters.repoUrl | parseRepoUrl).repo }}
+          organizacion: ${{ (parameters.repoUrl | parseRepoUrl).owner }}
+
+    - id: publicar
+      name: Crear el repositorio en GitHub
+      action: publish:github
+      input:
+        repoUrl: ${{ parameters.repoUrl }}
+        description: ${{ parameters.descripcion }}
+        defaultBranch: main
+        repoVisibility: private
+
+    - id: registrar
+      name: Registrar en el catálogo
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps['publicar'].output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+
+  output:
+    links:
+      - title: Repositorio
+        url: ${{ steps['publicar'].output.remoteUrl }}
+      - title: Ver en el catálogo
+        icon: catalog
+        entityRef: ${{ steps['registrar'].output.entityRef }}

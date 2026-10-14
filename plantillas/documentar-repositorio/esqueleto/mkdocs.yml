@@ -1,0 +1,10 @@
+site_name: ${{ values.titulo }}
+site_description: ${{ values.descripcion }}
+
+nav:
+  - Inicio: index.md
+  - Cómo levantarlo: levantamiento.md
+  - Decisiones: decisiones.md
+
+plugins:
+  - techdocs-core

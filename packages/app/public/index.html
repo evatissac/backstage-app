@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#0a1312" />
     <meta
       name="description"
-      content="Backstage is an open source framework for building developer portals"
+      content="Portal de Desarrollo del Hospital Regional de Loreto: proyectos, documentación y calidad."
     />
     <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -40,6 +40,16 @@
       rel="mask-icon"
       href="<%= publicPath %>/safari-pinned-tab.svg"
       color="#5bbad5"
+    />
+    <!--
+      Tipografía del portal: Poppins para el texto y JetBrains Mono para lo
+      técnico (cifras, identificadores, tecnologías). Ver modules/tema/tokens.css.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Poppins:wght@400;500;600;700&display=swap"
     />
     <title><%= config.getOptionalString('app.title') ?? 'Backstage' %></title>
   </head>

@@ -1,4 +1,6 @@
 # Estructura del Hospital Regional de Loreto en el catálogo.
+# Por ahora solo hay un proyecto publicado: el Sistema de Reporte Estadístico.
+# Los demás (Oncología, Plataforma) se agregan cuando estén listos para mostrarse.
 # Aquí solo va lo que no pertenece a un repo concreto: el dominio, los sistemas
 # y los equipos. Cada repo declara sus componentes en su propio catalog-info.yaml
 # y los cuelga de uno de estos sistemas con `spec.system`.
@@ -15,22 +17,17 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
-  name: vigilancia-oncologica
-  title: Sistema de Vigilancia Oncológica
-  description: Registro, seguimiento e indicadores de pacientes oncológicos.
-  links:
-    - url: https://github.com/DevHRL/HIS_HRL
-      title: Repositorio
-spec:
-  owner: equipo-oncologia
-  domain: salud-hrl
----
-apiVersion: backstage.io/v1alpha1
-kind: System
-metadata:
   name: reporte-estadistico
+  annotations:
+    # Color del proyecto en el portal (franja, monograma y cabecera).
+    hrl/color: '#0e7490'
   title: Sistema de Reporte Estadístico
-  description: Reportes estadísticos del hospital, incluido el módulo de Nutrición.
+  # Objetivo general del proyecto: es lo que muestra su tarjeta en el portal.
+  description: >-
+    Centraliza la estadística de todo el hospital: reúne en un solo envío lo que
+    reportan las áreas, arma lo que se remite a DIRESA, calcula los indicadores
+    de gestión y sostiene el boletín estadístico, el análisis situacional y la
+    auditoría de datos.
   links:
     - url: https://github.com/DevHRL/Estadistica_hrl
       title: Repositorio
@@ -39,29 +36,10 @@ spec:
   domain: salud-hrl
 ---
 apiVersion: backstage.io/v1alpha1
-kind: System
-metadata:
-  name: plataforma-hrl
-  title: Plataforma HRL
-  description: Piezas compartidas por todos los sistemas, como el kit de UI y este portal.
-spec:
-  owner: equipo-plataforma
-  domain: salud-hrl
----
-apiVersion: backstage.io/v1alpha1
 kind: Group
 metadata:
   name: equipo-plataforma
   title: Equipo de Plataforma
-spec:
-  type: team
-  children: []
----
-apiVersion: backstage.io/v1alpha1
-kind: Group
-metadata:
-  name: equipo-oncologia
-  title: Equipo de Oncología
 spec:
   type: team
   children: []

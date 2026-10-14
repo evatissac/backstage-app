@@ -5,3 +5,6 @@ coverage
 
 # Lo genera `yarn traducciones:importar`; se reescribe en cada importación.
 packages/app/src/translations/resources.ts
+
+# Esqueletos de las plantillas: llevan marcadores ${{ }} y {% %} que no son YAML ni Markdown válidos.
+plantillas/*/esqueleto

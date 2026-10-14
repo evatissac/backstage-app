@@ -1,0 +1,21 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{ values.nombre }}
+  title: ${{ values.titulo }}
+  description: ${{ values.descripcion }}
+  annotations:
+    github.com/project-slug: ${{ values.organizacion }}/${{ values.repo }}
+    backstage.io/source-location: url:https://github.com/${{ values.organizacion }}/${{ values.repo }}
+    backstage.io/techdocs-ref: dir:.
+  {%- if values.etiquetas | length %}
+  tags:
+    {%- for etiqueta in values.etiquetas %}
+    - ${{ etiqueta | lower }}
+    {%- endfor %}
+  {%- endif %}
+spec:
+  type: ${{ values.tipo }}
+  lifecycle: experimental
+  owner: ${{ values.responsable }}
+  system: ${{ values.sistema }}

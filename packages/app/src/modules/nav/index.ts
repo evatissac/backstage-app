@@ -1,7 +1,8 @@
 import { createFrontendModule } from '@backstage/frontend-plugin-api';
-import { SidebarContent } from './Sidebar';
+import { SidebarContent } from './BarraLateral';
+import { marcoHrl } from './Marco';
 
 export const navModule = createFrontendModule({
   pluginId: 'app',
-  extensions: [SidebarContent],
+  extensions: [marcoHrl, SidebarContent],
 });

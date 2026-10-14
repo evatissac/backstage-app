@@ -1,0 +1,170 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Sistema de Reporte Estadístico · Despliegue",
+    "quality_profile": "showcase",
+    "viewBox": [1200, 650],
+    "legend": {
+      "entries": {
+        "frontend": {
+          "label": "Interfaz"
+        },
+        "backend": {
+          "label": "Servicio"
+        },
+        "database": {
+          "label": "Datos"
+        },
+        "external": {
+          "label": "Externo"
+        },
+        "security": {
+          "label": "Seguridad"
+        }
+      }
+    }
+  },
+  "components": [
+    {
+      "id": "navegador",
+      "type": "external",
+      "label": "Navegador",
+      "sublabel": "red del hospital",
+      "pos": [30, 300],
+      "size": [190, 68]
+    },
+    {
+      "id": "frontend",
+      "type": "frontend",
+      "label": "frontend",
+      "sublabel": "nginx 1.27 · Vite build",
+      "pos": [320, 300],
+      "size": [210, 68],
+      "tag": ":80 publicado"
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "api",
+      "sublabel": "uvicorn · 2 workers",
+      "pos": [640, 300],
+      "size": [200, 68],
+      "tag": ":8000 interno"
+    },
+    {
+      "id": "bot",
+      "type": "backend",
+      "label": "bot",
+      "sublabel": "Node 22 · bot validador",
+      "pos": [640, 110],
+      "size": [200, 64],
+      "tag": ":8787 interno"
+    },
+    {
+      "id": "cargas",
+      "type": "database",
+      "label": "volumen cargas",
+      "sublabel": "/datos/cargas",
+      "pos": [640, 490],
+      "size": [200, 64]
+    },
+    {
+      "id": "postgres",
+      "type": "database",
+      "label": "PostgreSQL",
+      "sublabel": "fuera de Docker",
+      "pos": [950, 300],
+      "size": [200, 68],
+      "tag": "estadistica_hrl"
+    },
+    {
+      "id": "secretos",
+      "type": "security",
+      "label": "Archivo .env",
+      "sublabel": "DATABASE_URL · JWT_SECRETO",
+      "pos": [950, 490],
+      "size": [200, 64]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Servidor del hospital",
+      "wraps": ["frontend", "api", "bot", "cargas", "postgres", "secretos"],
+      "pad": 26
+    },
+    {
+      "kind": "security-group",
+      "label": "red interna · docker compose estadistica-hrl",
+      "wraps": ["frontend", "api", "bot", "cargas"],
+      "pad": 18
+    }
+  ],
+  "connections": [
+    {
+      "from": "navegador",
+      "to": "frontend",
+      "label": "HTTP :80",
+      "variant": "emphasis"
+    },
+    {
+      "from": "frontend",
+      "to": "api",
+      "label": "proxy /api",
+      "variant": "emphasis"
+    },
+    {
+      "from": "api",
+      "to": "bot",
+      "label": "HTTP :8787"
+    },
+    {
+      "from": "api",
+      "to": "postgres",
+      "label": "host.docker.internal",
+      "variant": "security"
+    },
+    {
+      "from": "api",
+      "to": "cargas",
+      "label": "volumen",
+      "labelAt": [740, 429]
+    },
+    {
+      "from": "secretos",
+      "to": "api",
+      "label": "variables",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Lo único expuesto",
+      "items": [
+        "Solo el frontend publica un puerto (:80)",
+        "La API y el bot quedan en la red interna",
+        "La documentación interactiva /docs no sale del servidor"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Estado persistente",
+      "items": [
+        "PostgreSQL lo provee el servidor, fuera de Docker",
+        "El volumen cargas guarda cada Excel subido",
+        "Respaldos y restauración: pendiente de definir"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Cómo se despliega",
+      "items": [
+        "cp .env.example .env",
+        "docker compose up -d --build",
+        "Esquema: avance_04 y flujo/01_entrega_directa.sql"
+      ]
+    }
+  ]
+}

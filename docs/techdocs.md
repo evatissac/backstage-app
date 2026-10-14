@@ -24,6 +24,12 @@ spec:
 - `system` debe ser uno de los definidos en `catalog/hrl.yaml` del portal.
 - `backstage.io/techdocs-ref: dir:.` indica que `mkdocs.yml` está junto a este
   archivo.
+- **No pongas `backstage.io/source-location`** en el componente que lleva la
+  documentación: TechDocs resuelve `dir:.` contra esa ruta (y en la rama `main`
+  de GitHub), no contra este archivo. Los demás componentes del mismo repo sí
+  pueden tenerla y reusar la documentación con
+  `backstage.io/techdocs-entity: component:default/<componente-con-docs>`.
+  Ejemplo completo: el `catalog-info.yaml` de `DevHRL/Estadistica_hrl`.
 
 ## 2. `mkdocs.yml`
 

@@ -1,0 +1,181 @@
+{
+  "schema_version": 1,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "Estados de un reporte mensual",
+    "quality_profile": "showcase",
+    "viewBox": [1040, 660],
+    "legend": {
+      "entries": {
+        "start": {
+          "label": "Inicio"
+        },
+        "active": {
+          "label": "En curso"
+        },
+        "decision": {
+          "label": "Control"
+        },
+        "success": {
+          "label": "Cerrado"
+        },
+        "failure": {
+          "label": "Recuperable"
+        },
+        "neutral": {
+          "label": "Historial"
+        }
+      }
+    }
+  },
+  "lanes": [
+    {
+      "id": "main",
+      "label": "Estados del reporte"
+    },
+    {
+      "id": "control",
+      "label": "Control"
+    },
+    {
+      "id": "terminal",
+      "label": "Historial"
+    }
+  ],
+  "states": [
+    {
+      "id": "no_iniciado",
+      "type": "start",
+      "label": "No iniciado",
+      "sublabel": "sin registro",
+      "lane": "main",
+      "col": 0,
+      "step": "01",
+      "tag": "no_iniciado"
+    },
+    {
+      "id": "borrador",
+      "type": "active",
+      "label": "En llenado",
+      "sublabel": "el área carga su Excel",
+      "lane": "main",
+      "col": 1,
+      "step": "02",
+      "tag": "borrador"
+    },
+    {
+      "id": "validacion",
+      "type": "decision",
+      "label": "Validación",
+      "sublabel": "bot · al enviar",
+      "lane": "main",
+      "col": 2,
+      "step": "03",
+      "tag": "control"
+    },
+    {
+      "id": "remitido",
+      "type": "success",
+      "label": "Entregado",
+      "sublabel": "periodo cerrado",
+      "lane": "main",
+      "col": 3,
+      "step": "04",
+      "tag": "remitido"
+    },
+    {
+      "id": "hallazgos",
+      "type": "failure",
+      "label": "Con hallazgos",
+      "sublabel": "no se puede enviar",
+      "lane": "control",
+      "col": 0,
+      "tag": "recuperable"
+    },
+    {
+      "id": "anterior",
+      "type": "neutral",
+      "label": "Remisión anterior",
+      "sublabel": "queda como prueba",
+      "lane": "terminal",
+      "col": 1,
+      "tag": "historial",
+      "width": 150
+    }
+  ],
+  "transitions": [
+    {
+      "from": "no_iniciado",
+      "to": "borrador",
+      "label": "crear"
+    },
+    {
+      "from": "borrador",
+      "to": "validacion",
+      "label": "enviar",
+      "variant": "emphasis",
+      "labelAt": [325, 122]
+    },
+    {
+      "from": "validacion",
+      "to": "remitido",
+      "label": "sin hallazgos",
+      "variant": "emphasis",
+      "labelAt": [479, 202]
+    },
+    {
+      "from": "validacion",
+      "to": "hallazgos",
+      "label": "hallazgos",
+      "variant": "security",
+      "route": "straight",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [402, 226]
+    },
+    {
+      "from": "hallazgos",
+      "to": "borrador",
+      "label": "corrige o justifica",
+      "variant": "dashed"
+    },
+    {
+      "from": "remitido",
+      "to": "borrador",
+      "label": "rectificar",
+      "variant": "dashed",
+      "route": "top-channel",
+      "fromSide": "top",
+      "toSide": "top"
+    },
+    {
+      "from": "remitido",
+      "to": "anterior",
+      "label": "conserva",
+      "variant": "dashed",
+      "route": "straight",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [556, 226]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Tres estados guardados",
+      "items": [
+        "no_iniciado: la ausencia de registro es el estado",
+        "borrador: el área lo está llenando",
+        "remitido: validado por el bot y entregado"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Rectificar",
+      "items": [
+        "Solo Estadística reabre un mes entregado",
+        "La remisión anterior se conserva como prueba"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,208 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Sistema de Reporte Estadístico · Arquitectura",
+    "quality_profile": "showcase",
+    "viewBox": [1260, 700],
+    "legend": {
+      "entries": {
+        "frontend": {
+          "label": "Interfaz"
+        },
+        "backend": {
+          "label": "Servicio"
+        },
+        "database": {
+          "label": "Datos"
+        },
+        "external": {
+          "label": "Externo"
+        },
+        "security": {
+          "label": "Seguridad"
+        }
+      }
+    }
+  },
+  "components": [
+    {
+      "id": "areas",
+      "type": "external",
+      "label": "Diez áreas",
+      "sublabel": "rol area · suben su Excel",
+      "pos": [40, 120],
+      "size": [210, 64]
+    },
+    {
+      "id": "estadistica",
+      "type": "external",
+      "label": "Oficina de Estadística",
+      "sublabel": "rol estadistica",
+      "pos": [40, 300],
+      "size": [210, 64]
+    },
+    {
+      "id": "oficinas",
+      "type": "external",
+      "label": "Oficinas receptoras",
+      "sublabel": "Planeamiento, Epidemiología…",
+      "pos": [40, 480],
+      "size": [210, 64]
+    },
+    {
+      "id": "web",
+      "type": "frontend",
+      "label": "Reporte Estadístico · Web",
+      "sublabel": "React 19 · Vite 8 · core-ui",
+      "pos": [400, 298],
+      "size": [220, 68],
+      "tag": "estadistica-web"
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "API",
+      "sublabel": "FastAPI · Python 3.13",
+      "pos": [700, 298],
+      "size": [200, 68],
+      "tag": "estadistica-api"
+    },
+    {
+      "id": "bot",
+      "type": "backend",
+      "label": "Bot validador",
+      "sublabel": "Node 22 · reglas por área",
+      "pos": [1010, 110],
+      "size": [210, 64],
+      "tag": "estadistica-bot-validador"
+    },
+    {
+      "id": "bd",
+      "type": "database",
+      "label": "PostgreSQL",
+      "sublabel": "base estadistica_hrl",
+      "pos": [1010, 300],
+      "size": [210, 64]
+    },
+    {
+      "id": "cargas",
+      "type": "database",
+      "label": "Volumen cargas",
+      "sublabel": "Excel originales",
+      "pos": [1010, 490],
+      "size": [210, 64]
+    },
+    {
+      "id": "diresa",
+      "type": "external",
+      "label": "DIRESA · GERESA Loreto",
+      "sublabel": "consolidado + 22 indicadores",
+      "pos": [580, 580],
+      "size": [220, 64]
+    },
+    {
+      "id": "boletin",
+      "type": "external",
+      "label": "Boletín estadístico",
+      "sublabel": "publicación mensual",
+      "pos": [830, 580],
+      "size": [150, 64]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Sistema de Reporte Estadístico",
+      "wraps": ["web", "api", "bot", "bd", "cargas"],
+      "pad": 22
+    }
+  ],
+  "connections": [
+    {
+      "from": "areas",
+      "to": "web",
+      "label": "sube y envía",
+      "variant": "emphasis"
+    },
+    {
+      "from": "estadistica",
+      "to": "web",
+      "label": "consolida",
+      "labelAt": [289, 318]
+    },
+    {
+      "from": "oficinas",
+      "to": "web",
+      "label": "consulta"
+    },
+    {
+      "from": "web",
+      "to": "api",
+      "label": "REST /api · JWT",
+      "variant": "emphasis"
+    },
+    {
+      "from": "api",
+      "to": "bot",
+      "label": "HTTP valida",
+      "variant": "emphasis"
+    },
+    {
+      "from": "api",
+      "to": "bd",
+      "label": "SQL",
+      "labelDy": 14
+    },
+    {
+      "from": "api",
+      "to": "cargas",
+      "label": "guarda"
+    },
+    {
+      "from": "api",
+      "to": "diresa",
+      "label": "exporta CSV",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "from": "api",
+      "to": "boletin",
+      "label": "genera",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Un solo envío",
+      "items": [
+        "El área envía una vez",
+        "Llega a Estadística y a las oficinas de la matriz",
+        "El bot valida antes de dejar enviar"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Fuente de verdad",
+      "items": [
+        "PostgreSQL guarda reportes, estados y constancias",
+        "El volumen cargas guarda cada Excel original",
+        "Los destinos los fija la matriz de áreas"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Salidas",
+      "items": [
+        "Consolidado de servicios intermedios a DIRESA",
+        "22 indicadores de gestión hospitalaria",
+        "Canal y plazo de remisión a DIRESA: pendiente"
+      ]
+    }
+  ]
+}

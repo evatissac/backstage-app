@@ -1,0 +1,177 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Ciclo mensual del reporte",
+    "quality_profile": "showcase",
+    "legend": {
+      "entries": {
+        "frontend": {
+          "label": "Acción del área"
+        },
+        "backend": {
+          "label": "Proceso del sistema"
+        },
+        "security": {
+          "label": "Control"
+        },
+        "external": {
+          "label": "Externo"
+        }
+      }
+    }
+  },
+  "lanes": [
+    {
+      "id": "area",
+      "label": "Área"
+    },
+    {
+      "id": "bot",
+      "label": "Bot validador"
+    },
+    {
+      "id": "entrega",
+      "label": "Estadística y oficinas"
+    }
+  ],
+  "phases": [
+    {
+      "id": "carga",
+      "label": "Carga y validación",
+      "fromCol": 0,
+      "toCol": 2
+    },
+    {
+      "id": "recepcion",
+      "label": "Entrega directa",
+      "fromCol": 3,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "consolidado",
+      "label": "Consolidado",
+      "fromCol": 4,
+      "toCol": 5,
+      "variant": "dashed"
+    }
+  ],
+  "mainPath": ["subir", "validar", "enviar", "recibir", "consolidar", "diresa"],
+  "nodes": [
+    {
+      "id": "subir",
+      "lane": "area",
+      "col": 0,
+      "type": "frontend",
+      "label": "Sube su Excel",
+      "sublabel": "mes cerrado · plazo día 10",
+      "width": 150
+    },
+    {
+      "id": "validar",
+      "lane": "bot",
+      "col": 1,
+      "type": "backend",
+      "label": "Valida",
+      "sublabel": "reglas por área",
+      "width": 140
+    },
+    {
+      "id": "corregir",
+      "lane": "bot",
+      "col": 0,
+      "type": "security",
+      "label": "Corrige o justifica",
+      "sublabel": "no deja enviar",
+      "width": 150
+    },
+    {
+      "id": "enviar",
+      "lane": "area",
+      "col": 2,
+      "type": "frontend",
+      "label": "Envía una vez",
+      "sublabel": "estado remitido",
+      "width": 140
+    },
+    {
+      "id": "recibir",
+      "lane": "entrega",
+      "col": 3,
+      "type": "backend",
+      "label": "Reciben",
+      "sublabel": "según la matriz · constancia",
+      "width": 160
+    },
+    {
+      "id": "consolidar",
+      "lane": "entrega",
+      "col": 4,
+      "type": "backend",
+      "label": "Consolida",
+      "sublabel": "Oficina de Estadística",
+      "width": 150
+    },
+    {
+      "id": "diresa",
+      "lane": "entrega",
+      "col": 5,
+      "type": "external",
+      "label": "Remite a DIRESA",
+      "sublabel": "canal y día: pendiente",
+      "width": 150
+    }
+  ],
+  "edges": [
+    {
+      "id": "subir-validar",
+      "from": "subir",
+      "to": "validar",
+      "label": "carga",
+      "variant": "emphasis"
+    },
+    {
+      "id": "validar-enviar",
+      "from": "validar",
+      "to": "enviar",
+      "label": "sin errores",
+      "variant": "emphasis"
+    },
+    {
+      "id": "validar-corregir",
+      "from": "validar",
+      "to": "corregir",
+      "label": "hallazgos",
+      "variant": "security",
+      "role": "error"
+    },
+    {
+      "id": "corregir-subir",
+      "from": "corregir",
+      "to": "subir",
+      "label": "vuelve a subir",
+      "variant": "dashed",
+      "role": "return"
+    },
+    {
+      "id": "enviar-recibir",
+      "from": "enviar",
+      "to": "recibir",
+      "variant": "emphasis"
+    },
+    {
+      "id": "recibir-consolidar",
+      "from": "recibir",
+      "to": "consolidar",
+      "variant": "default"
+    },
+    {
+      "id": "consolidar-diresa",
+      "from": "consolidar",
+      "to": "diresa",
+      "label": "formatos MINSA",
+      "variant": "emphasis"
+    }
+  ]
+}

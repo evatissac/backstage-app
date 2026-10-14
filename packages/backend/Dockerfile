@@ -76,6 +76,8 @@ COPY --from=build --chown=node:node /app/packages/backend/dist/bundle/ ./
 COPY --chown=node:node app-config.yaml app-config.production.yaml ./
 # Dominio, sistemas y equipos del hospital (catalog.locations en app-config.production.yaml).
 COPY --chown=node:node catalog ./catalog
+# Plantillas de los caminos dorados (página «Crear»).
+COPY --chown=node:node plantillas ./plantillas
 
 # Documentación compilada por TechDocs; en Coolify se monta un volumen aquí.
 RUN mkdir -p /app/techdocs

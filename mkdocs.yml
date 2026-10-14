@@ -3,6 +3,7 @@ site_description: Cómo se levanta, se configura y se amplía el portal.
 nav:
   - Inicio: index.md
   - Estado y pendientes: estado-y-pendientes.md
+  - Qué debe mostrar el portal: contenido-del-portal.md
   - Levantamiento local: levantamiento.md
   - Documentar un repo (TechDocs): techdocs.md
   - Idioma del portal: idioma.md

@@ -54,3 +54,6 @@ e2e-test-report/
 
 # Cache
 .cache/
+
+# Notas privadas (el repo oficial es público)
+*.privado.md

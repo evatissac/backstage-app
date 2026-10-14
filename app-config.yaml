@@ -6,17 +6,13 @@ app:
   packages: all
 
   extensions:
-    # Default landing page configuration.
-    # The catalog is mounted at /catalog by default but is overridden here to
-    # serve as the root page. To switch to the Home page, comment out the
-    # catalog path override and uncomment the home path override.
-    - page:catalog:
+    # La portada propia (modules/home) es la página de inicio.
+    - page:home:
         config:
           path: /
-          title: Catálogo
-    # - page:home:
-    #     config:
-    #       path: /
+          title: Inicio
+    - page:catalog:
+        config: { title: Catálogo }
 
     # Idioma: español por defecto, inglés como alternativa en Settings. Los
     # textos traducidos están en packages/app/translations (ver docs/idioma.md).
@@ -27,11 +23,21 @@ app:
 
     # Títulos de página (cabecera y migas de pan). Son texto fijo en la
     # configuración, así que se ven en español en ambos idiomas; en la barra
-    # lateral sí cambian con el idioma (modules/nav/Sidebar.tsx).
+    # lateral sí cambian con el idioma (modules/nav/BarraLateral.tsx).
     - page:scaffolder:
         config: { title: Crear }
     - page:api-docs:
         config: { title: APIs }
+    - sub-page:scaffolder/templates:
+        config: { title: Plantillas }
+    - sub-page:scaffolder/tasks:
+        config: { title: Tareas }
+    - sub-page:scaffolder/actions:
+        config: { title: Acciones }
+    - sub-page:scaffolder/editor:
+        config: { title: Editor de plantillas }
+    - sub-page:scaffolder/templating-extensions:
+        config: { title: Extensiones de plantillas }
     - page:catalog-graph:
         config: { title: Grafo del catálogo }
     - page:techdocs:
@@ -67,41 +73,19 @@ app:
     - api:home/visits: true
     - app-root-element:home/visit-listener: true
 
-    # Widgets de la plantilla que no aportan nada al hospital. La portada propia
-    # llega en la fase B de la personalización.
+    # La portada propia no usa los widgets del plugin home.
     - home-page-widget:home/toolkit: false
     - home-page-widget:home/world-clock: false
     - home-page-widget:home/random-joke: false
-    - page:home:
-        config:
-          title: Inicio
-          defaultConfig:
-            - component: HomePageSearchBar
-              column: 0
-              row: 0
-              width: 12
-              height: 2
-              deletable: false
-            - component: Bienvenida
-              column: 0
-              row: 2
-              width: 4
-              height: 8
-            - component: HomePageStarredEntities
-              column: 4
-              row: 2
-              width: 4
-              height: 4
-            - component: HomePageRecentlyVisited
-              column: 8
-              row: 2
-              width: 4
-              height: 4
-            - component: HomePageMostVisited
-              column: 4
-              row: 6
-              width: 8
-              height: 4
+    - home-page-widget:home/starred-entities: false
+    - home-page-widget:home/recently-visited: false
+    - home-page-widget:home/most-visited: false
+    - page:proyectos:
+        config: { title: Proyectos }
+    - page:calidad:
+        config: { title: Calidad }
+    - page:guia:
+        config: { title: Primeros pasos }
 
 organization:
   name: Hospital Regional de Loreto
@@ -242,6 +226,15 @@ catalog:
       target: ../../catalog/hrl.yaml
       rules:
         - allow: [Domain, System, Group, User]
+    # Caminos dorados: plantillas de la página «Crear» (plantillas/).
+    - type: file
+      target: ../../plantillas/nuevo-repositorio/template.yaml
+      rules:
+        - allow: [Template]
+    - type: file
+      target: ../../plantillas/documentar-repositorio/template.yaml
+      rules:
+        - allow: [Template]
     # El propio portal no se registra aquí: está en DevHRL y lo encuentra el
     # descubrimiento, como cualquier otro repo.
 

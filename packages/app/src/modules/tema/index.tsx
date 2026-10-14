@@ -11,87 +11,88 @@ import {
 } from '@backstage/theme';
 import LightIcon from '@material-ui/icons/WbSunnyOutlined';
 import DarkIcon from '@material-ui/icons/Brightness2Outlined';
+import { barra, diurno, estados, nocturno, verdeAgua } from './paleta';
 
-// Tema del portal con el aspecto de Backstage UI (https://ui.backstage.io):
-// gris neutro, un solo color de acento, cabeceras planas y la fuente del
-// sistema. Los colores son los tokens --bui-* de @backstage/ui/css/styles.css
-// (versión 0.18); así las páginas hechas con MUI (catálogo, TechDocs, ajustes)
-// se ven igual que los componentes de BUI. Si se actualiza @backstage/ui,
-// revisar que los valores sigan coincidiendo.
+// Tema de las páginas que Backstage aún dibuja con Material UI (catálogo,
+// TechDocs, ajustes). Las páginas propias del portal usan Backstage UI y toman
+// sus colores de tokens.css; este tema existe para que ambas se vean como una
+// sola aplicación. Los valores salen de paleta.ts.
 
+// Igual que --bui-font-regular en tokens.css (Poppins, cargada en index.html).
 const fuente =
-  'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+  'Poppins, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif';
 
-// Barra lateral oscura en ambos modos: el logo es blanco.
+// La barra lateral es propia (modules/nav), pero algunos componentes de
+// Backstage siguen leyendo estos valores.
 const navegacion = {
-  background: '#171717', // --bui-gray-10
-  indicator: '#9cc9ff', // --bui-bg-solid (oscuro)
-  color: '#a1a1a1', // --bui-gray-5
-  selectedColor: '#ffffff',
-  navItem: { hoverBackground: '#262626' }, // --bui-gray-9
-  submenu: { background: '#262626' },
+  background: barra.fondo,
+  indicator: verdeAgua[300],
+  color: barra.texto,
+  selectedColor: barra.activo,
+  navItem: { hoverBackground: barra.hover },
+  submenu: { background: barra.hover },
 };
 
 const claro = {
   ...palettes.light,
-  primary: { main: '#1f5493' }, // --bui-bg-solid
-  secondary: { main: '#1f5493' },
-  background: { default: '#f5f5f5', paper: '#ffffff' }, // --bui-bg-app / neutral-1
+  primary: { main: verdeAgua[700] },
+  secondary: { main: verdeAgua[600] },
+  background: { default: diurno.app, paper: diurno.superficie1 },
   status: {
-    ok: '#1aaf4f',
-    warning: '#f18900',
-    error: '#ec3b18',
-    running: '#0d74ce',
-    pending: '#f18900',
-    aborted: '#737373',
+    ok: estados.ok,
+    warning: estados.aviso,
+    error: estados.error,
+    running: estados.info,
+    pending: estados.aviso,
+    aborted: diurno.textoTenue,
   },
-  border: '#e5e5e5', // --bui-border-1
-  textSubtle: '#696969', // --bui-fg-secondary
-  textVerySubtle: '#a1a1a1',
-  link: '#1f5493',
-  linkHover: '#163a66', // --bui-bg-solid-hover
-  errorBackground: '#ffe2e2',
-  warningBackground: '#ffedd5',
-  infoBackground: '#dbeafe',
-  errorText: '#ec3b18',
-  warningText: '#f18900',
-  infoText: '#0d74ce',
+  border: diurno.borde,
+  textSubtle: diurno.textoSecundario,
+  textVerySubtle: diurno.textoTenue,
+  link: verdeAgua[700],
+  linkHover: verdeAgua[800],
+  errorBackground: estados.errorFondo,
+  warningBackground: estados.avisoFondo,
+  infoBackground: verdeAgua[50],
+  errorText: estados.error,
+  warningText: estados.aviso,
+  infoText: verdeAgua[700],
   navigation: navegacion,
-  pinSidebarButton: { icon: '#171717', background: '#d4d4d4' },
-  tabbar: { indicator: '#1f5493' },
+  pinSidebarButton: { icon: barra.fondo, background: verdeAgua[100] },
+  tabbar: { indicator: verdeAgua[600] },
 };
 
 const oscuro = {
   ...palettes.dark,
-  primary: { main: '#9cc9ff' },
-  secondary: { main: '#9cc9ff' },
-  background: { default: '#333333', paper: '#424141' },
+  primary: { main: verdeAgua[300] },
+  secondary: { main: verdeAgua[200] },
+  background: { default: nocturno.app, paper: nocturno.superficie1 },
   status: {
-    ok: '#1ed760',
-    warning: '#f18900',
-    error: '#ff5a30',
-    running: '#70b8ff',
-    pending: '#f18900',
-    aborted: '#a1a1a1',
+    ok: estados.okOscuro,
+    warning: estados.avisoOscuro,
+    error: estados.errorOscuro,
+    running: estados.infoOscuro,
+    pending: estados.avisoOscuro,
+    aborted: nocturno.textoTenue,
   },
-  border: '#737373',
-  textSubtle: '#a3a3a3',
-  textVerySubtle: '#737373',
-  link: '#9cc9ff',
-  linkHover: '#83b9fd',
-  errorBackground: '#300c0c',
-  warningBackground: '#302008',
-  infoBackground: '#132049',
-  errorText: '#ff5a30',
-  warningText: '#f18900',
-  infoText: '#70b8ff',
+  border: nocturno.borde,
+  textSubtle: nocturno.textoSecundario,
+  textVerySubtle: nocturno.textoTenue,
+  link: verdeAgua[300],
+  linkHover: verdeAgua[200],
+  errorBackground: estados.errorFondoOscuro,
+  warningBackground: estados.avisoFondoOscuro,
+  infoBackground: verdeAgua[950],
+  errorText: estados.errorOscuro,
+  warningText: estados.avisoOscuro,
+  infoText: verdeAgua[200],
   navigation: navegacion,
-  pinSidebarButton: { icon: '#171717', background: '#a1a1a1' },
-  tabbar: { indicator: '#9cc9ff' },
+  pinSidebarButton: { icon: barra.fondo, background: verdeAgua[300] },
+  tabbar: { indicator: verdeAgua[300] },
 };
 
-// Cabecera plana, sin las ondas de colores de Backstage, igual para todas las
-// páginas. Los subportales por proyecto (fase B) podrán darle su propio color.
+// Cabecera plana, sin las ondas de colores de Backstage. Las páginas propias
+// tienen su propia cabecera; esta queda para las de Material UI.
 const cabecera = (fondo: string, texto: string): Record<string, PageTheme> => {
   const plana = genPageTheme({
     colors: [fondo, fondo],
@@ -106,6 +107,7 @@ const crearTema = (
   fondoCabecera: string,
   textoCabecera: string,
   borde: string,
+  panelFiltros: string,
 ): UnifiedTheme =>
   createUnifiedTheme({
     ...createBaseThemeOptions({
@@ -124,23 +126,69 @@ const crearTema = (
       MuiPaper: {
         defaultProps: { elevation: 0 },
         styleOverrides: {
-          rounded: { borderRadius: 8 }, // --bui-radius-3
+          rounded: { borderRadius: 12 }, // --bui-radius-4
           outlined: { borderColor: borde },
           elevation1: { border: `1px solid ${borde}` },
+          elevation2: { border: `1px solid ${borde}` },
         },
+      },
+      MuiCard: {
+        styleOverrides: { root: { border: `1px solid ${borde}` } },
       },
       MuiButton: {
         styleOverrides: {
-          root: { textTransform: 'none', borderRadius: 6, fontWeight: 600 },
+          root: { textTransform: 'none', borderRadius: 8, fontWeight: 600 },
         },
       },
       MuiTab: { styleOverrides: { root: { textTransform: 'none' } } },
+      // Algunas etiquetas usan la tipografía «button» («CATEGORÍAS» en Crear).
+      MuiTypography: {
+        styleOverrides: { button: { textTransform: 'none' } },
+      },
       MuiChip: { styleOverrides: { root: { borderRadius: 6 } } },
-    },
+      // Las tablas de Backstage ponen las cabeceras en mayúsculas.
+      BackstageTableHeader: {
+        styleOverrides: {
+          header: {
+            textTransform: 'none',
+            borderTopColor: borde,
+            borderBottomColor: borde,
+          },
+        },
+      },
+      // «VER EL CÓDIGO», «VER DOCUMENTACIÓN» en la tarjeta «Acerca de».
+      BackstageIconLinkVertical: {
+        styleOverrides: {
+          label: { textTransform: 'none', letterSpacing: 0 },
+        },
+      },
+      // El panel «Propios / Favoritos / Todos» del catálogo trae un gris fijo.
+      CatalogReactUserListPicker: {
+        styleOverrides: {
+          root: {
+            backgroundColor: panelFiltros,
+            border: `1px solid ${borde}`,
+          },
+          title: { textTransform: 'none', fontSize: 13 },
+        },
+      },
+    } as Record<string, unknown>,
   });
 
-const temaClaro = crearTema(claro, '#ffffff', '#000000', '#e5e5e5');
-const temaOscuro = crearTema(oscuro, '#424141', '#ffffff', '#737373');
+const temaClaro = crearTema(
+  claro,
+  diurno.superficie1,
+  barra.fondo,
+  diurno.borde,
+  diurno.superficie1,
+);
+const temaOscuro = crearTema(
+  oscuro,
+  nocturno.superficie1,
+  barra.activo,
+  nocturno.borde,
+  nocturno.superficie1,
+);
 
 // Mismos nombres e ids que los temas por defecto (theme:app/light y
 // theme:app/dark): los reemplazan y se conserva la preferencia guardada.

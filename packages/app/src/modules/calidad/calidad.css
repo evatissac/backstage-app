@@ -1,0 +1,202 @@
+/* Calidad: insignias de nivel, comprobaciones y progreso. */
+
+.hrl-insignia {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px 2px 6px;
+  border-radius: var(--bui-radius-full);
+  background: var(--bui-bg-neutral-2);
+  color: var(--bui-fg-secondary);
+  font-size: var(--bui-font-size-2);
+  font-weight: var(--bui-font-weight-bold);
+  white-space: nowrap;
+}
+
+.hrl-insignia svg {
+  font-size: 16px;
+}
+
+.hrl-insignia--grande {
+  padding: 6px 14px 6px 10px;
+  font-size: var(--bui-font-size-3);
+}
+
+.hrl-insignia--grande svg {
+  font-size: 20px;
+}
+
+.hrl-insignia[data-nivel='bronce'] {
+  background: var(--hrl-bronce-fondo);
+  color: var(--hrl-bronce-texto);
+}
+
+.hrl-insignia[data-nivel='plata'] {
+  background: var(--hrl-plata-fondo);
+  color: var(--hrl-plata-texto);
+}
+
+.hrl-insignia[data-nivel='oro'] {
+  background: var(--hrl-oro-fondo);
+  color: var(--hrl-oro-texto);
+}
+
+.hrl-enlace-nivel {
+  text-decoration: none;
+}
+
+.hrl-enlace-nivel:focus-visible {
+  border-radius: var(--bui-radius-full);
+  outline: 2px solid var(--bui-ring);
+  outline-offset: 2px;
+}
+
+/* Progreso «6 de 9». */
+.hrl-progreso {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--bui-space-2);
+  min-width: 150px;
+}
+
+.hrl-progreso__barra {
+  flex: 0 0 64px;
+  height: 6px;
+  overflow: hidden;
+  border-radius: var(--bui-radius-full);
+  background: var(--bui-bg-neutral-2);
+}
+
+.hrl-progreso__barra span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--hrl-acento);
+}
+
+.hrl-progreso__texto {
+  color: var(--bui-fg-secondary);
+  font-size: var(--bui-font-size-2);
+  white-space: nowrap;
+}
+
+/* Niveles con sus comprobaciones. */
+.hrl-niveles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--bui-space-5);
+  align-items: start;
+}
+
+.hrl-nivel__cabecera {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--bui-space-2);
+  padding-bottom: var(--bui-space-3);
+  border-bottom: 1px solid var(--bui-border-1);
+}
+
+.hrl-reglas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bui-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hrl-regla {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: var(--bui-space-3);
+}
+
+.hrl-regla p {
+  margin: 0;
+}
+
+.hrl-regla__icono {
+  margin-top: 1px;
+  color: var(--bui-fg-disabled);
+  font-size: 20px !important;
+}
+
+.hrl-regla[data-ok='true'] .hrl-regla__icono {
+  color: var(--hrl-ok);
+}
+
+.hrl-regla__arreglo {
+  margin-top: var(--bui-space-2) !important;
+  padding: var(--bui-space-2) var(--bui-space-3);
+  border-radius: var(--bui-radius-3);
+  background: var(--hrl-acento-suave);
+  font-size: var(--bui-font-size-2);
+  line-height: 1.5;
+}
+
+.hrl-regla__arreglo code,
+.hrl-guia code {
+  padding: 1px 4px;
+  border-radius: var(--bui-radius-1);
+  background: var(--bui-bg-neutral-2);
+  font-family: var(--bui-font-monospace);
+  font-size: 0.95em;
+}
+
+/* Filtro por proyecto. */
+.hrl-filtro {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--bui-space-2);
+}
+
+.hrl-filtro a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 var(--bui-space-4);
+  border: 1px solid var(--bui-border-1);
+  border-radius: var(--bui-radius-full);
+  background: var(--hrl-superficie);
+  color: var(--bui-fg-secondary);
+  font-size: var(--bui-font-size-3);
+  text-decoration: none;
+}
+
+.hrl-filtro a:hover {
+  border-color: var(--hrl-acento-borde);
+  color: var(--bui-fg-primary);
+}
+
+.hrl-filtro a[aria-current='true'] {
+  border-color: var(--hrl-acento);
+  background: var(--hrl-acento-suave);
+  color: var(--hrl-acento-texto);
+  font-weight: var(--bui-font-weight-bold);
+}
+
+.hrl-filtro a:focus-visible {
+  outline: 2px solid var(--bui-ring);
+  outline-offset: 2px;
+}
+
+/* Cabecera de la pestaña de calidad en la ficha de una entidad. */
+.hrl-calidad-entidad {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bui-space-5);
+  padding: var(--bui-space-4) 0 var(--bui-space-8);
+}
+
+.hrl-calidad-entidad__cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bui-space-4);
+}
+
+.hrl-calidad-entidad__cabecera p {
+  margin: 0;
+}
