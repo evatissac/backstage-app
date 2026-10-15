@@ -24,6 +24,7 @@ import { ResumenAvance } from './Avance';
 import { Documentacion, TablaPiezas } from './Piezas';
 import { PestanaCalidadPruebas } from './Pruebas';
 import { PestanaMiembros } from './Miembros';
+import { PestanaCatalogoVisual } from './CatalogoVisual';
 import './proyectos.css';
 
 const SECCIONES_FICHA = [
@@ -100,6 +101,15 @@ const Pestanas = (props: { base: string; d: DetalleProyecto }) => {
       texto: t('proyecto.pestanaDocumentacion'),
       cuenta: documentos.length,
     },
+    // Solo en proyectos que publican un catálogo visual (el kit de UI).
+    ...(d.sistema.metadata.annotations?.['hrl/ladle']
+      ? [
+          {
+            ruta: 'catalogo-visual',
+            texto: t('proyecto.pestanaCatalogoVisual'),
+          },
+        ]
+      : []),
     { ruta: 'calidad', texto: t('proyecto.pestanaCalidadPruebas') },
     { ruta: 'miembros', texto: t('proyecto.pestanaMiembros') },
   ];
@@ -110,7 +120,7 @@ const Pestanas = (props: { base: string; d: DetalleProyecto }) => {
           key={p.ruta}
           to={p.ruta ? `${props.base}/${p.ruta}` : props.base}
           // La ficha técnica tiene subrutas: su pestaña sigue activa en ellas.
-          end={p.ruta !== 'ficha'}
+          end={p.ruta !== 'ficha' && p.ruta !== 'catalogo-visual'}
         >
           {p.texto}
           {p.cuenta !== undefined && (
@@ -258,6 +268,20 @@ export const Detalle = () => {
           <Route
             path="miembros"
             element={<PestanaMiembros sistema={sistema} />}
+          />
+          <Route
+            path="catalogo-visual/*"
+            element={
+              <PestanaCatalogoVisual
+                sistema={sistema}
+                base={base}
+                repositorio={
+                  d.sistema.metadata.links?.find(l =>
+                    l.url.includes('github.com'),
+                  )?.url
+                }
+              />
+            }
           />
         </Routes>
       </div>

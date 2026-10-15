@@ -16,9 +16,6 @@ export const textosHrl = createTranslationRef({
   messages: {
     portal: {
       title: 'HRL Developer Portal',
-      // El nombre en dos líneas, junto al sello de la barra lateral.
-      titleLine1: 'Developer Portal',
-      titleLine2: 'HRL',
     },
     ingreso: {
       github:
@@ -165,6 +162,7 @@ export const textosHrl = createTranslationRef({
       verTecnologias: 'Versions and purpose of each technology',
       pestanaCalidadPruebas: 'Quality and tests',
       pestanaMiembros: 'Members',
+      pestanaCatalogoVisual: 'Visual catalog',
       repositorios: 'Repositories',
       repositoriosAyuda:
         'The project code. Its README is the first read: what it is, how to run it and who to ask.',
@@ -648,13 +646,25 @@ export const textosHrl = createTranslationRef({
         otro: 'No result',
       },
     },
+    catalogoVisual: {
+      navegacion: 'Components of the visual catalog',
+      buscar: 'Search components',
+      sinResultados: 'No component matches',
+      sinResultadosAyuda:
+        'Search by group (Primitives, Layout…) or by component name.',
+      vacioTitulo: 'The catalog has no stories',
+      vacioDescripcion:
+        'The published Ladle site does not list any story in its meta.json.',
+      errorCarga: 'Could not load the visual catalog',
+      verCodigo: 'Story code',
+      pantallaCompleta: 'Open in Ladle',
+      marco: 'Live preview: {{historia}}',
+    },
   },
 });
 
 const es = {
   'portal.title': 'Portal de Desarrollo HRL',
-  'portal.titleLine1': 'Portal de Desarrollo',
-  'portal.titleLine2': 'HRL',
   'ingreso.github':
     'Ingresa con tu cuenta de GitHub, como miembro de la organización DevHRL.',
   'ingreso.hospital': 'Hospital Regional de Loreto',
@@ -1199,6 +1209,19 @@ const es = {
   'portada.tramo.ayer': 'Ayer',
   'portada.tramo.semana': 'Esta semana',
   'portada.tramo.antes': 'Antes',
+  'catalogoVisual.navegacion': 'Componentes del catálogo visual',
+  'catalogoVisual.buscar': 'Buscar componentes',
+  'catalogoVisual.sinResultados': 'Ningún componente coincide',
+  'catalogoVisual.sinResultadosAyuda':
+    'Busca por grupo (Primitivos, Layout…) o por el nombre del componente.',
+  'catalogoVisual.vacioTitulo': 'El catálogo no tiene historias',
+  'catalogoVisual.vacioDescripcion':
+    'El sitio de Ladle publicado no lista ninguna historia en su meta.json.',
+  'catalogoVisual.errorCarga': 'No se pudo cargar el catálogo visual',
+  'catalogoVisual.verCodigo': 'Código de la historia',
+  'catalogoVisual.pantallaCompleta': 'Abrir en Ladle',
+  'catalogoVisual.marco': 'Vista en vivo: {{historia}}',
+  'proyecto.pestanaCatalogoVisual': 'Catálogo visual',
 } as const;
 
 export const textosHrlEs = createTranslationResource({

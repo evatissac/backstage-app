@@ -37,7 +37,7 @@ const contarAvance = (avance: Avance) => {
   };
 };
 
-/** Barra «25 de 35 funciones completadas». */
+/** Cifra «71 % · 25 de 35 funciones completadas». */
 const BarraAvance = ({ avance }: { avance: Avance }) => {
   const { t } = useTranslationRef(textosHrl);
   const c = contarAvance(avance);
@@ -57,9 +57,6 @@ const BarraAvance = ({ avance }: { avance: Avance }) => {
           })}
         </span>
       </div>
-      <span className="hrl-avance-barra__pista" aria-hidden>
-        <span style={{ width: `${proporcion * 100}%` }} />
-      </span>
     </div>
   );
 };
@@ -79,7 +76,6 @@ const Cuadro = (props: {
   return (
     <section
       className="hrl-tarjeta hrl-cuadro-avance"
-      data-completadas={props.completadas}
       aria-labelledby={props.id}
     >
       <h2 id={props.id} className="hrl-avance-titulo">

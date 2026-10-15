@@ -150,3 +150,57 @@ export const useGuardarGrupos = () => {
     }
   };
 };
+
+/** Una historia del catálogo visual, tal como la lista el meta.json de Ladle. */
+export type Historia = {
+  id: string;
+  nombre: string;
+  /** Grupo y componente: ['Primitivos', 'Alert']. */
+  niveles: string[];
+  archivo: string;
+  lineaInicio: number;
+  lineaFin: number;
+};
+
+/**
+ * Catálogo visual del proyecto: la base del sitio de Ladle que sirve el
+ * backend y la lista de historias de su meta.json.
+ */
+export const useCatalogoVisual = (sistema: string) => {
+  const discovery = useApi(discoveryApiRef);
+  const fetchApi = useApi(fetchApiRef);
+  return useCarga(async () => {
+    const base = `${await discovery.getBaseUrl(
+      'proyectos',
+    )}/ladle/${encodeURIComponent(sistema)}/`;
+    const respuesta = await fetchApi.fetch(`${base}meta.json`);
+    if (!respuesta.ok) {
+      throw new Error(
+        `El catálogo visual respondió ${respuesta.status} ${respuesta.statusText}`,
+      );
+    }
+    const meta = (await respuesta.json()) as {
+      stories: Record<
+        string,
+        {
+          name: string;
+          levels: string[];
+          filePath: string;
+          locStart: number;
+          locEnd: number;
+        }
+      >;
+    };
+    const historias: Historia[] = Object.entries(meta.stories).map(
+      ([id, h]) => ({
+        id,
+        nombre: h.name,
+        niveles: h.levels,
+        archivo: h.filePath,
+        lineaInicio: h.locStart,
+        lineaFin: h.locEnd,
+      }),
+    );
+    return { base, historias };
+  }, [discovery, fetchApi, sistema]);
+};

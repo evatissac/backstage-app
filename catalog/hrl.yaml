@@ -1,5 +1,5 @@
 # Estructura del Hospital Regional de Loreto en el catálogo.
-# Por ahora solo hay un proyecto publicado: el Sistema de Reporte Estadístico.
+# Proyectos publicados: el Sistema de Reporte Estadístico y el Kit de UI.
 # Los demás (Oncología, Plataforma) se agregan cuando estén listos para mostrarse.
 # Aquí solo va lo que no pertenece a un repo concreto: el dominio, los sistemas,
 # sus recursos y los equipos. Cada repo declara sus componentes en su propio
@@ -56,6 +56,52 @@ spec:
   type: database
   owner: equipo-estadistica
   system: reporte-estadistico
+---
+# Kit de UI del hospital. Sus componentes no se pueden pintar dentro del
+# portal (el kit usa React 19 y Backstage React 18): la pestaña «Catálogo
+# visual» muestra su Ladle compilado, que el kit publica en la rama `catalogo`
+# (`ladle build --base ./`) y que el portal sirve él mismo.
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: hrl-core-ui
+  title: Kit de UI HRL
+  annotations:
+    hrl/color: '#4d7c0f'
+    hrl/ladle: https://github.com/DevHRL/hrl-core-ui/tree/catalogo
+  description: >-
+    Sistema de diseño del Hospital Regional de Loreto: componentes React y
+    tokens CSS que comparten todos los sistemas del hospital, con su catálogo
+    visual.
+  links:
+    - url: https://github.com/DevHRL/hrl-core-ui
+      title: Repositorio
+spec:
+  owner: equipo-plataforma
+  domain: salud-hrl
+---
+# El componente del kit se declara aquí y no en su repositorio porque aún no
+# se documentan los repos (docs/estado-y-pendientes.md, sección 4). Cuando el
+# kit tenga su catalog-info.yaml, este bloque se quita.
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: hrl-core-ui
+  title: '@hrl/core-ui'
+  description: >-
+    Paquete npm con los componentes React, los tokens CSS y la CLI de
+    actualización del kit. Se instala fijado a un tag de versión.
+  annotations:
+    github.com/project-slug: DevHRL/hrl-core-ui
+    backstage.io/source-location: url:https://github.com/DevHRL/hrl-core-ui/tree/main/
+  tags:
+    - react
+    - css
+spec:
+  type: library
+  lifecycle: production
+  owner: equipo-plataforma
+  system: hrl-core-ui
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Group

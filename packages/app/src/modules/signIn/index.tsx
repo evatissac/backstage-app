@@ -17,6 +17,7 @@ import CatalogIcon from '@material-ui/icons/AppsOutlined';
 import DocIcon from '@material-ui/icons/MenuBookOutlined';
 import ShieldIcon from '@material-ui/icons/VerifiedUserOutlined';
 import { textosHrl } from '../idioma';
+import { LogoHrl } from '../nav/Marca';
 import './ingreso.css';
 
 // Clave donde la página de ingreso de Backstage recuerda el proveedor elegido.
@@ -76,7 +77,7 @@ const IngresoGithub = (props: SignInPageProps & { onInvitado: () => void }) => {
     <div className="hrl-ingreso">
       <section className="hrl-ingreso__marca">
         <div className="hrl-ingreso__sello" aria-hidden>
-          HRL
+          <LogoHrl className="hrl-ingreso__logo" />
         </div>
         <div className="hrl-ingreso__presentacion">
           <p className="hrl-ingreso__antetitulo">{t('ingreso.hospital')}</p>

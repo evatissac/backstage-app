@@ -273,7 +273,7 @@ niveles y otra tipografía.
       10 min.
 - [x] **Avance** desde el plan del repositorio: anotación `hrl/avance` del
       System (hoy `docs/PLAN.md` de Estadistica_hrl). Fases `## Nombre ·
-  **[estado]**` y filas `| n | entrega | [hecho] |`. Solo «[hecho]» o
+**[estado]**` y filas `| n | entrega | [hecho] |`. Solo «[hecho]» o
       «[hecho, fecha]» cuenta como completada; lo parcial, en curso o
       bloqueado es pendiente; lo retirado no se cuenta. Prueba:
       `proyectos.test.ts`. Resultado real: 25 de 35.
@@ -314,6 +314,34 @@ niveles y otra tipografía.
 - [ ] El componente del portal (`catalog-info.yaml` de este repo) apunta al
       sistema `plataforma-hrl`, que no existe: sale «No pertenece a ningún
       proyecto».
+
+### B5. Kit de UI como proyecto y logo (2026-10-15, sin subir)
+
+- [x] **Logo oficial del HRL** en la barra lateral (con «Portal de Desarrollo
+      HRL» al lado), en la página de ingreso y como icono de la pestaña
+      (`modules/nav/logo-hrl.png`, `public/logo-hrl.png`).
+- [x] **Resumen:** sin barra de progreso ni bordes de color en los cuadros.
+- [x] **Kit de UI HRL como proyecto** (`catalog/hrl.yaml`: System y Component
+      `hrl-core-ui`, porque aún no se documentan los repos) con la pestaña
+      **Catálogo visual**: navegación del portal (en español, con búsqueda)
+      y cada historia de Ladle en un iframe, en modo vista previa y con el
+      tema del portal. El kit usa React 19 y el portal React 18: sus
+      componentes no se pueden pintar dentro de Backstage, y el iframe además
+      aísla sus estilos globales.
+- [x] **El portal sirve el Ladle del kit** (`packages/backend/src/plugins/ladle.ts`,
+      ruta pública `/api/proyectos/ladle/<sistema>/`): lo descarga de la URL
+      de la anotación `hrl/ladle` (rama `catalogo` del kit) y lo guarda en
+      memoria 10 min. Solo sirve archivos del sitio y fija sus propias
+      cabeceras (CSP, `frame-ancestors` solo el portal). En desarrollo,
+      `proyectos.ladleLocal.<sistema>` en `app-config.local.yaml` apunta a un
+      build local (hoy `.ladle-local/hrl-core-ui`, ignorado por git).
+- [ ] **Falta publicar el cambio del kit** (rama local `catalogo-rutas-relativas`
+      de hrl-core-ui, commit `50d5fc3`): `ladle build --base ./` y
+      `concurrency` en `catalogo.yml`. Mientras la rama `catalogo` tenga rutas
+      absolutas, el catálogo visual solo funciona con el build local. Al
+      publicarlo: correr «Catálogo» en Actions y quitar `ladleLocal`.
+- [ ] El kit no tiene `PLAN.md` ni TechDocs: su Resumen dice que no declara
+      plan y Documentación sale en 0.
 
 ### C. Catálogo (cuando el usuario lo autorice)
 

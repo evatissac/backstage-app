@@ -7,6 +7,12 @@ import { NotAllowedError, NotFoundError } from '@backstage/errors';
 import express from 'express';
 import Router from 'express-promise-router';
 import {
+  ANOTACION_LADLE,
+  cabecerasLadle,
+  crearAlmacenLadle,
+  tipoDe,
+} from './ladle';
+import {
   guardarGrupos,
   leerGrupos,
   prepararTabla,
@@ -462,6 +468,68 @@ export default createBackendPlugin({
             res.json({ avance: null, error: (e as Error).message, fuente });
           }
         });
+
+        /**
+         * Catálogo visual (Ladle) de un proyecto, para el iframe de la pestaña
+         * «Catálogo visual». Es contenido público del kit (su repositorio y su
+         * sitio en Netlify ya lo son) y un iframe no puede mandar el token
+         * del usuario: por eso esta ruta no exige sesión.
+         */
+        httpRouter.addAuthPolicy({ path: '/ladle', allow: 'unauthenticated' });
+        const leerSitio = crearAlmacenLadle(urlReader);
+        const origenApp = new URL(config.getString('app.baseUrl')).origin;
+
+        const sitioDe = async (nombre: string) => {
+          const { token: t } = await auth.getPluginRequestToken({
+            onBehalfOf: await auth.getOwnServiceCredentials(),
+            targetPluginId: 'catalog',
+          });
+          const sistema = await catalogo.getEntityByRef(
+            { kind: 'system', namespace: 'default', name: nombre },
+            { token: t },
+          );
+          const url = sistema?.metadata.annotations?.[ANOTACION_LADLE];
+          if (!sistema || !url) {
+            throw new NotFoundError(`${nombre} no tiene catálogo visual`);
+          }
+          return leerSitio(sistema.metadata.name, {
+            url,
+            // Solo en desarrollo: un Ladle compilado en local, para probar
+            // antes de publicarlo (app-config.local.yaml, ignorado por git).
+            carpetaLocal: config.getOptionalString(
+              `proyectos.ladleLocal.${sistema.metadata.name}`,
+            ),
+          });
+        };
+
+        // Sin la barra final, las rutas relativas del sitio se resolverían
+        // contra la carpeta de arriba.
+        // Express no distingue la barra final: se mira en la URL original.
+        router.get(
+          ['/ladle/:sistema', '/ladle/:sistema/*'],
+          async (req, res) => {
+            const camino = req.originalUrl.split('?')[0];
+            const resto = (req.params as Record<string, string>)[0];
+            if (resto === undefined && !camino.endsWith('/')) {
+              res.redirect(301, `${camino}/`);
+              return;
+            }
+            const sitio = await sitioDe(req.params.sistema);
+            const ruta = resto || 'index.html';
+            // Solo se sirven archivos que están en el sitio: nada de rutas
+            // construidas a partir de la petición.
+            const archivo = sitio?.archivos.get(ruta);
+            if (!archivo) throw new NotFoundError(`No existe ${ruta}`);
+            res.removeHeader('X-Frame-Options');
+            res.set(cabecerasLadle(origenApp));
+            res.set('Content-Type', tipoDe(ruta));
+            res.set(
+              'Cache-Control',
+              ruta.startsWith('assets/') ? 'public, max-age=3600' : 'no-cache',
+            );
+            res.send(archivo);
+          },
+        );
 
         /** Organizaciones de GitHub dueñas de los repositorios del proyecto. */
         const organizaciones = (slugs: string[]) => [

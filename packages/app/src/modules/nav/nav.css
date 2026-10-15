@@ -219,36 +219,18 @@
   text-decoration: none;
 }
 
-.hrl-marca__sello {
-  display: grid;
+.hrl-marca__logo {
   flex-shrink: 0;
-  place-items: center;
   width: 40px;
   height: 40px;
-  border-radius: var(--bui-radius-4);
-  background: var(--hrl-heroe);
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 14%);
-  color: var(--hrl-heroe-texto);
-  font-size: var(--bui-font-size-2);
-  font-weight: var(--bui-font-weight-bold);
-  letter-spacing: 0.04em;
+  object-fit: contain;
 }
 
 .hrl-marca__nombre {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-
-.hrl-marca__linea1 {
-  color: var(--hrl-barra-texto);
-  font-size: var(--bui-font-size-2);
-}
-
-.hrl-marca__linea2 {
-  font-size: var(--bui-font-size-4);
+  max-width: 17ch;
+  font-size: var(--bui-font-size-3);
   font-weight: var(--bui-font-weight-bold);
+  line-height: 1.2;
 }
 
 /* ---------- Barra plegada (solo escritorio) ---------- */
@@ -378,12 +360,10 @@
   }
 
   .hrl-movil .hrl-marca__nombre {
-    flex-direction: row;
-    gap: 6px;
-    align-items: baseline;
+    max-width: none;
   }
 
-  .hrl-movil .hrl-marca__sello {
+  .hrl-movil .hrl-marca__logo {
     width: 32px;
     height: 32px;
   }

@@ -235,7 +235,7 @@ catalog:
     - type: file
       target: ../../catalog/hrl.yaml
       rules:
-        - allow: [Domain, System, Resource, Group, User]
+        - allow: [Domain, System, Component, Resource, Group, User]
     # Caminos dorados: plantillas de la página «Crear» (plantillas/).
     - type: file
       target: ../../plantillas/nuevo-repositorio/template.yaml
