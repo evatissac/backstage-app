@@ -62,6 +62,8 @@ app:
     # Pestañas de la ficha de una entidad.
     - entity-content:catalog/overview:
         config: { title: Resumen }
+    # Sin filtro de responsable en el catálogo: el portal no muestra equipos.
+    - catalog-filter:catalog/mode: false
     # «Contexto» (modules/entidad/Tarjetas.tsx) reemplaza a «Acerca de».
     - entity-card:catalog/about: false
     # El portal no muestra equipos: el grafo de relaciones de cada ficha solo

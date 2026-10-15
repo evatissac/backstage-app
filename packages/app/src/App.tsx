@@ -9,6 +9,7 @@ import { calidadPlugin } from './modules/calidad';
 import { guiaPlugin } from './modules/guia';
 import { autoservicioPlugin } from './modules/autoservicio';
 import { mapaPlugin } from './modules/mapa';
+import { documentacionModule } from './modules/documentacion';
 import { entidadModule } from './modules/entidad';
 import { catalogoModule } from './modules/catalogo';
 // Zoom con rueda y arrastre sobre las imágenes de TechDocs, incluidos los .drawio.svg.
@@ -24,6 +25,7 @@ export default createApp({
     mapaPlugin,
     entidadModule,
     catalogoModule,
+    documentacionModule,
     navModule,
     homeModule,
     signInModule,

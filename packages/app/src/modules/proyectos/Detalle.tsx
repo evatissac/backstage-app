@@ -20,8 +20,7 @@ import {
   PestanaProcesos,
   PestanaTecnologias,
 } from './PestanasFicha';
-import { Recorrido } from './Recorrido';
-import { PestanaAvance } from './Avance';
+import { ResumenAvance } from './Avance';
 import { Documentacion, TablaPiezas } from './Piezas';
 import { PestanaCalidadPruebas } from './Pruebas';
 import { PestanaMiembros } from './Miembros';
@@ -90,7 +89,6 @@ const Pestanas = (props: { base: string; d: DetalleProyecto }) => {
   const documentos = [d.sistema, ...d.componentes, ...d.apis].filter(tieneDocs);
   const pestanas = [
     { ruta: '', texto: t('proyecto.pestanaResumen') },
-    { ruta: 'avance', texto: t('proyecto.pestanaAvance') },
     { ruta: 'ficha', texto: t('proyecto.pestanaFicha') },
     {
       ruta: 'componentes',
@@ -211,8 +209,8 @@ export const Detalle = () => {
 
       <div className="hrl-pagina">
         <Routes>
-          <Route path="" element={<Recorrido d={d} base={base} />} />
-          <Route path="avance" element={<PestanaAvance sistema={sistema} />} />
+          <Route path="" element={<ResumenAvance sistema={sistema} />} />
+          <Route path="avance" element={<Navigate to={base} replace />} />
           <Route
             path="ficha/*"
             element={<FichaTecnica base={base} sistema={sistema} />}

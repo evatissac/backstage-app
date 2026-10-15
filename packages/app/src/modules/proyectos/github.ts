@@ -102,3 +102,51 @@ export const fechaCorta = (iso: string) =>
         year: 'numeric',
       })
     : '';
+
+export type Grupo = { nombre: string; miembros: string[] };
+
+export type GruposProyecto = {
+  grupos: Grupo[];
+  actualizadoPor: string | null;
+  actualizadoEn: string | null;
+  puedeEditar: boolean;
+};
+
+export type Candidato = { login: string; avatar: string; url: string };
+
+/** Grupos del proyecto; cambiar `version` vuelve a pedirlos. */
+export const useGrupos = (sistema: string, version: number) =>
+  useBackend<GruposProyecto>(
+    `/${encodeURIComponent(sistema)}/grupos?v=${version}`,
+  );
+
+export const useCandidatos = (sistema: string) =>
+  useBackend<{ candidatos: Candidato[] }>(
+    `/${encodeURIComponent(sistema)}/candidatos`,
+  );
+
+/** Guarda los grupos; devuelve el mensaje de error del portal si falla. */
+export const useGuardarGrupos = () => {
+  const discovery = useApi(discoveryApiRef);
+  const fetchApi = useApi(fetchApiRef);
+  return async (sistema: string, grupos: Grupo[]) => {
+    const base = await discovery.getBaseUrl('proyectos');
+    const respuesta = await fetchApi.fetch(
+      `${base}/${encodeURIComponent(sistema)}/grupos`,
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ grupos }),
+      },
+    );
+    if (!respuesta.ok) {
+      let mensaje = `${respuesta.status} ${respuesta.statusText}`;
+      try {
+        mensaje = (await respuesta.json())?.error?.message ?? mensaje;
+      } catch {
+        // Sin cuerpo JSON: queda el código HTTP.
+      }
+      throw new Error(mensaje);
+    }
+  };
+};

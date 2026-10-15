@@ -273,7 +273,7 @@ niveles y otra tipografía.
       10 min.
 - [x] **Avance** desde el plan del repositorio: anotación `hrl/avance` del
       System (hoy `docs/PLAN.md` de Estadistica_hrl). Fases `## Nombre ·
-    **[estado]**` y filas `| n | entrega | [hecho] |`. Solo «[hecho]» o
+  **[estado]**` y filas `| n | entrega | [hecho] |`. Solo «[hecho]» o
       «[hecho, fecha]» cuenta como completada; lo parcial, en curso o
       bloqueado es pendiente; lo retirado no se cuenta. Prueba:
       `proyectos.test.ts`. Resultado real: 25 de 35.
@@ -290,6 +290,30 @@ niveles y otra tipografía.
       siguiente pasada de `hrlRepositorio` (cada 6 h, minuto 15).
 - [ ] Las tablas estándar de dependencias de la ficha de entidad aún muestran
       la columna «Responsable» (son de Backstage).
+
+### B4. Tercera ronda (2026-10-15, sin subir)
+
+- [x] **Resumen del proyecto = avance:** barra «X de Y funciones» y dos
+      cuadros, Pendientes y Completadas. Se quitó el recorrido de seis pasos
+      y la pestaña Avance (`/avance` redirige al resumen).
+- [x] **Grupos por proyecto editables** (pestaña Miembros): cada proyecto
+      tiene grupos con nombre y personas, elegidas entre los miembros de la
+      organización en GitHub. Se guardan en la tabla `proyecto_grupos` de la
+      base del plugin `proyectos` (`packages/backend/src/plugins/grupos.ts`).
+      Solo los edita un **administrador de la organización** en GitHub; el
+      invitado, solo fuera de producción. Ya no se listan todos los miembros
+      de la organización.
+- [x] **Inicio = lo último que viste:** una entrada por proyecto, ficha,
+      documento o página, con su nombre real, agrupado por día.
+- [x] **Espaciado:** aire entre la franja y la cabecera de la ficha; ~65px
+      menos de hueco en la pestaña Documentación (relleno del lector de
+      TechDocs); barra de las tablas en una sola línea a 1440px.
+- [x] **Sin responsables en Documentación ni en el catálogo:** índice `/docs`
+      propio (`modules/documentacion`, agrupado por proyecto) y filtro
+      `catalog-filter:catalog/mode` desactivado.
+- [ ] El componente del portal (`catalog-info.yaml` de este repo) apunta al
+      sistema `plataforma-hrl`, que no existe: sale «No pertenece a ningún
+      proyecto».
 
 ### C. Catálogo (cuando el usuario lo autorice)
 

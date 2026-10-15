@@ -184,3 +184,41 @@
 .hrl-entidad__franja .hrl-puntaje__barra span {
   background: var(--hrl-heroe-texto);
 }
+
+/* ---------- Espaciado de la ficha ---------- */
+
+/* La cabecera de BUI empieza justo bajo la franja: le falta aire arriba. */
+.hrl-entidad__franja + .bui-Container {
+  padding-top: var(--bui-space-4);
+}
+
+/*
+ * Pestaña Documentación dentro de la ficha. El lector de TechDocs suma
+ * ~150px vacíos entre las pestañas y la búsqueda: el relleno de su barra
+ * (la del engranaje), el del contenido y una fila vacía de su rejilla. Las
+ * clases de Material UI llevan un número que cambia entre compilaciones, por
+ * eso se buscan por prefijo.
+ */
+.hrl-entidad
+  + .bui-Container
+  main[class*='BackstagePage-root']
+  > [class*='MuiToolbar-root'] {
+  min-height: 0;
+  padding-top: 0;
+}
+
+.hrl-entidad
+  + .bui-Container
+  main[class*='BackstagePage-root']
+  > article[class*='BackstageContent-root'] {
+  padding-top: 0;
+}
+
+.hrl-entidad
+  + .bui-Container
+  main[class*='BackstagePage-root']
+  > article[class*='BackstageContent-root']
+  > [class*='MuiGrid-container']
+  > [class*='MuiGrid-item']:empty {
+  display: none;
+}

@@ -1,45 +1,21 @@
-import { ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import {
-  ButtonLink,
-  Cell,
-  CellText,
-  SearchField,
-  Skeleton,
-  Text,
-} from '@backstage/ui';
+import { Alert, SearchField, Skeleton, Text } from '@backstage/ui';
 import {
   identityApiRef,
   useApi,
   useTranslationRef,
 } from '@backstage/frontend-plugin-api';
-import {
-  catalogApiRef,
-  useStarredEntities,
-} from '@backstage/plugin-catalog-react';
+import { catalogApiRef } from '@backstage/plugin-catalog-react';
 import { visitsApiRef } from '@backstage/plugin-home';
-import FolderIcon from '@material-ui/icons/FolderSpecialOutlined';
-import CatalogIcon from '@material-ui/icons/AppsOutlined';
-import DocIcon from '@material-ui/icons/MenuBookOutlined';
-import AccionIcon from '@material-ui/icons/FlashOnOutlined';
-import TareaIcon from '@material-ui/icons/AssignmentTurnedInOutlined';
-import StarIcon from '@material-ui/icons/StarBorderOutlined';
 import HistoryIcon from '@material-ui/icons/HistoryOutlined';
-import ShieldIcon from '@material-ui/icons/VerifiedUserOutlined';
-import ArrowIcon from '@material-ui/icons/ArrowForward';
+import DocIcon from '@material-ui/icons/MenuBookOutlined';
+import ProyectoIcon from '@material-ui/icons/FolderSpecialOutlined';
+import PaginaIcon from '@material-ui/icons/WebOutlined';
 import { textosHrl } from '../idioma';
-import { Carga, useCarga } from '../comun/useCarga';
+import { useCarga } from '../comun/useCarga';
 import { EstadoVacio } from '../comun/EstadoVacio';
 import { IconoTipo } from '../comun/iconos';
-import { partesRef, rutaEntidad, tituloDe } from '../comun/entidades';
-import { Cifra } from '../comun/Cifra';
-import { TablaHRL } from '../comun/TablaHRL';
-import { RejillaProyectos } from '../proyectos';
-import { ListaPrimerosPasos } from '../guia';
-import { Puntaje, useCalidad } from '../calidad';
-import { textoRegla } from '../calidad/componentes';
-import { pendientes, proporcion, Resultado } from '../calidad/reglas';
-import { ResumenCatalogo, useResumenCatalogo } from '../proyectos/datos';
+import { partesRef, tituloDe } from '../comun/entidades';
 import '../comun/comun.css';
 import './portada.css';
 
@@ -49,34 +25,7 @@ const saludo = (hora: number) => {
   return 'portada.saludoNoche' as const;
 };
 
-const Panel = (props: {
-  titulo: string;
-  icono: ReactNode;
-  children: ReactNode;
-}) => (
-  <section className="hrl-tarjeta hrl-panel">
-    <h2 className="hrl-panel__titulo">
-      <span aria-hidden>{props.icono}</span>
-      <Text variant="title-x-small" weight="bold">
-        {props.titulo}
-      </Text>
-    </h2>
-    {props.children}
-  </section>
-);
-
-const CargandoLista = () => (
-  <div className="hrl-lista" aria-busy>
-    {[0, 1, 2].map(i => (
-      <Skeleton key={i} width="100%" height={36} style={{ margin: '4px 0' }} />
-    ))}
-  </div>
-);
-
-/**
- * Héroe compacto: saludo y búsqueda en una franja. Las cifras salen a su
- * propia fila para que lo importante quede a la vista sin desplazarse.
- */
+/** Héroe compacto: saludo y búsqueda en una franja. */
 const Heroe = () => {
   const { t } = useTranslationRef(textosHrl);
   const navigate = useNavigate();
@@ -88,7 +37,7 @@ const Heroe = () => {
       : '';
 
   return (
-    <section className="hrl-heroe hrl-heroe--compacto">
+    <section className="hrl-heroe hrl-heroe--compacto hrl-heroe--solo">
       <div className="hrl-heroe__contenido">
         <p className="hrl-heroe__antetitulo">{t('portal.title')}</p>
         <h1 className="hrl-heroe__titulo">
@@ -111,301 +60,104 @@ const Heroe = () => {
   );
 };
 
-/** Porcentaje, o null si no hay nada que medir: 0 de 0 no es 0 %. */
-const porcentaje = (parte: number, total: number) =>
-  total === 0 ? null : `${Math.round((parte / total) * 100)} %`;
+type Clase = 'entidad' | 'docs' | 'proyecto' | 'pagina';
 
-/** Cifras del catálogo, cada una con lo que cuenta exactamente. */
-const Cifras = ({ resumen }: { resumen: Carga<ResumenCatalogo> }) => {
-  const { t } = useTranslationRef(textosHrl);
-  const calidad = useCalidad();
-  const r = resumen.estado === 'listo' ? resumen.datos : undefined;
-  const piezas = r ? r.componentes + r.apis : 0;
-  const documentadas = r
-    ? r.proyectos.reduce((n, p) => n + p.documentos, 0)
-    : 0;
-  const cumplidas =
-    calidad.estado === 'listo'
-      ? calidad.datos.reduce((n, d) => n + d.cumplidas, 0)
-      : 0;
-  const evaluadas =
-    calidad.estado === 'listo'
-      ? calidad.datos.reduce((n, d) => n + d.evaluadas, 0)
-      : 0;
-  return (
-    <div className="hrl-cifras2 hrl-portada__cifras">
-      <Cifra
-        icono={<FolderIcon />}
-        etiqueta={t('portada.cifraProyectos')}
-        ayuda={t('portada.ayudaProyectos')}
-        valor={r?.proyectos.length}
-        cargando={!r}
-        href="/proyectos"
-      />
-      <Cifra
-        icono={<CatalogIcon />}
-        etiqueta={t('portada.cifraPiezas')}
-        ayuda={t('portada.ayudaPiezas')}
-        valor={r ? piezas : undefined}
-        cargando={!r}
-        href="/catalog"
-      />
-      <Cifra
-        icono={<DocIcon />}
-        etiqueta={t('portada.cifraDocumentadas')}
-        ayuda={t('portada.ayudaDocumentadas')}
-        valor={r ? porcentaje(documentadas, piezas) : undefined}
-        cargando={!r}
-        href="/docs"
-      />
-      <Cifra
-        icono={<ShieldIcon />}
-        etiqueta={t('portada.cifraCalidad')}
-        ayuda={t('portada.ayudaCalidad')}
-        valor={porcentaje(cumplidas, evaluadas)}
-        cargando={calidad.estado === 'cargando'}
-        href="/calidad"
-      />
-    </div>
-  );
+/** Qué se visitó, a partir de la ruta: la visita solo guarda el título de la pestaña. */
+const leerRuta = (
+  pathname: string,
+): { clase: Clase; ref?: string; pagina?: string } => {
+  const catalogo = pathname.match(/^\/catalog\/([^/]+)\/([^/]+)\/([^/]+)/);
+  if (catalogo) {
+    return {
+      clase: 'entidad',
+      ref: `${catalogo[2]}:${catalogo[1]}/${catalogo[3]}`.toLowerCase(),
+    };
+  }
+  const docs = pathname.match(/^\/docs\/([^/]+)\/([^/]+)\/([^/]+)/);
+  if (docs) {
+    return {
+      clase: 'docs',
+      ref: `${docs[2]}:${docs[1]}/${docs[3]}`.toLowerCase(),
+    };
+  }
+  const proyecto = pathname.match(/^\/proyectos\/([^/]+)/);
+  if (proyecto) {
+    return {
+      clase: 'proyecto',
+      ref: `system:default/${proyecto[1]}`.toLowerCase(),
+    };
+  }
+  return { clase: 'pagina', pagina: pathname.split('/')[1] ?? '' };
 };
 
-/**
- * «Por mejorar»: los componentes y APIs que menos comprobaciones cumplen,
- * con lo que les falta. Es la tabla de trabajo de la portada.
- */
-const PorMejorar = () => {
-  const { t } = useTranslationRef(textosHrl);
-  const calidad = useCalidad();
-  const filas =
-    calidad.estado === 'listo'
-      ? [...calidad.datos]
-          .filter(r => pendientes(r).length > 0)
-          .sort(
-            (a, b) =>
-              (proporcion(a) ?? 2) - (proporcion(b) ?? 2) ||
-              tituloDe(a.entidad).localeCompare(tituloDe(b.entidad)),
-          )
-          .map(r => ({
-            id: r.entidad.metadata.uid ?? r.entidad.metadata.name,
-            r,
-          }))
-      : undefined;
-  const faltan = (r: Resultado) =>
-    pendientes(r)
-      .map(regla => textoRegla(t, regla.id, 'titulo'))
-      .join(' · ');
-
-  return (
-    <Panel titulo={t('portada.porMejorar')} icono={<TareaIcon />}>
-      <Text as="p" variant="body-small" color="secondary">
-        {t('portada.porMejorarAyuda')}
-      </Text>
-      {calidad.estado === 'error' ? (
-        <Text variant="body-small" color="danger">
-          {calidad.error.message}
-        </Text>
-      ) : (
-        <TablaHRL
-          id="portada-por-mejorar"
-          titulo={t('portada.porMejorar')}
-          filas={filas}
-          cargando={!filas}
-          porPagina={5}
-          vacio={
-            <EstadoVacio
-              compacto
-              icono={<TareaIcon />}
-              titulo={t('portada.porMejorarVacioTitulo')}
-              descripcion={t('portada.porMejorarVacioDescripcion')}
-            />
-          }
-          columnas={[
-            {
-              id: 'nombre',
-              etiqueta: t('proyecto.columnaNombre'),
-              principal: true,
-              valor: ({ r }) => tituloDe(r.entidad),
-              celda: ({ r }) => (
-                <CellText
-                  title={tituloDe(r.entidad)}
-                  href={rutaEntidad(r.entidad)}
-                  leadingIcon={<IconoTipo tipo={r.entidad.kind} />}
-                />
-              ),
-            },
-            {
-              id: 'puntaje',
-              etiqueta: t('calidad.columnaPuntaje'),
-              celda: ({ r }) => (
-                <Cell>
-                  <Puntaje r={r} compacto />
-                </Cell>
-              ),
-            },
-            {
-              id: 'faltan',
-              etiqueta: t('calidad.columnaFaltan'),
-              valor: ({ r }) => faltan(r),
-              celda: ({ r }) => <CellText title={faltan(r)} />,
-            },
-          ]}
-          acciones={({ r }) => (
-            <ButtonLink
-              href={`${rutaEntidad(r.entidad)}/calidad`}
-              variant="tertiary"
-              size="small"
-              aria-label={t('portada.verQueFalta', {
-                nombre: tituloDe(r.entidad),
-              })}
-            >
-              {t('portada.queFalta')}
-            </ButtonLink>
-          )}
-        />
-      )}
-    </Panel>
-  );
+// Primer segmento de la ruta → clave del título de esa página.
+const PAGINAS: Record<string, string> = {
+  proyectos: 'paginas.proyectos',
+  catalog: 'paginas.catalog',
+  docs: 'paginas.techdocs',
+  'api-docs': 'paginas.api-docs',
+  calidad: 'paginas.calidad',
+  autoservicio: 'paginas.autoservicio',
+  mapa: 'paginas.mapa',
+  create: 'paginas.scaffolder',
+  settings: 'paginas.user-settings',
+  notifications: 'paginas.notifications',
+  'primeros-pasos': 'paginas.guia',
 };
 
-const Acceso = (props: {
-  href: string;
-  icono: ReactNode;
-  titulo: string;
-  texto: string;
-}) => (
-  <Link to={props.href} className="hrl-tarjeta hrl-acceso">
-    <span className="hrl-acceso__icono" aria-hidden>
-      {props.icono}
-    </span>
-    <span className="hrl-acceso__texto">
-      <Text variant="body-medium" weight="bold">
-        {props.titulo}
-      </Text>
-      <Text variant="body-small" color="secondary">
-        {props.texto}
-      </Text>
-    </span>
-    <ArrowIcon className="hrl-acceso__flecha" aria-hidden />
-  </Link>
-);
+type ClavePagina = 'paginas.catalog';
 
-const Accesos = () => {
-  const { t } = useTranslationRef(textosHrl);
-  return (
-    <div className="hrl-accesos">
-      <Acceso
-        href="/proyectos"
-        icono={<FolderIcon />}
-        titulo={t('paginas.proyectos')}
-        texto={t('portada.accesoProyectos')}
-      />
-      <Acceso
-        href="/catalog"
-        icono={<CatalogIcon />}
-        titulo={t('paginas.catalog')}
-        texto={t('portada.accesoCatalogo')}
-      />
-      <Acceso
-        href="/docs"
-        icono={<DocIcon />}
-        titulo={t('paginas.techdocs')}
-        texto={t('portada.accesoDocs')}
-      />
-      <Acceso
-        href="/autoservicio"
-        icono={<AccionIcon />}
-        titulo={t('paginas.autoservicio')}
-        texto={t('portada.accesoAutoservicio')}
-      />
-    </div>
-  );
+/** Hoy, ayer, esta semana o antes: para agrupar la lista. */
+const tramo = (ms: number) => {
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+  if (ms >= hoy.getTime()) return 'hoy' as const;
+  if (ms >= hoy.getTime() - 86400000) return 'ayer' as const;
+  if (ms >= hoy.getTime() - 7 * 86400000) return 'semana' as const;
+  return 'antes' as const;
 };
 
-const Favoritos = () => {
-  const { t } = useTranslationRef(textosHrl);
-  const catalogo = useApi(catalogApiRef);
-  const { starredEntities } = useStarredEntities();
-  const refs = [...starredEntities];
-  const clave = refs.join('|');
-  const entidades = useCarga(
-    async () =>
-      refs.length
-        ? (await catalogo.getEntitiesByRefs({ entityRefs: refs })).items
-        : [],
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- `clave` resume `refs`.
-    [catalogo, clave],
-  );
-
-  return (
-    <Panel titulo={t('portada.favoritos')} icono={<StarIcon />}>
-      {entidades.estado === 'cargando' && <CargandoLista />}
-      {entidades.estado === 'listo' &&
-        (entidades.datos.filter(Boolean).length === 0 ? (
-          <EstadoVacio
-            compacto
-            icono={<StarIcon />}
-            titulo={t('portada.favoritosVacioTitulo')}
-            descripcion={t('portada.favoritosVacioDescripcion')}
-          />
-        ) : (
-          <ul className="hrl-lista">
-            {entidades.datos.map(
-              e =>
-                e && (
-                  <li key={`${e.kind}:${e.metadata.name}`}>
-                    <Link className="hrl-lista__item" to={rutaEntidad(e)}>
-                      <IconoTipo tipo={e.kind} />
-                      <span className="hrl-lista__texto">
-                        <Text variant="body-small" weight="bold">
-                          {tituloDe(e)}
-                        </Text>
-                        <Text variant="body-x-small" color="secondary">
-                          {e.kind}
-                          {e.metadata.description
-                            ? ` · ${e.metadata.description}`
-                            : ''}
-                        </Text>
-                      </span>
-                    </Link>
-                  </li>
-                ),
-            )}
-          </ul>
-        ))}
-      {entidades.estado === 'error' && (
-        <Text variant="body-small" color="danger">
-          {entidades.error.message}
-        </Text>
-      )}
-    </Panel>
-  );
-};
-
-// Backstage guarda como nombre de la visita el título de la pestaña
-// («Portal de Desarrollo HRL | Techdocs | Portal de Desarrollo HRL») o el
-// segmento de la ruta («home»): se quita el nombre del portal y se capitaliza.
-const nombreVisita = (nombre: string, portal: string) => {
-  const partes = nombre
-    .split(' | ')
-    .map(p => p.trim())
-    .map(p => p.replace(` en ${portal}`, ''))
-    .filter(p => p && p !== portal);
-  const limpio = partes[partes.length - 1] ?? nombre;
-  return limpio.charAt(0).toUpperCase() + limpio.slice(1);
-};
-
-const Recientes = () => {
+/** Lo último que viste en el portal, sin repetir y agrupado por día. */
+const UltimoVisto = () => {
   const { t } = useTranslationRef(textosHrl);
   const visitas = useApi(visitsApiRef);
-  const lista = useCarga(
-    () =>
-      visitas.list({
-        limit: 6,
-        orderBy: [{ field: 'timestamp', direction: 'desc' }],
+  const catalogo = useApi(catalogApiRef);
+  const lista = useCarga(async () => {
+    const todas = await visitas.list({
+      limit: 60,
+      orderBy: [{ field: 'timestamp', direction: 'desc' }],
+    });
+    // Una entrada por cosa visitada (la visita más reciente): las pestañas
+    // de un mismo proyecto o ficha cuentan como una sola. Sin la portada.
+    const vistas = new Set<string>();
+    const items = todas
+      .filter(v => (v.pathname.replace(/\/$/, '') || '/') !== '/')
+      .map(v => ({ v, ...leerRuta(v.pathname) }))
+      .filter(i => {
+        const clave = `${i.clase}:${i.ref ?? i.pagina}`;
+        if (vistas.has(clave)) return false;
+        vistas.add(clave);
+        return true;
+      })
+      .slice(0, 20);
+    const refs = [
+      ...new Set(items.map(i => i.ref).filter((r): r is string => !!r)),
+    ];
+    const entidades = refs.length
+      ? (await catalogo.getEntitiesByRefs({ entityRefs: refs })).items
+      : [];
+    const titulos = new Map(
+      refs.map((r, i) => {
+        const e = entidades[i];
+        return [r, e ? tituloDe(e) : undefined] as const;
       }),
-    [visitas],
-  );
+    );
+    return items.map(i => ({
+      ...i,
+      titulo: i.ref ? titulos.get(i.ref) : undefined,
+    }));
+  }, [visitas, catalogo]);
+
   const formato = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' });
   const haceCuanto = (ms: number) => {
     const minutos = Math.round((ms - Date.now()) / 60000);
@@ -415,86 +167,108 @@ const Recientes = () => {
     return formato.format(Math.round(horas / 24), 'day');
   };
 
+  if (lista.estado === 'cargando') {
+    return <Skeleton width="100%" height={320} />;
+  }
+  if (lista.estado === 'error') {
+    return (
+      <Alert
+        status="danger"
+        icon
+        title={t('portada.recientesError')}
+        description={lista.error.message}
+      />
+    );
+  }
+  if (lista.datos.length === 0) {
+    return (
+      <EstadoVacio
+        icono={<HistoryIcon />}
+        titulo={t('portada.recientesVacioTitulo')}
+        descripcion={t('portada.recientesVacioDescripcion')}
+      />
+    );
+  }
+
+  type Item = (typeof lista.datos)[number];
+  const nombre = (i: Item) => {
+    if (i.titulo) return i.titulo;
+    if (i.ref) return partesRef(i.ref).name;
+    const clave = PAGINAS[i.pagina ?? ''];
+    return clave ? t(clave as ClavePagina) : i.v.pathname;
+  };
+  const detalle = (i: Item) => {
+    if (i.clase === 'docs') return t('portada.claseDocs');
+    if (i.clase === 'proyecto') return t('portada.claseProyecto');
+    if (i.clase === 'entidad') {
+      const kind = partesRef(i.ref!).kind;
+      return ['component', 'api', 'resource'].includes(kind)
+        ? t(`proyecto.clase.${kind}` as 'proyecto.clase.api')
+        : kind.charAt(0).toUpperCase() + kind.slice(1);
+    }
+    return t('portada.clasePagina');
+  };
+  const icono = (i: Item) => {
+    if (i.clase === 'docs') return <DocIcon />;
+    if (i.clase === 'proyecto') return <ProyectoIcon />;
+    if (i.clase === 'entidad') {
+      return <IconoTipo tipo={partesRef(i.ref!).kind} />;
+    }
+    return <PaginaIcon />;
+  };
+
+  const grupos = new Map<string, Item[]>();
+  for (const i of lista.datos) {
+    const clave = tramo(i.v.timestamp);
+    grupos.set(clave, [...(grupos.get(clave) ?? []), i]);
+  }
+
   return (
-    <Panel titulo={t('portada.recientes')} icono={<HistoryIcon />}>
-      {lista.estado === 'cargando' && <CargandoLista />}
-      {lista.estado === 'listo' &&
-        (lista.datos.length === 0 ? (
-          <EstadoVacio
-            compacto
-            icono={<HistoryIcon />}
-            titulo={t('portada.recientesVacioTitulo')}
-            descripcion={t('portada.recientesVacioDescripcion')}
-          />
-        ) : (
-          <ul className="hrl-lista">
-            {lista.datos.map(v => (
-              <li key={v.id}>
-                <Link className="hrl-lista__item" to={v.pathname}>
-                  <IconoTipo
-                    tipo={v.entityRef ? partesRef(v.entityRef).kind : undefined}
-                  />
-                  <span className="hrl-lista__texto">
-                    <Text variant="body-small" weight="bold">
-                      {nombreVisita(v.name, t('portal.title'))}
+    <div className="hrl-ultimo">
+      {[...grupos].map(([clave, items]) => (
+        <section key={clave} aria-labelledby={`hrl-ultimo-${clave}`}>
+          <h3 id={`hrl-ultimo-${clave}`} className="hrl-ultimo__tramo">
+            {t(`portada.tramo.${clave}` as 'portada.tramo.hoy')}
+          </h3>
+          <ul className="hrl-ultimo__lista">
+            {items.map(i => (
+              <li key={i.v.id}>
+                <Link to={i.v.pathname} className="hrl-ultimo__item">
+                  <span className="hrl-ultimo__icono" aria-hidden>
+                    {icono(i)}
+                  </span>
+                  <span className="hrl-ultimo__texto">
+                    <Text variant="body-medium" weight="bold">
+                      {nombre(i)}
                     </Text>
                     <Text variant="body-x-small" color="secondary">
-                      {haceCuanto(v.timestamp)}
+                      {detalle(i)}
                     </Text>
+                  </span>
+                  <span className="hrl-ultimo__cuando">
+                    {haceCuanto(i.v.timestamp)}
                   </span>
                 </Link>
               </li>
             ))}
           </ul>
-        ))}
-      {lista.estado === 'error' && (
-        <Text variant="body-small" color="danger">
-          {lista.error.message}
-        </Text>
-      )}
-    </Panel>
+        </section>
+      ))}
+    </div>
   );
 };
 
+/** Inicio: solo lo último que viste en el portal. */
 export const Portada = () => {
   const { t } = useTranslationRef(textosHrl);
-  // Una sola consulta al catálogo para las cifras y los proyectos.
-  const resumen = useResumenCatalogo();
   return (
     <div className="hrl-portada">
       <Heroe />
       <div className="hrl-portada__cuerpo">
-        <Cifras resumen={resumen} />
-
-        <div className="hrl-portada__trabajo">
-          <PorMejorar />
-          <div className="hrl-seccion">
-            <Accesos />
-            <ListaPrimerosPasos />
-          </div>
-        </div>
-
-        <section className="hrl-seccion">
-          <div className="hrl-seccion__cabecera">
-            <Text as="h2" variant="title-small" weight="bold">
-              {t('paginas.proyectos')}
-            </Text>
-            <Link to="/proyectos" className="hrl-enlace-flecha">
-              {t('portada.verTodos')} <ArrowIcon aria-hidden />
-            </Link>
-          </div>
-          <RejillaProyectos resumen={resumen} limite={6} />
-        </section>
-
-        <div className="hrl-portada__columnas">
-          <Favoritos />
-          <Recientes />
-        </div>
-
-        <p className="hrl-aviso">
-          <ShieldIcon aria-hidden />
-          {t('portada.avisoPacientes')}
-        </p>
+        <Text as="h2" variant="title-small" weight="bold">
+          {t('portada.recientes')}
+        </Text>
+        <UltimoVisto />
       </div>
     </div>
   );

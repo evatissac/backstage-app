@@ -3,9 +3,15 @@ import {
   createBackendPlugin,
 } from '@backstage/backend-plugin-api';
 import { CatalogClient } from '@backstage/catalog-client';
-import { NotFoundError } from '@backstage/errors';
+import { NotAllowedError, NotFoundError } from '@backstage/errors';
 import express from 'express';
 import Router from 'express-promise-router';
+import {
+  guardarGrupos,
+  leerGrupos,
+  prepararTabla,
+  validarGrupos,
+} from './grupos';
 
 /**
  * Lo que el portal necesita saber de un proyecto y que no está en el
@@ -192,6 +198,8 @@ export default createBackendPlugin({
         httpAuth: coreServices.httpAuth,
         urlReader: coreServices.urlReader,
         cache: coreServices.cache,
+        database: coreServices.database,
+        userInfo: coreServices.userInfo,
       },
       async init({
         httpRouter,
@@ -202,7 +210,11 @@ export default createBackendPlugin({
         httpAuth,
         urlReader,
         cache,
+        database,
+        userInfo,
       }) {
+        const db = await database.getClient();
+        await prepararTabla(db as any);
         const token = config
           .getOptionalConfigArray('integrations.github')
           ?.find(g => g.getString('host') === 'github.com')
@@ -449,6 +461,129 @@ export default createBackendPlugin({
             );
             res.json({ avance: null, error: (e as Error).message, fuente });
           }
+        });
+
+        /** Organizaciones de GitHub dueñas de los repositorios del proyecto. */
+        const organizaciones = (slugs: string[]) => [
+          ...new Set(slugs.map(s => s.split('/')[0])),
+        ];
+
+        /**
+         * Quién puede editar los grupos de un proyecto: un administrador de la
+         * organización de GitHub dueña de sus repositorios. El invitado, solo
+         * fuera de producción (el ingreso como invitado ya está limitado a
+         * desarrollo).
+         */
+        const editor = async (req: express.Request, slugs: string[]) => {
+          const credenciales = await httpAuth.credentials(req, {
+            allow: ['user'],
+          });
+          const { userEntityRef } = await userInfo.getUserInfo(credenciales);
+          if (userEntityRef === 'user:development/guest') {
+            return {
+              usuario: 'invitado',
+              puede: process.env.NODE_ENV !== 'production',
+            };
+          }
+          const login = userEntityRef.split('/').pop() ?? '';
+          const roles = await Promise.all(
+            organizaciones(slugs).map(org =>
+              enCache(`rol:${org}:${login}`, async () => {
+                try {
+                  const m = await github<{ role: string; state: string }>(
+                    `/orgs/${org}/memberships/${login}`,
+                  );
+                  return m.state === 'active' ? m.role : 'ninguno';
+                } catch {
+                  return 'ninguno';
+                }
+              }),
+            ),
+          );
+          return { usuario: login, puede: roles.includes('admin') };
+        };
+
+        router.get('/:sistema/grupos', async (req, res) => {
+          const credenciales = await httpAuth.credentials(req, {
+            allow: ['user'],
+          });
+          const { sistema, piezas } = await proyecto(
+            req.params.sistema,
+            credenciales,
+          );
+          const quien = await editor(req, reposDe(sistema, piezas));
+          res.json({
+            ...(await leerGrupos(db as any, sistema.metadata.name)),
+            puedeEditar: quien.puede,
+          });
+        });
+
+        router.put('/:sistema/grupos', async (req, res) => {
+          const credenciales = await httpAuth.credentials(req, {
+            allow: ['user'],
+          });
+          const { sistema, piezas } = await proyecto(
+            req.params.sistema,
+            credenciales,
+          );
+          const quien = await editor(req, reposDe(sistema, piezas));
+          if (!quien.puede) {
+            throw new NotAllowedError(
+              'Solo un administrador de la organización en GitHub puede editar los grupos',
+            );
+          }
+          const grupos = validarGrupos(req.body);
+          await guardarGrupos(
+            db as any,
+            sistema.metadata.name,
+            grupos,
+            quien.usuario,
+          );
+          logger.info(
+            `Grupos de ${sistema.metadata.name} actualizados por ${quien.usuario}`,
+          );
+          res.json({
+            ...(await leerGrupos(db as any, sistema.metadata.name)),
+            puedeEditar: true,
+          });
+        });
+
+        /** Personas que se pueden asignar: miembros de la organización. */
+        router.get('/:sistema/candidatos', async (req, res) => {
+          const credenciales = await httpAuth.credentials(req, {
+            allow: ['user'],
+          });
+          const { sistema, piezas } = await proyecto(
+            req.params.sistema,
+            credenciales,
+          );
+          const personas = new Map<
+            string,
+            { login: string; avatar: string; url: string }
+          >();
+          for (const org of organizaciones(reposDe(sistema, piezas))) {
+            const miembros = await enCache(`miembros:${org}`, async () => {
+              try {
+                return await github<
+                  { login: string; avatar_url: string; html_url: string }[]
+                >(`/orgs/${org}/members?per_page=100`);
+              } catch {
+                return [];
+              }
+            });
+            for (const m of miembros) {
+              personas.set(m.login.toLowerCase(), {
+                login: m.login,
+                avatar: m.avatar_url,
+                url: m.html_url,
+              });
+            }
+          }
+          res.json({
+            candidatos: [...personas.values()].sort((a, b) =>
+              a.login.localeCompare(b.login),
+            ),
+          });
         });
 
         httpRouter.use(router);

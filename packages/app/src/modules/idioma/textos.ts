@@ -70,56 +70,29 @@ export const textosHrl = createTranslationRef({
       guia: 'Getting started',
     },
     portada: {
-      cifraPiezas: 'Components and APIs',
-      cifraDocumentadas: 'With documentation',
-      cifraCalidad: 'Checks met',
-      porMejorar: 'To improve',
-      porMejorarAyuda:
-        'Components and APIs that meet the fewest quality checks, with what they are missing.',
-      porMejorarVacioTitulo: 'Nothing to improve',
-      porMejorarVacioDescripcion:
-        'Every component and API meets all the checks that could be evaluated.',
-      ayudaProyectos:
-        'Systems published in the portal (catalog/hrl.yaml). Each one has its own page.',
-      ayudaPiezas:
-        'Components plus APIs that belong to a published project. Something without spec.system is not counted.',
-      ayudaDocumentadas:
-        'Share of components and APIs that publish TechDocs. «No data» means there is nothing to measure yet, not 0 %.',
-      ayudaCalidad:
-        'Quality checks met out of those evaluated, adding up every component and API.',
       queFalta: 'What is missing',
       verQueFalta: 'What is missing in {{nombre}}',
-      accesoAutoservicio: 'Create a repository or document one',
       saludoManana: 'Good morning, {{nombre}}',
       saludoTarde: 'Good afternoon, {{nombre}}',
       saludoNoche: 'Good evening, {{nombre}}',
       saludoSinNombre: 'Welcome',
-      subtitulo:
-        'Everything the hospital builds: projects, components, APIs and their documentation.',
       buscarEtiqueta: 'Search the portal',
       buscarPlaceholder: 'Search projects, components, docs…',
       buscarPista: 'Press Ctrl K from any page to search.',
-      cifraProyectos: 'Projects',
-      cifraComponentes: 'Components',
-      cifraApis: 'APIs',
-      cifraPersonas: 'People',
-      accesoProyectos: 'A home for each system',
-      accesoCatalogo: 'Everything registered, with owners',
-      accesoDocs: 'Technical docs of each repo',
-      accesoApis: 'Contracts between systems',
-      verTodos: 'See all',
-      favoritos: 'Your favorites',
-      favoritosVacioTitulo: 'No favorites yet',
-      favoritosVacioDescripcion:
-        'Mark an entity with the star on its page in the catalog and it will appear here.',
-      recientes: 'Recently visited',
       recientesVacioTitulo: 'Nothing visited yet',
       recientesVacioDescripcion:
         'The pages you open in the portal will appear here so you can get back to them.',
-      avisoPacientes:
-        'No patient data belongs in this portal or in the repositories.',
-      salud: 'Catalog health',
-      verDetalle: 'See details',
+      recientes: 'What you viewed last',
+      recientesError: 'Could not read your recent visits',
+      claseDocs: 'Documentation',
+      claseProyecto: 'Project',
+      clasePagina: 'Portal page',
+      tramo: {
+        hoy: 'Today',
+        ayer: 'Yesterday',
+        semana: 'This week',
+        antes: 'Earlier',
+      },
     },
     proyectos: {
       titulo: 'Projects',
@@ -190,7 +163,6 @@ export const textosHrl = createTranslationRef({
       pestanaProcesos: 'Processes',
       pestanaDocumentos: 'Documents',
       verTecnologias: 'Versions and purpose of each technology',
-      pestanaAvance: 'Progress',
       pestanaCalidadPruebas: 'Quality and tests',
       pestanaMiembros: 'Members',
       repositorios: 'Repositories',
@@ -564,6 +536,13 @@ export const textosHrl = createTranslationRef({
       accionesDe: 'Actions for {{nombre}}',
       verTodas: 'All self-service actions',
     },
+    docs: {
+      intro:
+        'All the documentation published in the portal, grouped by project. Each one is written in its repository (docs/ and mkdocs.yml).',
+      columnaDocumento: 'Document',
+      leer: 'Read',
+      leerDe: 'Read {{nombre}}',
+    },
     mapa: {
       titulo: 'Map',
       intro:
@@ -609,36 +588,6 @@ export const textosHrl = createTranslationRef({
         },
       },
     },
-    recorrido: {
-      queEs: 'What it is',
-      queEsPregunta: 'What the system does and what it is made of.',
-      queEsEnlace: 'See components and APIs',
-      piezas:
-        'Components: {{componentes}} · APIs: {{apis}} · Resources: {{recursos}}',
-      enQueVa: 'How far along it is',
-      enQueVaPregunta: 'Which functions are done and which are still missing.',
-      enQueVaEnlace: 'See the progress',
-      ultimaFase: 'Last stage closed: {{fase}} ({{fecha}}).',
-      siguiente: 'Next pending:',
-      comoEsta: 'How it is built',
-      comoEstaPregunta: 'Technologies, architecture, deployment and processes.',
-      comoEstaEnlace: 'See the technical sheet',
-      sinFicha:
-        'This project has no technical sheet yet (fichas/<project>/ficha.json).',
-      diagramas: '{{cuenta}} diagrams: architecture, deployment and processes.',
-      dondeLeer: 'Where to read about it',
-      dondeLeerPregunta: 'Wiki, repositories and institutional documents.',
-      dondeLeerEnlace: 'See the documentation',
-      documentos:
-        'Wiki pages (TechDocs): {{wiki}} · Institutional documents: {{documentos}} · Repositories: {{repos}}',
-      solidez: 'How solid it is',
-      solidezPregunta: 'Latest automated test results and quality checks.',
-      solidezEnlace: 'See quality and tests',
-      calidad: '{{cumplidas}} of {{total}} quality checks met.',
-      quienes: 'Who works on it',
-      quienesPregunta: 'People with access to its repositories.',
-      quienesEnlace: 'See the members',
-    },
     avance: {
       resumen: '{{completadas}} of {{total}} functions done',
       fuente: 'Open the plan',
@@ -649,10 +598,6 @@ export const textosHrl = createTranslationRef({
       completadas: 'Done',
       ningunaPendiente: 'Nothing pending in the plan.',
       ningunaCompletada: 'Nothing completed yet.',
-      ultimo: 'Latest integrated',
-      ultimoAyuda:
-        'The latest merged pull requests (or commits) in the project repositories.',
-      sinCambios: 'No recent changes could be read.',
       errorCarga: 'Could not load the progress',
       sinPlanTitulo: 'This project does not declare its plan yet',
       sinPlanDescripcion:
@@ -662,19 +607,29 @@ export const textosHrl = createTranslationRef({
         'The portal could not read the declared plan: {{error}}',
     },
     miembros: {
-      resumen: 'People: {{personas}} · Repositories: {{repos}}',
-      segunColaboradores: 'People with access to the repository',
-      segunContribuidores:
-        'Authors of commits (the portal cannot see who has access)',
-      aportes: 'Commits: {{cuenta}}',
       errorCarga: 'Could not load the members',
-      permiso: {
-        admin: 'Admin',
-        maintain: 'Maintainer',
-        write: 'Write',
-        triage: 'Triage',
-        read: 'Read',
-      },
+      resumenGrupos: 'Groups: {{grupos}} · People: {{personas}}',
+      actualizado: 'updated by {{quien}} on {{fecha}}',
+      sinGruposTitulo: 'This project has no groups yet',
+      sinGruposDescripcion:
+        'Create the groups of people who work on the project (e.g. Development, Statistics) and pick their members from the organization.',
+      sinGruposSinPermiso:
+        'An administrator of the organization on GitHub can create the groups of people who work on the project.',
+      crearGrupos: 'Create groups',
+      editarGrupos: 'Edit groups',
+      editarTitulo: 'Project groups',
+      editarAyuda:
+        'Each group has a name and its people, chosen among the members of the organization on GitHub. Nothing is saved until you press Save.',
+      filtrarPersonas: 'Filter people',
+      nombreGrupo: 'Group name',
+      grupoInicial: 'Development',
+      quitarGrupo: 'Remove group {{grupo}}',
+      agregarGrupo: 'Add group',
+      grupoVacio: 'Nobody in this group yet.',
+      guardar: 'Save',
+      cancelar: 'Cancel',
+      guardado: 'Groups saved',
+      errorGuardar: 'Could not save the groups',
     },
     pruebas: {
       titulo: 'Automated tests',
@@ -742,30 +697,12 @@ const es = {
   'portada.saludoTarde': 'Buenas tardes, {{nombre}}',
   'portada.saludoNoche': 'Buenas noches, {{nombre}}',
   'portada.saludoSinNombre': 'Te damos la bienvenida',
-  'portada.subtitulo':
-    'Todo lo que construye el hospital: proyectos, componentes, APIs y su documentación.',
   'portada.buscarEtiqueta': 'Buscar en el portal',
   'portada.buscarPlaceholder': 'Busca proyectos, componentes, documentación…',
   'portada.buscarPista': 'Pulsa Ctrl K desde cualquier página para buscar.',
-  'portada.cifraProyectos': 'Proyectos',
-  'portada.cifraComponentes': 'Componentes',
-  'portada.cifraApis': 'APIs',
-  'portada.cifraPersonas': 'Personas',
-  'portada.accesoProyectos': 'La portada de cada sistema',
-  'portada.accesoCatalogo': 'Todo lo registrado, con responsables',
-  'portada.accesoDocs': 'La documentación técnica de cada repo',
-  'portada.accesoApis': 'Los contratos entre sistemas',
-  'portada.verTodos': 'Ver todos',
-  'portada.favoritos': 'Tus favoritos',
-  'portada.favoritosVacioTitulo': 'Aún no tienes favoritos',
-  'portada.favoritosVacioDescripcion':
-    'Marca una entidad con la estrella en su ficha del catálogo y aparecerá aquí.',
-  'portada.recientes': 'Visitados recientemente',
   'portada.recientesVacioTitulo': 'Todavía no has visitado nada',
   'portada.recientesVacioDescripcion':
     'Las páginas que abras en el portal aparecerán aquí para volver a ellas.',
-  'portada.avisoPacientes':
-    'En este portal y en los repositorios no va ningún dato de pacientes.',
   'proyectos.titulo': 'Proyectos',
   'proyectos.intro':
     'Cada proyecto es un sistema del catálogo: entra para ver qué es, en qué va, cómo está hecho y quiénes trabajan en él.',
@@ -816,8 +753,6 @@ const es = {
   'paginas.calidad': 'Calidad',
   'paginas.guia': 'Primeros pasos',
   'barra.tusProyectos': 'Proyectos',
-  'portada.salud': 'Salud del catálogo',
-  'portada.verDetalle': 'Ver detalle',
   'proyecto.pestanaCalidad': 'Calidad',
   'calidad.titulo': 'Calidad',
   'calidad.intro':
@@ -1132,26 +1067,8 @@ const es = {
   'entidad.acciones': 'Acciones',
   'entidad.comprobaciones': 'Comprobaciones',
   'entidad.verCalidad': 'Todas las comprobaciones y cómo cumplirlas',
-  'portada.cifraPiezas': 'Componentes y APIs',
-  'portada.cifraDocumentadas': 'Con documentación',
-  'portada.cifraCalidad': 'Comprobaciones cumplidas',
-  'portada.porMejorar': 'Por mejorar',
-  'portada.porMejorarAyuda':
-    'Componentes y APIs que menos comprobaciones de calidad cumplen, con lo que les falta.',
-  'portada.porMejorarVacioTitulo': 'Nada por mejorar',
-  'portada.porMejorarVacioDescripcion':
-    'Todos los componentes y APIs cumplen las comprobaciones que se pudieron evaluar.',
-  'portada.ayudaProyectos':
-    'Sistemas publicados en el portal (catalog/hrl.yaml). Cada uno tiene su propia página.',
-  'portada.ayudaPiezas':
-    'Componentes más APIs que pertenecen a un proyecto publicado. Lo que no tiene spec.system no se cuenta.',
-  'portada.ayudaDocumentadas':
-    'Parte de los componentes y APIs que publican TechDocs. «Sin datos» significa que aún no hay nada que medir, no 0 %.',
-  'portada.ayudaCalidad':
-    'Comprobaciones de calidad cumplidas sobre las evaluadas, sumando todos los componentes y APIs.',
   'portada.queFalta': 'Qué falta',
   'portada.verQueFalta': 'Qué le falta a {{nombre}}',
-  'portada.accesoAutoservicio': 'Crear un repositorio o documentar uno',
   'mapa.titulo': 'Mapa',
   'mapa.intro':
     'Cómo se relacionan los proyectos del hospital con sus componentes, APIs y recursos. Todo sale del catálogo.',
@@ -1204,39 +1121,6 @@ const es = {
     'Cada cambio se comprueba solo; sin ellas, los errores los encuentran los usuarios.',
   'calidad.reglas.pruebas.arreglo':
     'Agrega un flujo de GitHub Actions en .github/workflows/ que ejecute las pruebas (o la prueba de humo) en cada push.',
-  'recorrido.queEs': 'Qué es',
-  'recorrido.queEsPregunta': 'Qué hace el sistema y de qué piezas está hecho.',
-  'recorrido.queEsEnlace': 'Ver componentes y APIs',
-  'recorrido.piezas':
-    'Componentes: {{componentes}} · APIs: {{apis}} · Recursos: {{recursos}}',
-  'recorrido.enQueVa': 'En qué va',
-  'recorrido.enQueVaPregunta': 'Qué funciones ya están y cuáles faltan.',
-  'recorrido.enQueVaEnlace': 'Ver el avance',
-  'recorrido.ultimaFase': 'Última etapa cerrada: {{fase}} ({{fecha}}).',
-  'recorrido.siguiente': 'Lo siguiente pendiente:',
-  'recorrido.comoEsta': 'Cómo está hecho',
-  'recorrido.comoEstaPregunta':
-    'Tecnologías, arquitectura, despliegue y procesos.',
-  'recorrido.comoEstaEnlace': 'Ver la ficha técnica',
-  'recorrido.sinFicha':
-    'Este proyecto aún no tiene ficha técnica (fichas/<proyecto>/ficha.json).',
-  'recorrido.diagramas':
-    '{{cuenta}} diagramas: arquitectura, despliegue y procesos.',
-  'recorrido.dondeLeer': 'Dónde leer sobre él',
-  'recorrido.dondeLeerPregunta':
-    'Wiki, repositorios y documentos institucionales.',
-  'recorrido.dondeLeerEnlace': 'Ver la documentación',
-  'recorrido.documentos':
-    'Páginas de wiki (TechDocs): {{wiki}} · Documentos institucionales: {{documentos}} · Repositorios: {{repos}}',
-  'recorrido.solidez': 'Qué tan sólido es',
-  'recorrido.solidezPregunta':
-    'Último resultado de las pruebas automáticas y comprobaciones de calidad.',
-  'recorrido.solidezEnlace': 'Ver calidad y pruebas',
-  'recorrido.calidad':
-    '{{cumplidas}} de {{total}} comprobaciones de calidad cumplidas.',
-  'recorrido.quienes': 'Quiénes trabajan en él',
-  'recorrido.quienesPregunta': 'Personas con acceso a sus repositorios.',
-  'recorrido.quienesEnlace': 'Ver los miembros',
   'avance.resumen': '{{completadas}} de {{total}} funciones completadas',
   'avance.fuente': 'Abrir el plan',
   'avance.ayuda':
@@ -1246,10 +1130,6 @@ const es = {
   'avance.completadas': 'Completadas',
   'avance.ningunaPendiente': 'Nada pendiente en el plan.',
   'avance.ningunaCompletada': 'Aún no hay nada completado.',
-  'avance.ultimo': 'Lo último integrado',
-  'avance.ultimoAyuda':
-    'Los últimos pull requests integrados (o commits) en los repositorios del proyecto.',
-  'avance.sinCambios': 'No se pudieron leer cambios recientes.',
   'avance.errorCarga': 'No se pudo cargar el avance',
   'avance.sinPlanTitulo': 'Este proyecto aún no declara su plan',
   'avance.sinPlanDescripcion':
@@ -1257,17 +1137,6 @@ const es = {
   'avance.noLeidoTitulo': 'No se pudo leer el plan',
   'avance.noLeidoDescripcion':
     'El portal no pudo leer el plan declarado: {{error}}',
-  'miembros.resumen': 'Personas: {{personas}} · Repositorios: {{repos}}',
-  'miembros.segunColaboradores': 'Personas con acceso al repositorio',
-  'miembros.segunContribuidores':
-    'Autores de commits (el portal no puede ver quién tiene acceso)',
-  'miembros.aportes': 'Commits: {{cuenta}}',
-  'miembros.errorCarga': 'No se pudieron cargar los miembros',
-  'miembros.permiso.admin': 'Administración',
-  'miembros.permiso.maintain': 'Mantenimiento',
-  'miembros.permiso.write': 'Escritura',
-  'miembros.permiso.triage': 'Clasificación',
-  'miembros.permiso.read': 'Lectura',
   'pruebas.titulo': 'Pruebas automáticas',
   'pruebas.ayuda':
     'La última ejecución de cada flujo de GitHub Actions en los repositorios del proyecto.',
@@ -1282,7 +1151,6 @@ const es = {
   'pruebas.resultado.failure': 'Falló',
   'pruebas.resultado.en_curso': 'En curso',
   'pruebas.resultado.otro': 'Sin resultado',
-  'proyecto.pestanaAvance': 'Avance',
   'proyecto.pestanaCalidadPruebas': 'Calidad y pruebas',
   'proyecto.pestanaMiembros': 'Miembros',
   'proyecto.repositorios': 'Repositorios',
@@ -1294,6 +1162,43 @@ const es = {
     'El portal busca los repositorios en los enlaces del System y en la anotación de código fuente de sus componentes.',
   'proyecto.wikiGithub': 'Wiki de {{repo}}',
   'proyecto.wikiGithubAyuda': 'Wiki del repositorio en GitHub',
+  'docs.intro':
+    'Toda la documentación publicada en el portal, agrupada por proyecto. Cada una se escribe en su repositorio (docs/ y mkdocs.yml).',
+  'docs.columnaDocumento': 'Documento',
+  'docs.leer': 'Leer',
+  'docs.leerDe': 'Leer {{nombre}}',
+  'miembros.errorCarga': 'No se pudieron cargar los miembros',
+  'miembros.resumenGrupos': 'Grupos: {{grupos}} · Personas: {{personas}}',
+  'miembros.actualizado': 'actualizado por {{quien}} el {{fecha}}',
+  'miembros.sinGruposTitulo': 'Este proyecto aún no tiene grupos',
+  'miembros.sinGruposDescripcion':
+    'Crea los grupos de personas que trabajan en el proyecto (p. ej. Desarrollo, Estadística) y elige a sus miembros entre los de la organización.',
+  'miembros.sinGruposSinPermiso':
+    'Un administrador de la organización en GitHub puede crear los grupos de personas que trabajan en el proyecto.',
+  'miembros.crearGrupos': 'Crear grupos',
+  'miembros.editarGrupos': 'Editar grupos',
+  'miembros.editarTitulo': 'Grupos del proyecto',
+  'miembros.editarAyuda':
+    'Cada grupo tiene un nombre y sus personas, elegidas entre los miembros de la organización en GitHub. Nada se guarda hasta pulsar Guardar.',
+  'miembros.filtrarPersonas': 'Filtrar personas',
+  'miembros.nombreGrupo': 'Nombre del grupo',
+  'miembros.grupoInicial': 'Desarrollo',
+  'miembros.quitarGrupo': 'Quitar el grupo {{grupo}}',
+  'miembros.agregarGrupo': 'Agregar grupo',
+  'miembros.grupoVacio': 'Todavía nadie en este grupo.',
+  'miembros.guardar': 'Guardar',
+  'miembros.cancelar': 'Cancelar',
+  'miembros.guardado': 'Grupos guardados',
+  'miembros.errorGuardar': 'No se pudieron guardar los grupos',
+  'portada.recientes': 'Lo último que viste',
+  'portada.recientesError': 'No se pudieron leer tus visitas recientes',
+  'portada.claseDocs': 'Documentación',
+  'portada.claseProyecto': 'Proyecto',
+  'portada.clasePagina': 'Página del portal',
+  'portada.tramo.hoy': 'Hoy',
+  'portada.tramo.ayer': 'Ayer',
+  'portada.tramo.semana': 'Esta semana',
+  'portada.tramo.antes': 'Antes',
 } as const;
 
 export const textosHrlEs = createTranslationResource({
