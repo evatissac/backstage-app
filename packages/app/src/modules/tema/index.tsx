@@ -18,9 +18,9 @@ import { barra, diurno, estados, nocturno, verdeAgua } from './paleta';
 // sus colores de tokens.css; este tema existe para que ambas se vean como una
 // sola aplicación. Los valores salen de paleta.ts.
 
-// Igual que --bui-font-regular en tokens.css (Poppins, cargada en index.html).
+// Igual que --bui-font-regular en tokens.css (Figtree, cargada en index.html).
 const fuente =
-  'Poppins, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif';
+  'Figtree, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif';
 
 // La barra lateral es propia (modules/nav), pero algunos componentes de
 // Backstage siguen leyendo estos valores.

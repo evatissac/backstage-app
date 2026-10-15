@@ -146,7 +146,6 @@
 
 .hrl-heroe__cifra dt {
   color: var(--hrl-heroe-texto-2);
-  font-family: var(--bui-font-monospace);
   font-size: var(--bui-font-size-1);
   letter-spacing: 0.06em;
   text-transform: uppercase;

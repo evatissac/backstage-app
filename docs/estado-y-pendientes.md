@@ -1,6 +1,6 @@
 # Estado y pendientes
 
-**Última actualización:** 2026-10-14. Léelo completo antes de tocar nada: explica
+**Última actualización:** 2026-10-15. Léelo completo antes de tocar nada: explica
 qué existe, qué se decidió, qué **no** se debe hacer todavía y qué sigue.
 
 ## 1. Resumen en 30 segundos
@@ -244,6 +244,52 @@ local: el usuario indicará en qué rama subirlo.
       Backstage las ordena por registro.
 - [ ] Probar el ⚡ de punta a punta: el formulario se abre prellenado, pero la
       plantilla sigue sin ejecutarse de verdad (ver arriba).
+
+### B3. Segunda ronda del rediseño (2026-10-15, sin subir)
+
+Pedidos del usuario: sin equipos, tarjeta de proyecto mínima, un recorrido
+para entender cada proyecto, avance como lista de funciones, calidad sin
+niveles y otra tipografía.
+
+- [x] **Sin equipos en la interfaz.** Los miembros de un proyecto son los
+      colaboradores de sus repositorios en GitHub, agrupados por repositorio
+      (pestaña _Miembros_). Fuera: columna «Responsable» del catálogo y de las
+      tablas, dato «Responsable» de la cabecera y del contexto, interruptor de
+      equipos del mapa y nodos de equipos en el grafo de relaciones
+      (`entity-card:catalog-graph/relations`). Los `Group` siguen en
+      `catalog/hrl.yaml` porque Backstage exige `spec.owner`, y el campo
+      «Equipo responsable» de las plantillas sigue existiendo.
+- [x] **Tarjeta de proyecto:** solo título y descripción.
+- [x] **Ficha del proyecto como recorrido**, en orden de lectura: _Resumen_
+      (seis pasos: qué es, en qué va, cómo está hecho, dónde leer, qué tan
+      sólido es, quiénes trabajan, más «Lo último integrado») · _Avance_ ·
+      _Ficha técnica_ · _Componentes y APIs_ · _Documentación_ (wiki/TechDocs,
+      repositorios con su README, documentos) · _Calidad y pruebas_ ·
+      _Miembros_. `/equipo` redirige a `/miembros`.
+- [x] **Backend `proyectos`** (`packages/backend/src/plugins/proyectos.ts`):
+      lee de GitHub, con el token de la integración y solo lecturas, los
+      repositorios de cada proyecto (colaboradores, ejecuciones de GitHub
+      Actions, wiki, pull requests y commits recientes) y su plan. Caché de
+      10 min.
+- [x] **Avance** desde el plan del repositorio: anotación `hrl/avance` del
+      System (hoy `docs/PLAN.md` de Estadistica_hrl). Fases `## Nombre ·
+    **[estado]**` y filas `| n | entrega | [hecho] |`. Solo «[hecho]» o
+      «[hecho, fecha]» cuenta como completada; lo parcial, en curso o
+      bloqueado es pendiente; lo retirado no se cuenta. Prueba:
+      `proyectos.test.ts`. Resultado real: 25 de 35.
+- [x] **Calidad sin niveles:** «X de Y comprobaciones» sobre lo evaluado, 12
+      reglas en cuatro categorías (identificación, documentación,
+      repositorio, operación). Fuera las reglas de equipos; nueva «tiene
+      pruebas automáticas» (`.github/workflows/`). La portada cambia «Pendiente
+      para ti» por «Por mejorar».
+- [x] **Tipografía Figtree** (Google Fonts, OFL) en lugar de Poppins. Spotify
+      Mix no tiene licencia pública; Figtree es la alternativa libre elegida.
+      JetBrains Mono queda solo para código, comandos y versiones. Los
+      diagramas de archify conservan su propia tipografía.
+- [ ] La regla «tiene pruebas automáticas» sale «sin evaluar» hasta la
+      siguiente pasada de `hrlRepositorio` (cada 6 h, minuto 15).
+- [ ] Las tablas estándar de dependencias de la ficha de entidad aún muestran
+      la columna «Responsable» (son de Backstage).
 
 ### C. Catálogo (cuando el usuario lo autorice)
 

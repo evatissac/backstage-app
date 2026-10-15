@@ -31,19 +31,14 @@ import { textosHrl } from '../idioma';
 import { Carga, useCarga } from '../comun/useCarga';
 import { EstadoVacio } from '../comun/EstadoVacio';
 import { IconoTipo } from '../comun/iconos';
-import {
-  partesRef,
-  relaciones,
-  rutaEntidad,
-  tituloDe,
-} from '../comun/entidades';
+import { partesRef, rutaEntidad, tituloDe } from '../comun/entidades';
 import { Cifra } from '../comun/Cifra';
 import { TablaHRL } from '../comun/TablaHRL';
 import { RejillaProyectos } from '../proyectos';
 import { ListaPrimerosPasos } from '../guia';
-import { Insignia, useCalidad } from '../calidad';
+import { Puntaje, useCalidad } from '../calidad';
 import { textoRegla } from '../calidad/componentes';
-import { pendientes, Resultado } from '../calidad/reglas';
+import { pendientes, proporcion, Resultado } from '../calidad/reglas';
 import { ResumenCatalogo, useResumenCatalogo } from '../proyectos/datos';
 import '../comun/comun.css';
 import './portada.css';
@@ -129,13 +124,14 @@ const Cifras = ({ resumen }: { resumen: Carga<ResumenCatalogo> }) => {
   const documentadas = r
     ? r.proyectos.reduce((n, p) => n + p.documentos, 0)
     : 0;
-  const conBronce =
+  const cumplidas =
     calidad.estado === 'listo'
-      ? porcentaje(
-          calidad.datos.filter(d => d.nivel).length,
-          calidad.datos.length,
-        )
-      : null;
+      ? calidad.datos.reduce((n, d) => n + d.cumplidas, 0)
+      : 0;
+  const evaluadas =
+    calidad.estado === 'listo'
+      ? calidad.datos.reduce((n, d) => n + d.evaluadas, 0)
+      : 0;
   return (
     <div className="hrl-cifras2 hrl-portada__cifras">
       <Cifra
@@ -164,9 +160,9 @@ const Cifras = ({ resumen }: { resumen: Carga<ResumenCatalogo> }) => {
       />
       <Cifra
         icono={<ShieldIcon />}
-        etiqueta={t('portada.cifraBronce')}
-        ayuda={t('portada.ayudaBronce')}
-        valor={conBronce}
+        etiqueta={t('portada.cifraCalidad')}
+        ayuda={t('portada.ayudaCalidad')}
+        valor={porcentaje(cumplidas, evaluadas)}
         cargando={calidad.estado === 'cargando'}
         href="/calidad"
       />
@@ -175,50 +171,35 @@ const Cifras = ({ resumen }: { resumen: Carga<ResumenCatalogo> }) => {
 };
 
 /**
- * «Pendiente para ti»: los componentes y APIs de tus equipos que aún no
- * llegan a Oro, con lo siguiente que les falta. Es la tabla de trabajo de la
- * portada, como la cola de revisión de Port.
+ * «Por mejorar»: los componentes y APIs que menos comprobaciones cumplen,
+ * con lo que les falta. Es la tabla de trabajo de la portada.
  */
-const Pendiente = () => {
+const PorMejorar = () => {
   const { t } = useTranslationRef(textosHrl);
-  const identityApi = useApi(identityApiRef);
-  const identidad = useCarga(
-    () => identityApi.getBackstageIdentity(),
-    [identityApi],
-  );
   const calidad = useCalidad();
-  const propios = new Set(
-    identidad.estado === 'listo'
-      ? identidad.datos.ownershipEntityRefs.map(r => r.toLowerCase())
-      : [],
-  );
   const filas =
-    calidad.estado === 'listo' && identidad.estado === 'listo'
-      ? calidad.datos
-          .filter(
-            r =>
-              r.nivel !== 'oro' &&
-              relaciones(r.entidad, 'ownedBy').some(o =>
-                propios.has(o.toLowerCase()),
-              ),
+    calidad.estado === 'listo'
+      ? [...calidad.datos]
+          .filter(r => pendientes(r).length > 0)
+          .sort(
+            (a, b) =>
+              (proporcion(a) ?? 2) - (proporcion(b) ?? 2) ||
+              tituloDe(a.entidad).localeCompare(tituloDe(b.entidad)),
           )
           .map(r => ({
             id: r.entidad.metadata.uid ?? r.entidad.metadata.name,
             r,
           }))
       : undefined;
-  const sinEquipo =
-    identidad.estado === 'listo' &&
-    !identidad.datos.ownershipEntityRefs.some(r => r.startsWith('group:'));
-  const siguientes = (r: Resultado) =>
+  const faltan = (r: Resultado) =>
     pendientes(r)
       .map(regla => textoRegla(t, regla.id, 'titulo'))
       .join(' · ');
 
   return (
-    <Panel titulo={t('portada.pendiente')} icono={<TareaIcon />}>
+    <Panel titulo={t('portada.porMejorar')} icono={<TareaIcon />}>
       <Text as="p" variant="body-small" color="secondary">
-        {t('portada.pendienteAyuda')}
+        {t('portada.porMejorarAyuda')}
       </Text>
       {calidad.estado === 'error' ? (
         <Text variant="body-small" color="danger">
@@ -226,8 +207,8 @@ const Pendiente = () => {
         </Text>
       ) : (
         <TablaHRL
-          id="portada-pendiente"
-          titulo={t('portada.pendiente')}
+          id="portada-por-mejorar"
+          titulo={t('portada.porMejorar')}
           filas={filas}
           cargando={!filas}
           porPagina={5}
@@ -235,16 +216,8 @@ const Pendiente = () => {
             <EstadoVacio
               compacto
               icono={<TareaIcon />}
-              titulo={
-                sinEquipo
-                  ? t('portada.pendienteSinEquipoTitulo')
-                  : t('portada.pendienteVacioTitulo')
-              }
-              descripcion={
-                sinEquipo
-                  ? t('portada.pendienteSinEquipoDescripcion')
-                  : t('portada.pendienteVacioDescripcion')
-              }
+              titulo={t('portada.porMejorarVacioTitulo')}
+              descripcion={t('portada.porMejorarVacioDescripcion')}
             />
           }
           columnas={[
@@ -262,26 +235,19 @@ const Pendiente = () => {
               ),
             },
             {
-              id: 'nivel',
-              etiqueta: t('calidad.columnaNivel'),
-              filtrable: true,
-              valor: ({ r }) => {
-                if (r.sinEvaluar) return t('calidad.sinEvaluar');
-                return r.nivel
-                  ? t(`calidad.nivel.${r.nivel}` as const)
-                  : t('calidad.sinNivel');
-              },
+              id: 'puntaje',
+              etiqueta: t('calidad.columnaPuntaje'),
               celda: ({ r }) => (
                 <Cell>
-                  <Insignia nivel={r.nivel} sinEvaluar={r.sinEvaluar} />
+                  <Puntaje r={r} compacto />
                 </Cell>
               ),
             },
             {
-              id: 'siguiente',
-              etiqueta: t('calidad.columnaSiguiente'),
-              valor: ({ r }) => siguientes(r),
-              celda: ({ r }) => <CellText title={siguientes(r)} />,
+              id: 'faltan',
+              etiqueta: t('calidad.columnaFaltan'),
+              valor: ({ r }) => faltan(r),
+              celda: ({ r }) => <CellText title={faltan(r)} />,
             },
           ]}
           acciones={({ r }) => (
@@ -501,7 +467,7 @@ export const Portada = () => {
         <Cifras resumen={resumen} />
 
         <div className="hrl-portada__trabajo">
-          <Pendiente />
+          <PorMejorar />
           <div className="hrl-seccion">
             <Accesos />
             <ListaPrimerosPasos />

@@ -3,15 +3,14 @@ import {
   useTranslationRef,
 } from '@backstage/frontend-plugin-api';
 import { Alert, ButtonLink, Cell, CellText, Text } from '@backstage/ui';
-import { Link } from 'react-router-dom';
 import CheckIcon from '@material-ui/icons/CheckCircle';
 import FaltaIcon from '@material-ui/icons/RadioButtonUnchecked';
 import SinEvaluarIcon from '@material-ui/icons/HelpOutline';
-import MedallaIcon from '@material-ui/icons/EmojiEventsOutlined';
-import SinNivelIcon from '@material-ui/icons/RemoveCircleOutline';
 import InsightsIcon from '@material-ui/icons/AssessmentOutlined';
-import ResponsableIcon from '@material-ui/icons/PersonOutline';
 import DocIcon from '@material-ui/icons/MenuBookOutlined';
+import ReadmeIcon from '@material-ui/icons/DescriptionOutlined';
+import ChecklistIcon from '@material-ui/icons/PlaylistAddCheck';
+import PendienteIcon from '@material-ui/icons/HourglassEmptyOutlined';
 import { textosHrl } from '../idioma';
 import { EstadoVacio } from '../comun/EstadoVacio';
 import { IconoTipo } from '../comun/iconos';
@@ -26,10 +25,10 @@ import {
 } from '../comun/entidades';
 import { Carga } from '../comun/useCarga';
 import {
+  CATEGORIAS,
   EstadoRegla,
-  Nivel,
-  NIVELES,
   pendientes,
+  proporcion,
   REGLAS,
   Resultado,
 } from './reglas';
@@ -38,7 +37,8 @@ import './calidad.css';
 
 // Las claves de las reglas se arman con su id; TypeScript no puede seguir la
 // plantilla, así que se afirma una clave cualquiera del mismo grupo.
-type ClaveRegla = 'calidad.reglas.responsable.titulo';
+type ClaveRegla = 'calidad.reglas.proyecto.titulo';
+type ClaveCategoria = 'calidad.categoria.identificacion';
 
 export const textoRegla = (
   t: TranslationFunction<typeof textosHrl.T>,
@@ -46,51 +46,48 @@ export const textoRegla = (
   campo: 'titulo' | 'porque' | 'arreglo',
 ) => t(`calidad.reglas.${id}.${campo}` as ClaveRegla);
 
-export const Insignia = (props: {
-  nivel?: Nivel;
-  grande?: boolean;
-  /** Aún no hay resultados: no es lo mismo que «sin nivel». */
-  sinEvaluar?: boolean;
+const textoCategoria = (
+  t: TranslationFunction<typeof textosHrl.T>,
+  categoria: string,
+) => t(`calidad.categoria.${categoria}` as ClaveCategoria);
+
+/**
+ * Puntaje de una entidad: «9 de 12 comprobaciones» con una barra. Sobre lo
+ * evaluado: lo que aún no tiene datos no resta.
+ */
+export const Puntaje = ({
+  r,
+  compacto,
+}: {
+  r: Resultado;
+  compacto?: boolean;
 }) => {
   const { t } = useTranslationRef(textosHrl);
-  if (props.sinEvaluar) {
+  if (r.sinEvaluar) {
     return (
-      <span
-        className={`hrl-insignia${props.grande ? ' hrl-insignia--grande' : ''}`}
-        data-nivel="sin-evaluar"
-      >
-        <SinEvaluarIcon aria-hidden />
+      <span className="hrl-puntaje" data-sin-evaluar>
+        <SinEvaluarIcon aria-hidden className="hrl-puntaje__icono" />
         {t('calidad.sinEvaluar')}
       </span>
     );
   }
-  const nivel = props.nivel ?? 'ninguno';
-  return (
-    <span
-      className={`hrl-insignia${props.grande ? ' hrl-insignia--grande' : ''}`}
-      data-nivel={nivel}
-    >
-      {props.nivel ? <MedallaIcon aria-hidden /> : <SinNivelIcon aria-hidden />}
-      {props.nivel
-        ? t(`calidad.nivel.${props.nivel}` as const)
-        : t('calidad.sinNivel')}
-    </span>
-  );
-};
-
-/** Barra de progreso «6 de 13 comprobaciones». */
-export const Progreso = ({ r }: { r: Resultado }) => {
-  const { t } = useTranslationRef(textosHrl);
   const texto = t('calidad.progreso', {
     cumplidas: String(r.cumplidas),
-    total: String(r.total),
+    total: String(r.evaluadas),
   });
   return (
-    <span className="hrl-progreso">
-      <span className="hrl-progreso__barra" aria-hidden>
-        <span style={{ width: `${(r.cumplidas / r.total) * 100}%` }} />
+    <span className="hrl-puntaje" data-compacto={compacto}>
+      <span className="hrl-puntaje__barra" aria-hidden>
+        <span style={{ width: `${(proporcion(r) ?? 0) * 100}%` }} />
       </span>
-      <span className="hrl-progreso__texto">{texto}</span>
+      <span className="hrl-puntaje__texto">{texto}</span>
+      {r.evaluadas < r.total && (
+        <span className="hrl-puntaje__nota">
+          {t('calidad.faltanEvaluar', {
+            cuenta: String(r.total - r.evaluadas),
+          })}
+        </span>
+      )}
     </span>
   );
 };
@@ -119,58 +116,70 @@ export const EstadoReglaIcono = ({ estado }: { estado: EstadoRegla }) => {
 export const estadoDato = (estado: EstadoRegla) =>
   estado === undefined ? 'sin-evaluar' : String(estado);
 
-/** Todas las comprobaciones de una entidad, agrupadas por nivel. */
+/** Una comprobación con su estado, por qué importa y cómo cumplirla. */
+export const ItemRegla = (props: {
+  id: string;
+  estado: EstadoRegla;
+  conPorque?: boolean;
+}) => {
+  const { t } = useTranslationRef(textosHrl);
+  return (
+    <li className="hrl-regla" data-ok={estadoDato(props.estado)}>
+      <EstadoReglaIcono estado={props.estado} />
+      <div>
+        <Text as="p" variant="body-medium" weight="bold">
+          {textoRegla(t, props.id, 'titulo')}
+        </Text>
+        {props.conPorque && (
+          <Text as="p" variant="body-small" color="secondary">
+            {textoRegla(t, props.id, 'porque')}
+          </Text>
+        )}
+        {props.estado === false && (
+          <p className="hrl-regla__arreglo">
+            {textoRegla(t, props.id, 'arreglo')}
+          </p>
+        )}
+        {props.estado === undefined && (
+          <p className="hrl-regla__arreglo">{t('calidad.sinEvaluarAyuda')}</p>
+        )}
+      </div>
+    </li>
+  );
+};
+
+/** Todas las comprobaciones de una entidad, agrupadas por categoría. */
 export const ListaReglas = ({ r }: { r: Resultado }) => {
   const { t } = useTranslationRef(textosHrl);
   return (
     <div className="hrl-niveles">
-      {NIVELES.map(nivel => {
-        const reglas = REGLAS.filter(regla => regla.nivel === nivel);
-        const completo = reglas.every(regla => r.reglas[regla.id] === true);
+      {CATEGORIAS.map(categoria => {
+        const reglas = REGLAS.filter(regla => regla.categoria === categoria);
+        const cumplidas = reglas.filter(
+          regla => r.reglas[regla.id] === true,
+        ).length;
         return (
-          <section
-            key={nivel}
-            className="hrl-tarjeta hrl-nivel"
-            data-nivel={nivel}
-            data-completo={completo}
-          >
+          <section key={categoria} className="hrl-tarjeta hrl-nivel">
             <header className="hrl-nivel__cabecera">
-              <Insignia nivel={nivel} />
+              <Text as="h3" variant="title-x-small" weight="bold">
+                {textoCategoria(t, categoria)}
+              </Text>
               <Text as="p" variant="body-small" color="secondary">
-                {t(`calidad.descripcionNivel.${nivel}` as const)}
+                {t('calidad.progreso', {
+                  cumplidas: String(cumplidas),
+                  total: String(reglas.length),
+                })}
               </Text>
             </header>
             <ul className="hrl-reglas">
-              {reglas.map(regla => {
-                const estado = r.reglas[regla.id];
-                return (
-                  <li
-                    key={regla.id}
-                    className="hrl-regla"
-                    data-ok={estadoDato(estado)}
-                  >
-                    <EstadoReglaIcono estado={estado} />
-                    <div>
-                      <Text as="p" variant="body-medium" weight="bold">
-                        {textoRegla(t, regla.id, 'titulo')}
-                      </Text>
-                      <Text as="p" variant="body-small" color="secondary">
-                        {textoRegla(t, regla.id, 'porque')}
-                      </Text>
-                      {estado === false && (
-                        <p className="hrl-regla__arreglo">
-                          {textoRegla(t, regla.id, 'arreglo')}
-                        </p>
-                      )}
-                      {estado === undefined && (
-                        <p className="hrl-regla__arreglo">
-                          {t('calidad.sinEvaluarAyuda')}
-                        </p>
-                      )}
-                    </div>
-                  </li>
-                );
-              })}
+              {reglas.map(regla => (
+                <ItemRegla
+                  key={regla.id}
+                  id={regla.id}
+                  estado={r.reglas[regla.id]}
+                  conPorque
+                />
+              ))}
             </ul>
           </section>
         );
@@ -186,7 +195,7 @@ const proyectoDe = (r: Resultado) => {
   return sistema ? partesRef(sistema).name : '';
 };
 
-/** Tabla de componentes y APIs con su nivel y lo que les falta. */
+/** Tabla de componentes y APIs con su puntaje y lo que les falta. */
 export const TablaCalidad = (props: {
   carga: Carga<Resultado[]>;
   mostrarProyecto?: boolean;
@@ -203,19 +212,13 @@ export const TablaCalidad = (props: {
       />
     );
   }
-  const nivelTexto = (r: Resultado) => {
-    if (r.sinEvaluar) return t('calidad.sinEvaluar');
-    return r.nivel
-      ? t(`calidad.nivel.${r.nivel}` as const)
-      : t('calidad.sinNivel');
-  };
-  const siguientes = (r: Resultado) =>
+  const faltan = (r: Resultado) =>
     pendientes(r)
       .map(regla => textoRegla(t, regla.id, 'titulo'))
       .join(' · ');
   return (
     <TablaHRL
-      id={props.mostrarProyecto ? 'calidad-todo' : 'calidad-proyecto'}
+      id={props.mostrarProyecto ? 'calidad-todo-2' : 'calidad-proyecto-2'}
       titulo={t('calidad.titulo')}
       cargando={carga.estado === 'cargando'}
       filas={
@@ -266,36 +269,29 @@ export const TablaCalidad = (props: {
             ),
         },
         {
-          id: 'nivel',
-          etiqueta: t('calidad.columnaNivel'),
-          filtrable: true,
-          agrupable: true,
-          valor: ({ r }) => nivelTexto(r),
+          id: 'puntaje',
+          etiqueta: t('calidad.columnaPuntaje'),
+          // Ordena por proporción cumplida; lo no evaluado va al final.
+          valor: ({ r }) =>
+            String(Math.round((proporcion(r) ?? -1) * 1000) + 1000).padStart(
+              4,
+              '0',
+            ),
           celda: ({ r }) => (
             <Cell>
-              <Insignia nivel={r.nivel} sinEvaluar={r.sinEvaluar} />
+              <Puntaje r={r} compacto />
             </Cell>
           ),
         },
         {
-          id: 'progreso',
-          etiqueta: t('calidad.columnaProgreso'),
-          valor: ({ r }) => String(r.cumplidas).padStart(3, '0'),
-          celda: ({ r }) => (
-            <Cell>
-              <Progreso r={r} />
-            </Cell>
-          ),
-        },
-        {
-          id: 'siguiente',
-          etiqueta: t('calidad.columnaSiguiente'),
-          valor: ({ r }) => siguientes(r),
+          id: 'faltan',
+          etiqueta: t('calidad.columnaFaltan'),
+          valor: ({ r }) => faltan(r),
           celda: ({ r }) =>
             pendientes(r).length === 0 ? (
               <CellText title={t('calidad.todoCumplido')} color="secondary" />
             ) : (
-              <CellText title={siguientes(r)} />
+              <CellText title={faltan(r)} />
             ),
         },
       ]}
@@ -317,52 +313,53 @@ export const TablaCalidad = (props: {
 const porcentaje = (parte: number, total: number) =>
   total === 0 ? null : `${Math.round((parte / total) * 100)} %`;
 
-/** Cifras de cobertura: cuántos tienen cada nivel y qué falta más. */
+/** Cifras de cobertura del conjunto. */
 export const ResumenCalidad = ({ datos }: { datos: Resultado[] }) => {
   const { t } = useTranslationRef(textosHrl);
-  const evaluados = datos.filter(d => !d.sinEvaluar);
-  const conNivel = (n: Nivel) =>
-    evaluados.filter(
-      d => d.nivel && NIVELES.indexOf(d.nivel) >= NIVELES.indexOf(n),
-    ).length;
+  const conRegla = (id: string) => {
+    const evaluados = datos.filter(d => d.reglas[id] !== undefined);
+    return porcentaje(
+      evaluados.filter(d => d.reglas[id] === true).length,
+      evaluados.length,
+    );
+  };
+  const cumplidas = datos.reduce((n, d) => n + d.cumplidas, 0);
+  const evaluadas = datos.reduce((n, d) => n + d.evaluadas, 0);
   return (
     <div className="hrl-cifras2">
       <Cifra
-        icono={<ResponsableIcon />}
-        etiqueta={t('calidad.cifraResponsable')}
-        ayuda={t('calidad.ayudaResponsable')}
-        valor={porcentaje(
-          evaluados.filter(d => d.reglas.responsable === true).length,
-          evaluados.length,
-        )}
+        icono={<ChecklistIcon />}
+        etiqueta={t('calidad.cifraCumplidas')}
+        ayuda={t('calidad.ayudaCumplidas')}
+        valor={porcentaje(cumplidas, evaluadas)}
       />
       <Cifra
         icono={<DocIcon />}
         etiqueta={t('calidad.cifraDocs')}
         ayuda={t('calidad.ayudaDocs')}
-        valor={porcentaje(
-          evaluados.filter(d => d.reglas.documentacion === true).length,
-          evaluados.length,
-        )}
+        valor={conRegla('documentacion')}
       />
-      {NIVELES.map(n => (
-        <Cifra
-          key={n}
-          icono={<MedallaIcon />}
-          etiqueta={t('calidad.cifraNivel', {
-            nivel: t(`calidad.nivel.${n}` as const),
-          })}
-          ayuda={t(`calidad.descripcionNivel.${n}` as const)}
-          valor={evaluados.length === 0 ? null : conNivel(n)}
-        />
-      ))}
+      <Cifra
+        icono={<ReadmeIcon />}
+        etiqueta={t('calidad.cifraReadme')}
+        ayuda={t('calidad.ayudaReadme')}
+        valor={conRegla('readme')}
+      />
+      <Cifra
+        icono={<PendienteIcon />}
+        etiqueta={t('calidad.cifraSinEvaluar')}
+        ayuda={t('calidad.ayudaSinEvaluar')}
+        valor={
+          datos.length === 0 ? null : datos.filter(d => d.sinEvaluar).length
+        }
+      />
     </div>
   );
 };
 
 /**
- * Vista por regla (como «Rules» en Port): cuántos la cumplen de los que se
- * pudieron evaluar, y por qué importa.
+ * Vista por comprobación (como «Rules» en Port): cuántos la cumplen de los
+ * que se pudieron evaluar, y por qué importa.
  */
 export const TablaReglas = ({ carga }: { carga: Carga<Resultado[]> }) => {
   const { t } = useTranslationRef(textosHrl);
@@ -390,12 +387,12 @@ export const TablaReglas = ({ carga }: { carga: Carga<Resultado[]> }) => {
   });
   return (
     <TablaHRL
-      id="calidad-reglas"
+      id="calidad-reglas-2"
       titulo={t('calidad.vistaReglas')}
       cargando={carga.estado === 'cargando'}
       filas={carga.estado === 'listo' ? filas : undefined}
       porPagina={50}
-      agruparPorDefecto="nivel"
+      agruparPorDefecto="categoria"
       vacio={null}
       columnas={[
         {
@@ -411,15 +408,13 @@ export const TablaReglas = ({ carga }: { carga: Carga<Resultado[]> }) => {
           ),
         },
         {
-          id: 'nivel',
-          etiqueta: t('calidad.columnaNivel'),
+          id: 'categoria',
+          etiqueta: t('calidad.columnaCategoria'),
           filtrable: true,
           agrupable: true,
-          valor: ({ regla }) => t(`calidad.nivel.${regla.nivel}` as const),
+          valor: ({ regla }) => textoCategoria(t, regla.categoria),
           celda: ({ regla }) => (
-            <Cell>
-              <Insignia nivel={regla.nivel} />
-            </Cell>
+            <CellText title={textoCategoria(t, regla.categoria)} />
           ),
         },
         {
@@ -459,10 +454,3 @@ export const TablaReglas = ({ carga }: { carga: Carga<Resultado[]> }) => {
     />
   );
 };
-
-/** Enlace corto a la página de calidad con el nivel de una entidad. */
-export const EnlaceCalidad = ({ r }: { r: Resultado }) => (
-  <Link to={`${rutaEntidad(r.entidad)}/calidad`} className="hrl-enlace-nivel">
-    <Insignia nivel={r.nivel} sinEvaluar={r.sinEvaluar} />
-  </Link>
-);

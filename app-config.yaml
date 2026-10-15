@@ -64,6 +64,11 @@ app:
         config: { title: Resumen }
     # «Contexto» (modules/entidad/Tarjetas.tsx) reemplaza a «Acerca de».
     - entity-card:catalog/about: false
+    # El portal no muestra equipos: el grafo de relaciones de cada ficha solo
+    # dibuja piezas, proyectos y dominios.
+    - entity-card:catalog-graph/relations:
+        config:
+          kinds: [component, api, resource, system, domain]
     - entity-content:techdocs:
         config: { title: Documentación }
     - entity-content:api-docs/definition:
@@ -242,9 +247,9 @@ catalog:
     # descubrimiento, como cualquier otro repo.
 
 # Calidad: datos que recoge packages/backend/src/modules/calidad.ts y reglas
-# que los evalúan. El id de cada regla es el del frontend (modules/calidad),
-# donde está su texto en los dos idiomas; `nivel` decide si cuenta para
-# Bronce, Plata u Oro.
+# que los evalúan. Sin niveles: cada componente se mide por cuántas cumple.
+# El id de cada regla es el del frontend (modules/calidad), donde está su
+# texto en los dos idiomas; `categoria` solo agrupa la lista.
 techInsights:
   factRetrievers:
     hrlCatalogo:
@@ -259,22 +264,12 @@ techInsights:
       lifecycle: { maxItems: 30 }
   factChecker:
     checks:
-      responsable:
-        type: json-rules-engine
-        name: Tiene responsable
-        description: Su ficha declara spec.owner.
-        factIds: [hrlCatalogo]
-        metadata: { nivel: bronce }
-        rule:
-          conditions:
-            all:
-              - { fact: tieneResponsable, operator: equal, value: true }
       proyecto:
         type: json-rules-engine
         name: Pertenece a un proyecto
         description: Declara spec.system.
         factIds: [hrlCatalogo]
-        metadata: { nivel: bronce }
+        metadata: { categoria: identificacion }
         rule:
           conditions:
             all:
@@ -284,111 +279,111 @@ techInsights:
         name: Tiene descripción
         description: metadata.description con al menos una frase.
         factIds: [hrlCatalogo]
-        metadata: { nivel: bronce }
+        metadata: { categoria: identificacion }
         rule:
           conditions:
             all:
               - { fact: descripcionSuficiente, operator: equal, value: true }
-      documentacion:
-        type: json-rules-engine
-        name: Publica documentación
-        description: Tiene la anotación de TechDocs.
-        factIds: [hrlCatalogo]
-        metadata: { nivel: plata }
-        rule:
-          conditions:
-            all:
-              - { fact: tieneDocs, operator: equal, value: true }
-      repositorio:
-        type: json-rules-engine
-        name: Enlaza su repositorio
-        description: Declara dónde está su código.
-        factIds: [hrlCatalogo]
-        metadata: { nivel: plata }
-        rule:
-          conditions:
-            all:
-              - { fact: tieneRepositorio, operator: equal, value: true }
       cicloDeVida:
         type: json-rules-engine
         name: Declara su ciclo de vida
         description: Tiene spec.lifecycle.
         factIds: [hrlCatalogo]
-        metadata: { nivel: plata }
+        metadata: { categoria: identificacion }
         rule:
           conditions:
             all:
               - { fact: tieneCicloDeVida, operator: equal, value: true }
-      readme:
-        type: json-rules-engine
-        name: Tiene README
-        description: Hay un README en la raíz del repositorio.
-        factIds: [hrlRepositorio]
-        metadata: { nivel: plata }
-        rule:
-          conditions:
-            all:
-              - { fact: tieneReadme, operator: equal, value: true }
-      sinCredenciales:
-        type: json-rules-engine
-        name: Sin credenciales versionadas
-        description: No hay archivos de credenciales ni .env en el repositorio.
-        factIds: [hrlRepositorio]
-        metadata: { nivel: plata }
-        rule:
-          conditions:
-            all:
-              - { fact: sinCredenciales, operator: equal, value: true }
       etiquetas:
         type: json-rules-engine
         name: Declara sus tecnologías
         description: Tiene metadata.tags.
         factIds: [hrlCatalogo]
-        metadata: { nivel: oro }
+        metadata: { categoria: identificacion }
         rule:
           conditions:
             all:
               - { fact: tieneEtiquetas, operator: equal, value: true }
-      equipo:
+      documentacion:
         type: json-rules-engine
-        name: Equipo con personas
-        description: Su responsable es un equipo con miembros.
+        name: Publica documentación
+        description: Tiene la anotación de TechDocs.
         factIds: [hrlCatalogo]
-        metadata: { nivel: oro }
+        metadata: { categoria: documentacion }
         rule:
           conditions:
             all:
-              - { fact: equipoConMiembros, operator: equal, value: true }
-      produccion:
+              - { fact: tieneDocs, operator: equal, value: true }
+      readme:
         type: json-rules-engine
-        name: En producción
-        description: spec.lifecycle es production.
-        factIds: [hrlCatalogo]
-        metadata: { nivel: oro }
+        name: Tiene README
+        description: Hay un README en la raíz del repositorio.
+        factIds: [hrlRepositorio]
+        metadata: { categoria: documentacion }
         rule:
           conditions:
             all:
-              - { fact: enProduccion, operator: equal, value: true }
+              - { fact: tieneReadme, operator: equal, value: true }
+      repositorio:
+        type: json-rules-engine
+        name: Enlaza su repositorio
+        description: Declara dónde está su código.
+        factIds: [hrlCatalogo]
+        metadata: { categoria: repositorio }
+        rule:
+          conditions:
+            all:
+              - { fact: tieneRepositorio, operator: equal, value: true }
       codeowners:
         type: json-rules-engine
         name: Tiene CODEOWNERS
         description: GitHub sabe a quién pedir revisión.
         factIds: [hrlRepositorio]
-        metadata: { nivel: oro }
+        metadata: { categoria: repositorio }
         rule:
           conditions:
             all:
               - { fact: tieneCodeowners, operator: equal, value: true }
+      sinCredenciales:
+        type: json-rules-engine
+        name: Sin credenciales versionadas
+        description: No hay archivos de credenciales ni .env en el repositorio.
+        factIds: [hrlRepositorio]
+        metadata: { categoria: repositorio }
+        rule:
+          conditions:
+            all:
+              - { fact: sinCredenciales, operator: equal, value: true }
       kitFijado:
         type: json-rules-engine
         name: Kit fijado a una versión
         description: '@hrl/core-ui está fijado a un tag (o no lo usa).'
         factIds: [hrlRepositorio]
-        metadata: { nivel: oro }
+        metadata: { categoria: repositorio }
         rule:
           conditions:
             all:
               - { fact: kitFijado, operator: equal, value: true }
+      pruebas:
+        type: json-rules-engine
+        name: Tiene pruebas automáticas
+        description: Hay flujos de GitHub Actions en .github/workflows/.
+        factIds: [hrlRepositorio]
+        metadata: { categoria: operacion }
+        rule:
+          conditions:
+            all:
+              - { fact: tienePruebas, operator: equal, value: true }
+      produccion:
+        type: json-rules-engine
+        name: En producción
+        description: spec.lifecycle es production.
+        factIds: [hrlCatalogo]
+        metadata: { categoria: operacion }
+        rule:
+          conditions:
+            all:
+              - { fact: enProduccion, operator: equal, value: true }
 
 # see https://backstage.io/docs/permissions/getting-started for more on the permission framework
 permission:

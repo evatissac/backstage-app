@@ -21,6 +21,9 @@ metadata:
   annotations:
     # Color del proyecto en el portal (franja, monograma y cabecera).
     hrl/color: '#0e7490'
+    # Plan del que sale la pestaña «Avance»: fases y entregas marcadas
+    # [hecho], [en curso], [pendiente] o [bloqueado].
+    hrl/avance: https://github.com/DevHRL/Estadistica_hrl/blob/main/docs/PLAN.md
   title: Sistema de Reporte Estadístico
   # Objetivo general del proyecto: es lo que muestra su tarjeta en el portal.
   description: >-

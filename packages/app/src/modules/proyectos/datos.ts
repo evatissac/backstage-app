@@ -82,14 +82,12 @@ export const useResumenCatalogo = () => {
   }, [catalogo]);
 };
 
-/** Un proyecto con todo lo que cuelga de él y su equipo responsable. */
+/** Un proyecto con todo lo que cuelga de él. */
 export type DetalleProyecto = {
   sistema: Entidad;
   componentes: Entidad[];
   apis: Entidad[];
   recursos: Entidad[];
-  responsable?: Entidad;
-  miembros: Entidad[];
   dominio?: Entidad;
 };
 
@@ -104,7 +102,7 @@ export const useDetalleProyecto = (nombre: string) => {
     if (!sistema) return undefined;
 
     const refSistema = `system:default/${sistema.metadata.name}`.toLowerCase();
-    const [piezas, responsables, dominios] = await Promise.all([
+    const [piezas, dominios] = await Promise.all([
       catalogo.getEntities({
         filter: {
           kind: ['Component', 'API', 'Resource'],
@@ -113,29 +111,15 @@ export const useDetalleProyecto = (nombre: string) => {
         order: { field: 'metadata.name', order: 'asc' },
       }),
       catalogo.getEntitiesByRefs({
-        entityRefs: relaciones(sistema, 'ownedBy'),
-      }),
-      catalogo.getEntitiesByRefs({
         entityRefs: relaciones(sistema, 'partOf'),
       }),
     ]);
-
-    const responsable = responsables.items.find(Boolean);
-    const miembros = responsable
-      ? (
-          await catalogo.getEntitiesByRefs({
-            entityRefs: relaciones(responsable, 'hasMember'),
-          })
-        ).items.filter((m): m is Entidad => Boolean(m))
-      : [];
 
     return {
       sistema,
       componentes: piezas.items.filter(p => p.kind === 'Component'),
       apis: piezas.items.filter(p => p.kind === 'API'),
       recursos: piezas.items.filter(p => p.kind === 'Resource'),
-      responsable,
-      miembros,
       dominio: dominios.items.find(d => d?.kind === 'Domain'),
     };
   }, [catalogo, nombre]);

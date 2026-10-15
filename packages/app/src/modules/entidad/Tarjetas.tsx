@@ -14,7 +14,6 @@ import {
   colorProyecto,
   Entidad,
   iniciales,
-  partesRef,
   relaciones,
   rutaDocs,
   rutaEntidad,
@@ -22,14 +21,9 @@ import {
   tieneDocs,
   tituloDe,
 } from '../comun/entidades';
-import {
-  EstadoReglaIcono,
-  estadoDato,
-  Insignia,
-  textoRegla,
-} from '../calidad/componentes';
+import { ItemRegla, Puntaje } from '../calidad/componentes';
 import { useCalidadEntidad } from '../calidad/datos';
-import { NIVELES, pendientes, REGLAS } from '../calidad/reglas';
+import { pendientes } from '../calidad/reglas';
 import {
   accionesPara,
   prellenado,
@@ -56,18 +50,15 @@ const urlFuente = (e: Entidad) =>
     '',
   );
 
-const NivelContexto = ({ entidad }: { entidad: Entidad }) => {
+const CalidadContexto = ({ entidad }: { entidad: Entidad }) => {
   const { t } = useTranslationRef(textosHrl);
   const carga = useCalidadEntidad(entidad);
   return (
-    <Dato etiqueta={t('entidad.nivel')}>
+    <Dato etiqueta={t('entidad.calidad')}>
       {carga.estado === 'cargando' && <Skeleton width={80} />}
       {carga.estado === 'listo' && (
         <Link to={`${rutaEntidad(entidad)}/calidad`}>
-          <Insignia
-            nivel={carga.datos.nivel}
-            sinEvaluar={carga.datos.sinEvaluar}
-          />
+          <Puntaje r={carga.datos} compacto />
         </Link>
       )}
       {carga.estado === 'error' && t('calidad.sinDatos')}
@@ -77,7 +68,7 @@ const NivelContexto = ({ entidad }: { entidad: Entidad }) => {
 
 /**
  * «Contexto» (columna derecha de la ficha, como el Catalog context de Port):
- * las propiedades que responden «qué es y de quién es» de un vistazo.
+ * las propiedades que responden «qué es y dónde vive» de un vistazo.
  * Reemplaza la tarjeta «Acerca de» de Backstage.
  */
 export const TarjetaContexto = () => {
@@ -93,7 +84,6 @@ export const TarjetaContexto = () => {
     [catalogo, refSistema],
   );
   const spec = (entity.spec ?? {}) as { type?: string; lifecycle?: string };
-  const responsables = relaciones(entity, 'ownedBy');
   const fuente = urlFuente(entity);
   const editar = entity.metadata.annotations?.['backstage.io/edit-url'];
   const etiquetas = entity.metadata.tags ?? [];
@@ -136,22 +126,7 @@ export const TarjetaContexto = () => {
             <Etiqueta texto={spec.lifecycle} {...estiloCiclo(spec.lifecycle)} />
           </Dato>
         )}
-        <Dato etiqueta={t('proyecto.responsable')}>
-          {responsables.length === 0
-            ? t('proyecto.sinResponsable')
-            : responsables.map((r, i) => {
-                const { kind, namespace, name } = partesRef(r);
-                return (
-                  <span key={r}>
-                    {i > 0 && ', '}
-                    <Link to={`/catalog/${namespace}/${kind}/${name}`}>
-                      {name}
-                    </Link>
-                  </span>
-                );
-              })}
-        </Dato>
-        {conCalidad(entity) && <NivelContexto entidad={entity} />}
+        {conCalidad(entity) && <CalidadContexto entidad={entity} />}
         {etiquetas.length > 0 && (
           <Dato etiqueta={t('entidad.tecnologias')}>
             {etiquetas.map(e => (
@@ -237,9 +212,8 @@ export const TarjetaAcciones = () => {
 };
 
 /**
- * «Comprobaciones»: cuántas reglas cumple, en qué nivel está y qué le falta
- * para el siguiente, con cómo arreglarlo. El detalle está en la pestaña
- * Calidad.
+ * «Comprobaciones»: cuántas cumple y qué le falta, con cómo arreglarlo. El
+ * detalle por categoría está en la pestaña Calidad.
  */
 export const TarjetaComprobaciones = () => {
   const { t } = useTranslationRef(textosHrl);
@@ -251,68 +225,35 @@ export const TarjetaComprobaciones = () => {
   if (carga.estado === 'error') return null;
   const r = carga.datos;
   const faltan = pendientes(r);
-  const siguiente = r.nivel
-    ? NIVELES[NIVELES.indexOf(r.nivel) + 1]
-    : NIVELES[0];
-  const delSiguiente = siguiente
-    ? REGLAS.filter(regla => regla.nivel === siguiente)
-    : [];
   return (
     <section
       className="hrl-tarjeta hrl-comprobaciones"
       aria-labelledby="hrl-comprobaciones"
     >
       <header className="hrl-comprobaciones__cabecera">
-        <div>
-          <Text
-            as="h2"
-            id="hrl-comprobaciones"
-            variant="title-x-small"
-            weight="bold"
-          >
-            {t('entidad.comprobaciones')}
-          </Text>
-          <Text as="p" variant="body-small" color="secondary">
-            {siguiente
-              ? t('entidad.comprobacionesSiguiente', {
-                  cumplidas: String(delSiguiente.length - faltan.length),
-                  total: String(delSiguiente.length),
-                  nivel: t(`calidad.nivel.${siguiente}` as const),
-                })
-              : t('calidad.todoCumplido')}
-          </Text>
-        </div>
-        <Insignia nivel={r.nivel} sinEvaluar={r.sinEvaluar} />
+        <Text
+          as="h2"
+          id="hrl-comprobaciones"
+          variant="title-x-small"
+          weight="bold"
+        >
+          {t('entidad.comprobaciones')}
+        </Text>
+        <Puntaje r={r} />
       </header>
-      {faltan.length > 0 && (
+      {faltan.length === 0 ? (
+        <Text as="p" variant="body-small" color="secondary">
+          {t('calidad.todoCumplido')}
+        </Text>
+      ) : (
         <ul className="hrl-reglas">
-          {delSiguiente.map(regla => {
-            const estado = r.reglas[regla.id];
-            return (
-              <li
-                key={regla.id}
-                className="hrl-regla"
-                data-ok={estadoDato(estado)}
-              >
-                <EstadoReglaIcono estado={estado} />
-                <div>
-                  <Text as="p" variant="body-medium" weight="bold">
-                    {textoRegla(t, regla.id, 'titulo')}
-                  </Text>
-                  {estado === false && (
-                    <p className="hrl-regla__arreglo">
-                      {textoRegla(t, regla.id, 'arreglo')}
-                    </p>
-                  )}
-                  {estado === undefined && (
-                    <p className="hrl-regla__arreglo">
-                      {t('calidad.sinEvaluarAyuda')}
-                    </p>
-                  )}
-                </div>
-              </li>
-            );
-          })}
+          {faltan.map(regla => (
+            <ItemRegla
+              key={regla.id}
+              id={regla.id}
+              estado={r.reglas[regla.id]}
+            />
+          ))}
         </ul>
       )}
       <Link to={`${rutaEntidad(entity)}/calidad`} className="hrl-enlace-flecha">
@@ -321,5 +262,3 @@ export const TarjetaComprobaciones = () => {
     </section>
   );
 };
-
-export const filtroCalidad = conCalidad;

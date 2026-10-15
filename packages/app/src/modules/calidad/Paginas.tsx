@@ -7,9 +7,8 @@ import { useResumenCatalogo } from '../proyectos/datos';
 import { tituloDe } from '../comun/entidades';
 import { useCalidad, useCalidadEntidad } from './datos';
 import {
-  Insignia,
   ListaReglas,
-  Progreso,
+  Puntaje,
   ResumenCalidad,
   TablaCalidad,
   TablaReglas,
@@ -119,11 +118,10 @@ export const PestanaCalidad = () => {
       <div className="hrl-calidad-entidad__cabecera">
         <div>
           <Text as="p" variant="body-small" color="secondary">
-            {t('calidad.nivelActual')}
+            {t('calidad.columnaPuntaje')}
           </Text>
-          <Insignia nivel={r.nivel} sinEvaluar={r.sinEvaluar} grande />
+          <Puntaje r={r} />
         </div>
-        <Progreso r={r} />
       </div>
       <ListaReglas r={r} />
     </div>

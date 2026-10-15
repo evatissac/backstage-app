@@ -56,7 +56,6 @@
 
 .hrl-entidad__etiqueta {
   color: rgb(255 255 255 / 78%);
-  font-family: var(--bui-font-monospace);
   font-size: var(--bui-font-size-1);
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -75,12 +74,6 @@
 .hrl-entidad__nivel {
   border-radius: var(--bui-radius-full);
   text-decoration: none;
-}
-
-/* Sobre el color del proyecto, la insignia necesita fondo propio para leerse. */
-.hrl-entidad__franja .hrl-insignia {
-  background: rgb(255 255 255 / 92%);
-  color: #0a1312;
 }
 
 /* Tarjetas de la ficha (Tarjetas.tsx). */
@@ -175,4 +168,19 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--bui-space-3);
+}
+
+/* Puntaje sobre la franja de color del proyecto: texto claro y legible. */
+.hrl-entidad__franja .hrl-puntaje,
+.hrl-entidad__franja .hrl-puntaje__nota {
+  color: var(--hrl-heroe-texto);
+}
+
+.hrl-entidad__franja .hrl-puntaje__barra {
+  background: rgb(255 255 255 / 25%);
+  box-shadow: none;
+}
+
+.hrl-entidad__franja .hrl-puntaje__barra span {
+  background: var(--hrl-heroe-texto);
 }

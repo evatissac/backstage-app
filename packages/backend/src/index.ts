@@ -71,6 +71,9 @@ backend.add(
 );
 backend.add(import('./modules/calidad'));
 
+// Repositorios, miembros, pruebas y avance de cada proyecto, leídos de GitHub.
+backend.add(import('./plugins/proyectos'));
+
 // mcp actions plugin
 backend.add(import('@backstage/plugin-mcp-actions-backend'));
 

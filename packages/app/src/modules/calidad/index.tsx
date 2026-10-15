@@ -7,7 +7,7 @@ import { EntityContentBlueprint } from '@backstage/plugin-catalog-react/alpha';
 import CalidadIcon from '@material-ui/icons/AssessmentOutlined';
 
 export { useCalidad } from './datos';
-export { Insignia, TablaCalidad, ResumenCalidad } from './componentes';
+export { Puntaje, TablaCalidad, ResumenCalidad } from './componentes';
 
 const rutaCalidad = createRouteRef();
 

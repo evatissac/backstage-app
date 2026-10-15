@@ -1,37 +1,43 @@
 import { Entidad } from '../comun/entidades';
 
 /**
- * Comprobaciones de calidad, al estilo de Soundcheck de Spotify o de los
- * scorecards de Port. Las evalúa el backend con Tech Insights
- * (packages/backend/src/modules/calidad.ts y techInsights en app-config.yaml):
- * aquí solo se declara a qué nivel pertenece cada una, y su texto está en
- * modules/idioma. El id debe ser el mismo en los tres sitios.
+ * Comprobaciones de calidad. Las evalúa el backend con Tech Insights
+ * (packages/backend/src/modules/calidad.ts y techInsights en app-config.yaml);
+ * aquí solo se declara en qué categoría se muestra cada una, y su texto está
+ * en modules/idioma. El id debe ser el mismo en los tres sitios.
  *
- * Cada nivel exige los anteriores: no se llega a Plata sin cumplir Bronce.
+ * No hay niveles: un componente se describe por cuántas comprobaciones
+ * cumple («9 de 12») y cuáles le faltan.
  */
 
-export type Nivel = 'bronce' | 'plata' | 'oro';
-export const NIVELES: Nivel[] = ['bronce', 'plata', 'oro'];
+export type Categoria =
+  | 'identificacion'
+  | 'documentacion'
+  | 'repositorio'
+  | 'operacion';
 
-export type Regla = { id: string; nivel: Nivel };
+export const CATEGORIAS: Categoria[] = [
+  'identificacion',
+  'documentacion',
+  'repositorio',
+  'operacion',
+];
+
+export type Regla = { id: string; categoria: Categoria };
 
 export const REGLAS: Regla[] = [
-  // Bronce: se sabe qué es y quién responde por él.
-  { id: 'responsable', nivel: 'bronce' },
-  { id: 'proyecto', nivel: 'bronce' },
-  { id: 'descripcion', nivel: 'bronce' },
-  // Plata: alguien nuevo puede trabajar con él sin preguntar.
-  { id: 'documentacion', nivel: 'plata' },
-  { id: 'repositorio', nivel: 'plata' },
-  { id: 'cicloDeVida', nivel: 'plata' },
-  { id: 'readme', nivel: 'plata' },
-  { id: 'sinCredenciales', nivel: 'plata' },
-  // Oro: listo para producción y con un equipo real detrás.
-  { id: 'etiquetas', nivel: 'oro' },
-  { id: 'equipo', nivel: 'oro' },
-  { id: 'produccion', nivel: 'oro' },
-  { id: 'codeowners', nivel: 'oro' },
-  { id: 'kitFijado', nivel: 'oro' },
+  { id: 'proyecto', categoria: 'identificacion' },
+  { id: 'descripcion', categoria: 'identificacion' },
+  { id: 'cicloDeVida', categoria: 'identificacion' },
+  { id: 'etiquetas', categoria: 'identificacion' },
+  { id: 'documentacion', categoria: 'documentacion' },
+  { id: 'readme', categoria: 'documentacion' },
+  { id: 'repositorio', categoria: 'repositorio' },
+  { id: 'codeowners', categoria: 'repositorio' },
+  { id: 'sinCredenciales', categoria: 'repositorio' },
+  { id: 'kitFijado', categoria: 'repositorio' },
+  { id: 'pruebas', categoria: 'operacion' },
+  { id: 'produccion', categoria: 'operacion' },
 ];
 
 /**
@@ -44,9 +50,9 @@ export type EstadoRegla = boolean | undefined;
 export type Resultado = {
   entidad: Entidad;
   reglas: Record<string, EstadoRegla>;
-  /** El nivel más alto con todas sus reglas (y las de los anteriores) cumplidas. */
-  nivel?: Nivel;
   cumplidas: number;
+  /** Comprobaciones con resultado: el denominador honesto del puntaje. */
+  evaluadas: number;
   total: number;
   /** Ninguna regla tiene resultado todavía. */
   sinEvaluar: boolean;
@@ -56,30 +62,21 @@ export const resultado = (
   entidad: Entidad,
   reglas: Record<string, EstadoRegla>,
 ): Resultado => {
-  let nivel: Nivel | undefined;
-  for (const n of NIVELES) {
-    if (REGLAS.filter(r => r.nivel === n).every(r => reglas[r.id] === true)) {
-      nivel = n;
-    } else break;
-  }
+  const evaluadas = REGLAS.filter(r => reglas[r.id] !== undefined).length;
   return {
     entidad,
     reglas,
-    nivel,
     cumplidas: REGLAS.filter(r => reglas[r.id] === true).length,
+    evaluadas,
     total: REGLAS.length,
-    sinEvaluar: REGLAS.every(r => reglas[r.id] === undefined),
+    sinEvaluar: evaluadas === 0,
   };
 };
 
-/** Lo siguiente que falta para subir de nivel (incluye lo no evaluado). */
-export const pendientes = (r: Resultado) => {
-  const siguiente = r.nivel
-    ? NIVELES[NIVELES.indexOf(r.nivel) + 1]
-    : NIVELES[0];
-  return siguiente
-    ? REGLAS.filter(
-        regla => regla.nivel === siguiente && r.reglas[regla.id] !== true,
-      )
-    : [];
-};
+/** Lo que le falta: no cumple o aún sin evaluar. */
+export const pendientes = (r: Resultado) =>
+  REGLAS.filter(regla => r.reglas[regla.id] !== true);
+
+/** Parte cumplida de lo evaluado, o null si no hay nada evaluado. */
+export const proporcion = (r: Resultado) =>
+  r.evaluadas === 0 ? null : r.cumplidas / r.evaluadas;

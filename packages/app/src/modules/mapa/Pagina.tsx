@@ -1,6 +1,6 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Alert, Skeleton, Switch, Text } from '@backstage/ui';
+import { Alert, Skeleton, Text } from '@backstage/ui';
 import { useApi, useTranslationRef } from '@backstage/frontend-plugin-api';
 import { catalogApiRef } from '@backstage/plugin-catalog-react';
 import {
@@ -12,7 +12,6 @@ import SistemaIcon from '@material-ui/icons/CategoryOutlined';
 import ComponenteIcon from '@material-ui/icons/WidgetsOutlined';
 import ApiIcon from '@material-ui/icons/SettingsEthernetOutlined';
 import RecursoIcon from '@material-ui/icons/StorageOutlined';
-import GrupoIcon from '@material-ui/icons/GroupOutlined';
 import { textosHrl } from '../idioma';
 import { useCarga } from '../comun/useCarga';
 import { EstadoVacio } from '../comun/EstadoVacio';
@@ -38,7 +37,6 @@ const Grafo = () => {
   const { t } = useTranslationRef(textosHrl);
   const navigate = useNavigate();
   const catalogo = useApi(catalogApiRef);
-  const [equipos, setEquipos] = useState(false);
   const dominio = useCarga(() => catalogo.getEntityByRef(DOMINIO), [catalogo]);
 
   if (dominio.estado === 'cargando') {
@@ -69,25 +67,13 @@ const Grafo = () => {
         <Text as="p" variant="body-small" color="secondary">
           {t('mapa.pista')}
         </Text>
-        <Switch
-          label={t('mapa.mostrarEquipos')}
-          isSelected={equipos}
-          onChange={setEquipos}
-        />
       </div>
       <EntityRelationsGraph
         className="hrl-mapa__grafo"
         rootEntityNames={DOMINIO}
-        maxDepth={equipos ? 4 : 3}
-        kinds={[
-          'domain',
-          'system',
-          'component',
-          'api',
-          'resource',
-          ...(equipos ? ['group'] : []),
-        ]}
-        relations={equipos ? [...RELACIONES, 'ownedBy', 'ownerOf'] : RELACIONES}
+        maxDepth={3}
+        kinds={['domain', 'system', 'component', 'api', 'resource']}
+        relations={RELACIONES}
         mergeRelations
         direction={Direction.LEFT_RIGHT}
         zoom="enable-on-click"
@@ -108,7 +94,6 @@ const CLASES: { kind: string; icono: ReactNode }[] = [
   { kind: 'Component', icono: <ComponenteIcon /> },
   { kind: 'API', icono: <ApiIcon /> },
   { kind: 'Resource', icono: <RecursoIcon /> },
-  { kind: 'Group', icono: <GrupoIcon /> },
 ];
 
 // Las claves de cada clase se arman con su nombre; se afirma una del grupo.
@@ -146,7 +131,7 @@ const Tarjetas = () => {
   );
 };
 
-/** `/mapa`: cómo se relacionan los proyectos, sus piezas y sus equipos. */
+/** `/mapa`: cómo se relacionan los proyectos y sus piezas. */
 export const PaginaMapa = () => {
   const { t } = useTranslationRef(textosHrl);
   const [params] = useSearchParams();

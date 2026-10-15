@@ -24,6 +24,15 @@ const PLURALES = {
   location: 'catalogo.tipos.location',
 } as const;
 
+// El portal no muestra equipos responsables: quien trabaja en cada proyecto
+// se ve en su pestaña «Miembros», leída de GitHub.
+const campoResponsable = CatalogTable.columns.createOwnerColumn().field;
+const columnasSinResponsable: typeof CatalogTable.defaultColumnsFunc =
+  contexto =>
+    CatalogTable.defaultColumnsFunc(contexto).filter(
+      c => c.field !== campoResponsable,
+    );
+
 /**
  * Tabla con el título en el idioma del portal. El de Backstage arma «All
  * Components (4)» con textos fijos en inglés que no pasan por la traducción.
@@ -41,7 +50,9 @@ const TablaCatalogo = () => {
     base = t('catalogo.tituloFavoritos', { tipo: plural });
   }
   const cuenta = typeof totalItems === 'number' ? ` (${totalItems})` : '';
-  return <CatalogTable title={`${base}${cuenta}`} />;
+  return (
+    <CatalogTable title={`${base}${cuenta}`} columns={columnasSinResponsable} />
+  );
 };
 
 export const PaginaCatalogo = (props: { filtros: ReactNode }) => {

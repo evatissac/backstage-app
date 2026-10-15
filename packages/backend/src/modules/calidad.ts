@@ -51,12 +51,11 @@ const leerEntidades = async (ctx: FactRetrieverContext) => {
 
 const catalogo: FactRetriever = {
   id: 'hrlCatalogo',
-  version: '1.0.0',
+  version: '2.0.0',
   title: 'Ficha del catálogo',
   description: 'Lo que declara la ficha de cada componente y API.',
   entityFilter: COMPONENTES_Y_APIS,
   schema: {
-    tieneResponsable: { type: 'boolean', description: 'Tiene spec.owner.' },
     tieneProyecto: { type: 'boolean', description: 'Pertenece a un System.' },
     descripcionSuficiente: {
       type: 'boolean',
@@ -69,10 +68,6 @@ const catalogo: FactRetriever = {
     },
     tieneCicloDeVida: { type: 'boolean', description: 'Tiene spec.lifecycle.' },
     tieneEtiquetas: { type: 'boolean', description: 'Tiene metadata.tags.' },
-    equipoConMiembros: {
-      type: 'boolean',
-      description: 'Su responsable es un equipo con al menos un miembro.',
-    },
     enProduccion: {
       type: 'boolean',
       description: 'spec.lifecycle es production.',
@@ -80,27 +75,13 @@ const catalogo: FactRetriever = {
   },
   handler: async ctx => {
     const { leer } = await leerEntidades(ctx);
-    const [entidades, grupos] = await Promise.all([
-      leer(ctx.entityFilter ?? COMPONENTES_Y_APIS),
-      leer({ kind: 'group' }),
-    ]);
-    const conMiembros = new Set(
-      grupos
-        .filter(g => relaciones(g, 'hasMember').length > 0)
-        .map(g =>
-          `group:${g.metadata.namespace ?? 'default'}/${
-            g.metadata.name
-          }`.toLowerCase(),
-        ),
-    );
+    const entidades = await leer(ctx.entityFilter ?? COMPONENTES_Y_APIS);
     return entidades.map(e => {
       const spec = (e.spec ?? {}) as { system?: string; lifecycle?: string };
       const anotaciones = e.metadata.annotations ?? {};
-      const responsables = relaciones(e, 'ownedBy');
       return {
         entity: refEntidad(e),
         facts: {
-          tieneResponsable: responsables.length > 0,
           tieneProyecto:
             Boolean(spec.system) ||
             relaciones(e, 'partOf').some(r => r.startsWith('system:')),
@@ -116,9 +97,6 @@ const catalogo: FactRetriever = {
           ),
           tieneCicloDeVida: Boolean(spec.lifecycle),
           tieneEtiquetas: (e.metadata.tags ?? []).length > 0,
-          equipoConMiembros: responsables.some(r =>
-            conMiembros.has(r.toLowerCase()),
-          ),
           enProduccion: spec.lifecycle === 'production',
         },
       };
@@ -159,13 +137,17 @@ const kitFijado = (paquetes: string[]) => {
 
 const repositorio: FactRetriever = {
   id: 'hrlRepositorio',
-  version: '1.0.0',
+  version: '2.0.0',
   title: 'Contenido del repositorio',
   description:
     'Archivos del repositorio de cada componente y API: README, CODEOWNERS, credenciales y versión del kit.',
   entityFilter: COMPONENTES_Y_APIS,
   schema: {
     tieneReadme: { type: 'boolean', description: 'README en la raíz.' },
+    tienePruebas: {
+      type: 'boolean',
+      description: 'Tiene flujos de GitHub Actions en .github/workflows/.',
+    },
     tieneCodeowners: {
       type: 'boolean',
       description: 'CODEOWNERS en la raíz, .github/ o docs/.',
@@ -202,6 +184,7 @@ const repositorio: FactRetriever = {
               ruta,
             ) ||
               /(^|\/)package\.json$/.test(ruta) ||
+              /^\.github\/workflows\/[^/]+\.ya?ml$/i.test(ruta) ||
               CREDENCIALES.test(ruta)),
         });
         const archivos = await arbol.files();
@@ -213,6 +196,9 @@ const repositorio: FactRetriever = {
         );
         const facts = {
           tieneReadme: rutas.some(r => /^readme(\.\w+)?$/i.test(r)),
+          tienePruebas: rutas.some(r =>
+            /^\.github\/workflows\/[^/]+\.ya?ml$/i.test(r),
+          ),
           tieneCodeowners: rutas.some(r =>
             /^(\.github\/|docs\/)?codeowners$/i.test(r),
           ),

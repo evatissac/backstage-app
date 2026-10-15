@@ -295,7 +295,6 @@ a.hrl-tarjeta:focus-visible {
 
 .hrl-identidad__equipo {
   color: rgb(255 255 255 / 82%);
-  font-family: var(--bui-font-monospace);
   font-size: var(--bui-font-size-1);
   letter-spacing: 0.06em;
 }
@@ -304,24 +303,6 @@ a.hrl-tarjeta:focus-visible {
   margin: 2px 0 0;
   color: #ffffff !important;
   line-height: 1.25;
-}
-
-/* Stack técnico: etiquetas en monoespaciada, sin color de acento. */
-.hrl-stack {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.hrl-stack__item {
-  padding: 2px 8px;
-  border: 1px solid var(--bui-border-1);
-  border-radius: var(--bui-radius-2);
-  background: var(--hrl-superficie-2);
-  color: var(--bui-fg-primary);
-  font-family: var(--bui-font-monospace);
-  font-size: var(--bui-font-size-1);
-  line-height: 1.6;
 }
 
 /* Enlace de texto con flecha («Ver todos», «Ver detalle»). */

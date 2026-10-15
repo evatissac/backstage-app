@@ -25,7 +25,7 @@ export const textosHrl = createTranslationRef({
         'Sign in with your GitHub account, as a member of the DevHRL organization.',
       hospital: 'Hospital Regional de Loreto',
       lema: 'The systems the hospital builds, who owns each one and how they work, in one place.',
-      puntoCatalogo: 'Catalog of projects, components and teams',
+      puntoCatalogo: 'Catalog of projects and their components',
       puntoDocs: 'Technical documentation for every repository',
       puntoPacientes: 'No patient data: only code and documentation',
       titulo: 'Sign in',
@@ -72,24 +72,21 @@ export const textosHrl = createTranslationRef({
     portada: {
       cifraPiezas: 'Components and APIs',
       cifraDocumentadas: 'With documentation',
-      cifraBronce: 'At Bronze level or above',
+      cifraCalidad: 'Checks met',
+      porMejorar: 'To improve',
+      porMejorarAyuda:
+        'Components and APIs that meet the fewest quality checks, with what they are missing.',
+      porMejorarVacioTitulo: 'Nothing to improve',
+      porMejorarVacioDescripcion:
+        'Every component and API meets all the checks that could be evaluated.',
       ayudaProyectos:
         'Systems published in the portal (catalog/hrl.yaml). Each one has its own page.',
       ayudaPiezas:
         'Components plus APIs that belong to a published project. Something without spec.system is not counted.',
       ayudaDocumentadas:
         'Share of components and APIs that publish TechDocs. «No data» means there is nothing to measure yet, not 0 %.',
-      ayudaBronce:
-        'Share of components and APIs that meet the three Bronze checks: owner, project and description.',
-      pendiente: 'Pending for you',
-      pendienteAyuda:
-        'Components and APIs of your teams that are not Gold yet, with the next thing they need.',
-      pendienteVacioTitulo: 'Nothing pending',
-      pendienteVacioDescripcion:
-        'Everything your teams own is at Gold level, or they do not own anything yet.',
-      pendienteSinEquipoTitulo: 'You are not in any team yet',
-      pendienteSinEquipoDescripcion:
-        'This list shows what your teams own. Teams are imported from GitHub (DevHRL) once they are created there.',
+      ayudaCalidad:
+        'Quality checks met out of those evaluated, adding up every component and API.',
       queFalta: 'What is missing',
       verQueFalta: 'What is missing in {{nombre}}',
       accesoAutoservicio: 'Create a repository or document one',
@@ -127,7 +124,7 @@ export const textosHrl = createTranslationRef({
     proyectos: {
       titulo: 'Projects',
       intro:
-        'Each project is a system of the catalog: its components, APIs, documentation and the team that owns it.',
+        'Each project is a system of the catalog: open it to see what it is, how far along it is, how it is built and who works on it.',
       sinDescripcion: 'No description.',
       componentes: 'components',
       apis: 'APIs',
@@ -144,7 +141,6 @@ export const textosHrl = createTranslationRef({
       pestanaComponentes: 'Components',
       pestanaDocumentacion: 'Documentation',
       pestanaApis: 'APIs',
-      pestanaEquipo: 'Team',
       secciones: 'Project sections',
       responsable: 'Owner',
       dominio: 'Domain',
@@ -170,9 +166,6 @@ export const textosHrl = createTranslationRef({
       sinDocsTitulo: 'No documentation published',
       sinDocsDescripcion:
         'A component publishes its documentation with mkdocs.yml, a docs/ folder and the backstage.io/techdocs-ref annotation.',
-      sinMiembrosTitulo: '{{equipo}} has no members in the catalog',
-      sinMiembrosDescripcion:
-        'Teams will be imported from GitHub (DevHRL) once they are created there.',
       columnaNombre: 'Name',
       columnaTipo: 'Type',
       columnaCiclo: 'Lifecycle',
@@ -197,6 +190,18 @@ export const textosHrl = createTranslationRef({
       pestanaProcesos: 'Processes',
       pestanaDocumentos: 'Documents',
       verTecnologias: 'Versions and purpose of each technology',
+      pestanaAvance: 'Progress',
+      pestanaCalidadPruebas: 'Quality and tests',
+      pestanaMiembros: 'Members',
+      repositorios: 'Repositories',
+      repositoriosAyuda:
+        'The project code. Its README is the first read: what it is, how to run it and who to ask.',
+      leerReadme: 'Read the README',
+      sinReposTitulo: 'No repositories found',
+      sinReposDescripcion:
+        'The portal looks for repositories in the System links and in the source annotation of its components.',
+      wikiGithub: '{{repo}} wiki',
+      wikiGithubAyuda: 'Repository wiki on GitHub',
       pestanaFicha: 'Technical sheet',
       pestanaPiezas: 'Components and APIs',
       seccionesFicha: 'Technical sheet sections',
@@ -219,7 +224,7 @@ export const textosHrl = createTranslationRef({
     calidad: {
       titulo: 'Quality',
       intro:
-        'Each component and API earns a level as it meets basic practices: an owner, documentation, a README, no credentials in the repository. The server evaluates them and keeps the history.',
+        'Each component and API is measured by how many basic checks it meets: documentation, a README, automated tests, no credentials in the repository. The server evaluates them and keeps the history.',
       nota: 'The checks read the catalog-info.yaml of each repository (every 30 minutes) and some files of the repository itself (every 6 hours); they do not run the code.',
       filtroProyecto: 'Filter by project',
       todos: 'All',
@@ -227,40 +232,33 @@ export const textosHrl = createTranslationRef({
       vacioTitulo: 'Nothing to evaluate',
       vacioDescripcion:
         'There are no components or APIs here yet. They appear when a repository declares them in its catalog-info.yaml.',
-      sinNivel: 'No level',
-      nivel: {
-        bronce: 'Bronze',
-        plata: 'Silver',
-        oro: 'Gold',
-      },
-      descripcionNivel: {
-        bronce: 'We know what it is and who owns it.',
-        plata: 'Someone new can work on it without asking.',
-        oro: 'Ready for production, with a real team behind it.',
-      },
       progreso: '{{cumplidas}} of {{total}} checks',
+      faltanEvaluar: '{{cuenta}} not evaluated yet',
       cumple: '(met)',
       noCumple: '(pending)',
       columnaProyecto: 'Project',
-      columnaNivel: 'Level',
-      columnaProgreso: 'Progress',
-      columnaSiguiente: 'To level up',
+      columnaPuntaje: 'Checks',
+      columnaFaltan: 'Missing',
+      columnaCategoria: 'Category',
       todoCumplido: 'Everything met',
       sinDatos: 'No data',
-      cifraResponsable: 'with an owner',
-      ayudaResponsable: 'Share of components and APIs with an owning team.',
+      cifraCumplidas: 'checks met',
+      ayudaCumplidas:
+        'Checks met out of those that could be evaluated, adding up every component and API.',
       cifraDocs: 'with documentation',
       ayudaDocs: 'Share that publish their docs in the portal.',
-      cifraNivel: 'at {{nivel}} or above',
-      nivelActual: 'Current level',
+      cifraReadme: 'with README',
+      ayudaReadme: 'Share whose repository has a README at the root.',
+      cifraSinEvaluar: 'not evaluated yet',
+      ayudaSinEvaluar:
+        'Components and APIs without any result yet: the portal has not read their repository or catalog entry.',
+      categoria: {
+        identificacion: 'Identification',
+        documentacion: 'Documentation',
+        repositorio: 'Repository',
+        operacion: 'Operation',
+      },
       reglas: {
-        responsable: {
-          titulo: 'Has an owner',
-          porque:
-            'Without an owner nobody answers when it fails or needs a change.',
-          arreglo:
-            'Add spec.owner with the team, e.g. owner: equipo-estadistica.',
-        },
         proyecto: {
           titulo: 'Belongs to a project',
           porque: 'It shows up in its project page and in its counts.',
@@ -296,16 +294,17 @@ export const textosHrl = createTranslationRef({
             'They let you find everything that uses, say, FastAPI or React.',
           arreglo: 'Add metadata.tags, e.g. tags: [react, vite].',
         },
-        equipo: {
-          titulo: 'Its team has people',
-          porque: 'An empty team is the same as no owner.',
-          arreglo:
-            'Teams are imported from GitHub (DevHRL). Create the team there and add its members.',
-        },
         produccion: {
           titulo: 'Is in production',
-          porque: 'Gold is for what the hospital already uses every day.',
+          porque: 'It says whether the hospital already uses it every day.',
           arreglo: 'When it is in use, change spec.lifecycle to production.',
+        },
+        pruebas: {
+          titulo: 'Has automated tests',
+          porque:
+            'Each change is checked on its own; without it, regressions are found by the users.',
+          arreglo:
+            'Add a GitHub Actions workflow in .github/workflows/ that runs the tests (or the smoke test) on each push.',
         },
         readme: {
           titulo: 'Has a README',
@@ -366,7 +365,7 @@ export const textosHrl = createTranslationRef({
         'How to find your way around the portal and how to bring your repository in. Six steps, from reading to publishing.',
       p1Titulo: 'Find your project',
       p1Texto:
-        'Each hospital system has its own page with its components, documentation, APIs and team.',
+        'Each hospital system has its own page: what it is, its progress, its documentation and its members.',
       p1Accion: 'Go to projects',
       p2Titulo: 'Read the documentation',
       p2Texto:
@@ -391,27 +390,25 @@ export const textosHrl = createTranslationRef({
         'Diagrams go as .drawio.svg files: the portal lets you zoom them.',
       p5Titulo: 'Raise your quality level',
       p5Texto:
-        'Every component earns Bronze, Silver and Gold as it meets basic practices. Each check says how to fix it.',
+        'Each component shows how many quality checks it meets and which are missing. Each check says how to fix it.',
       p5Accion: 'See quality',
       p6Titulo: 'Rules that are never broken',
       p6Regla1:
         'No patient data in the portal or the repositories: no names, no screenshots with data, no sample Excel files.',
       p6Regla2:
         'Passwords and keys go in .env, which git ignores. Never in the code or the docs.',
-      p6Regla3: 'Every repository has an owning team.',
+      p6Regla3: 'Every repository has a README that says how to run it.',
     },
     entidad: {
       contexto: 'Context',
       clase: 'Kind',
       tecnologias: 'Technologies',
-      nivel: 'Quality level',
+      calidad: 'Quality',
       verDocumentacion: 'Documentation',
       verCodigo: 'Source code',
       editarFicha: 'Edit catalog entry',
       acciones: 'Actions',
       comprobaciones: 'Checks',
-      comprobacionesSiguiente:
-        '{{cumplidas}} of {{total}} checks for {{nivel}}',
       verCalidad: 'All checks and how to meet them',
       proyecto: 'Project',
       sinProyecto: 'Not part of any project',
@@ -428,7 +425,7 @@ export const textosHrl = createTranslationRef({
     catalogo: {
       titulo: 'Catalog',
       descripcion:
-        'Everything registered in the portal: components, APIs, systems and teams.',
+        'Everything registered in the portal: components, APIs, systems and resources.',
       crear: 'Create',
       tituloTodos: '{{tipo}}',
       tituloPropios: '{{tipo}} · owned by you',
@@ -570,13 +567,12 @@ export const textosHrl = createTranslationRef({
     mapa: {
       titulo: 'Map',
       intro:
-        'How the hospital projects relate to their components, APIs, resources and teams. Everything comes from the catalog.',
+        'How the hospital projects relate to their components, APIs and resources. Everything comes from the catalog.',
       vistas: 'Map views',
       grafo: 'Graph',
       tarjetas: 'Cards',
       pista:
         'Click a node to open its entry. Click the graph to enable zoom with the mouse wheel.',
-      mostrarEquipos: 'Show teams',
       errorCarga: 'Could not load the map',
       sinDominioTitulo: 'The hospital domain is not in the catalog',
       sinDominioDescripcion:
@@ -613,6 +609,90 @@ export const textosHrl = createTranslationRef({
         },
       },
     },
+    recorrido: {
+      queEs: 'What it is',
+      queEsPregunta: 'What the system does and what it is made of.',
+      queEsEnlace: 'See components and APIs',
+      piezas:
+        'Components: {{componentes}} · APIs: {{apis}} · Resources: {{recursos}}',
+      enQueVa: 'How far along it is',
+      enQueVaPregunta: 'Which functions are done and which are still missing.',
+      enQueVaEnlace: 'See the progress',
+      ultimaFase: 'Last stage closed: {{fase}} ({{fecha}}).',
+      siguiente: 'Next pending:',
+      comoEsta: 'How it is built',
+      comoEstaPregunta: 'Technologies, architecture, deployment and processes.',
+      comoEstaEnlace: 'See the technical sheet',
+      sinFicha:
+        'This project has no technical sheet yet (fichas/<project>/ficha.json).',
+      diagramas: '{{cuenta}} diagrams: architecture, deployment and processes.',
+      dondeLeer: 'Where to read about it',
+      dondeLeerPregunta: 'Wiki, repositories and institutional documents.',
+      dondeLeerEnlace: 'See the documentation',
+      documentos:
+        'Wiki pages (TechDocs): {{wiki}} · Institutional documents: {{documentos}} · Repositories: {{repos}}',
+      solidez: 'How solid it is',
+      solidezPregunta: 'Latest automated test results and quality checks.',
+      solidezEnlace: 'See quality and tests',
+      calidad: '{{cumplidas}} of {{total}} quality checks met.',
+      quienes: 'Who works on it',
+      quienesPregunta: 'People with access to its repositories.',
+      quienesEnlace: 'See the members',
+    },
+    avance: {
+      resumen: '{{completadas}} of {{total}} functions done',
+      fuente: 'Open the plan',
+      ayuda:
+        'Read from the project plan in its repository: each deliverable marked [done] counts as complete; partially done, in progress or blocked counts as pending.',
+      retiradas: '{{cuenta}} withdrawn deliverables are not counted.',
+      pendientes: 'Pending',
+      completadas: 'Done',
+      ningunaPendiente: 'Nothing pending in the plan.',
+      ningunaCompletada: 'Nothing completed yet.',
+      ultimo: 'Latest integrated',
+      ultimoAyuda:
+        'The latest merged pull requests (or commits) in the project repositories.',
+      sinCambios: 'No recent changes could be read.',
+      errorCarga: 'Could not load the progress',
+      sinPlanTitulo: 'This project does not declare its plan yet',
+      sinPlanDescripcion:
+        'Add the hrl/avance annotation to the System in catalog/hrl.yaml with the URL of its plan (e.g. docs/PLAN.md), with stages as «## Stage · **[done]**» and deliverables as table rows.',
+      noLeidoTitulo: 'The plan could not be read',
+      noLeidoDescripcion:
+        'The portal could not read the declared plan: {{error}}',
+    },
+    miembros: {
+      resumen: 'People: {{personas}} · Repositories: {{repos}}',
+      segunColaboradores: 'People with access to the repository',
+      segunContribuidores:
+        'Authors of commits (the portal cannot see who has access)',
+      aportes: 'Commits: {{cuenta}}',
+      errorCarga: 'Could not load the members',
+      permiso: {
+        admin: 'Admin',
+        maintain: 'Maintainer',
+        write: 'Write',
+        triage: 'Triage',
+        read: 'Read',
+      },
+    },
+    pruebas: {
+      titulo: 'Automated tests',
+      ayuda:
+        'The latest run of each GitHub Actions workflow in the project repositories.',
+      sinCi: 'This repository has no automated test runs.',
+      sinCiCorto: 'No automated tests',
+      sinCiTitulo: 'There are no automated tests yet',
+      sinCiDescripcion:
+        'None of the project repositories runs GitHub Actions. Add a workflow in .github/workflows/ that runs the tests on each push and the result will appear here.',
+      errorCarga: 'Could not load the test results',
+      resultado: {
+        success: 'Passed',
+        failure: 'Failed',
+        en_curso: 'Running',
+        otro: 'No result',
+      },
+    },
   },
 });
 
@@ -625,7 +705,7 @@ const es = {
   'ingreso.hospital': 'Hospital Regional de Loreto',
   'ingreso.lema':
     'Los sistemas que construye el hospital, quién responde por cada uno y cómo funcionan, en un solo lugar.',
-  'ingreso.puntoCatalogo': 'Catálogo de proyectos, componentes y equipos',
+  'ingreso.puntoCatalogo': 'Catálogo de proyectos y sus componentes',
   'ingreso.puntoDocs': 'Documentación técnica de cada repositorio',
   'ingreso.puntoPacientes':
     'Sin datos de pacientes: solo código y documentación',
@@ -688,7 +768,7 @@ const es = {
     'En este portal y en los repositorios no va ningún dato de pacientes.',
   'proyectos.titulo': 'Proyectos',
   'proyectos.intro':
-    'Cada proyecto es un sistema del catálogo: sus componentes, APIs, documentación y el equipo que responde por él.',
+    'Cada proyecto es un sistema del catálogo: entra para ver qué es, en qué va, cómo está hecho y quiénes trabajan en él.',
   'proyectos.sinDescripcion': 'Sin descripción.',
   'proyectos.componentes': 'componentes',
   'proyectos.apis': 'APIs',
@@ -701,7 +781,6 @@ const es = {
   'proyecto.pestanaComponentes': 'Componentes',
   'proyecto.pestanaDocumentacion': 'Documentación',
   'proyecto.pestanaApis': 'APIs',
-  'proyecto.pestanaEquipo': 'Equipo',
   'proyecto.secciones': 'Secciones del proyecto',
   'proyecto.responsable': 'Responsable',
   'proyecto.dominio': 'Dominio',
@@ -727,9 +806,6 @@ const es = {
   'proyecto.sinDocsTitulo': 'Sin documentación publicada',
   'proyecto.sinDocsDescripcion':
     'Un componente publica su documentación con mkdocs.yml, una carpeta docs/ y la anotación backstage.io/techdocs-ref.',
-  'proyecto.sinMiembrosTitulo': '{{equipo}} no tiene miembros en el catálogo',
-  'proyecto.sinMiembrosDescripcion':
-    'Los equipos se importarán desde GitHub (DevHRL) cuando se creen allí.',
   'proyecto.columnaNombre': 'Nombre',
   'proyecto.columnaTipo': 'Tipo',
   'proyecto.columnaCiclo': 'Ciclo de vida',
@@ -745,7 +821,7 @@ const es = {
   'proyecto.pestanaCalidad': 'Calidad',
   'calidad.titulo': 'Calidad',
   'calidad.intro':
-    'Cada componente y API sube de nivel a medida que cumple prácticas básicas: un responsable, documentación, un README, nada de credenciales en el repositorio. Las evalúa el servidor y guarda el historial.',
+    'Cada componente y API se mide por cuántas comprobaciones básicas cumple: documentación, un README, pruebas automáticas, nada de credenciales en el repositorio. Las evalúa el servidor y guarda el historial.',
   'calidad.nota':
     'Las comprobaciones leen el catalog-info.yaml de cada repositorio (cada 30 minutos) y algunos archivos del propio repositorio (cada 6 horas); no ejecutan el código.',
   'calidad.filtroProyecto': 'Filtrar por proyecto',
@@ -754,36 +830,14 @@ const es = {
   'calidad.vacioTitulo': 'Nada que evaluar',
   'calidad.vacioDescripcion':
     'Aquí aún no hay componentes ni APIs. Aparecen cuando un repositorio los declara en su catalog-info.yaml.',
-  'calidad.sinNivel': 'Sin nivel',
-  'calidad.nivel.bronce': 'Bronce',
-  'calidad.nivel.plata': 'Plata',
-  'calidad.nivel.oro': 'Oro',
-  'calidad.descripcionNivel.bronce': 'Se sabe qué es y quién responde por él.',
-  'calidad.descripcionNivel.plata':
-    'Alguien nuevo puede trabajar con él sin preguntar.',
-  'calidad.descripcionNivel.oro':
-    'Listo para producción y con un equipo real detrás.',
   'calidad.progreso': '{{cumplidas}} de {{total}} comprobaciones',
   'calidad.cumple': '(cumplida)',
   'calidad.noCumple': '(pendiente)',
   'calidad.columnaProyecto': 'Proyecto',
-  'calidad.columnaNivel': 'Nivel',
-  'calidad.columnaProgreso': 'Progreso',
-  'calidad.columnaSiguiente': 'Para subir de nivel',
   'calidad.todoCumplido': 'Todo cumplido',
   'calidad.sinDatos': 'Sin datos',
-  'calidad.cifraResponsable': 'con responsable',
-  'calidad.ayudaResponsable':
-    'Porcentaje de componentes y APIs con un equipo responsable.',
   'calidad.cifraDocs': 'con documentación',
   'calidad.ayudaDocs': 'Porcentaje que publica su documentación en el portal.',
-  'calidad.cifraNivel': 'con {{nivel}} o más',
-  'calidad.nivelActual': 'Nivel actual',
-  'calidad.reglas.responsable.titulo': 'Tiene responsable',
-  'calidad.reglas.responsable.porque':
-    'Sin responsable, nadie contesta cuando falla o hay que cambiarlo.',
-  'calidad.reglas.responsable.arreglo':
-    'Agrega spec.owner con el equipo, por ejemplo owner: equipo-estadistica.',
   'calidad.reglas.proyecto.titulo': 'Pertenece a un proyecto',
   'calidad.reglas.proyecto.porque':
     'Así aparece en la portada de su proyecto y en sus cifras.',
@@ -814,14 +868,9 @@ const es = {
     'Permiten encontrar todo lo que usa, por ejemplo, FastAPI o React.',
   'calidad.reglas.etiquetas.arreglo':
     'Agrega metadata.tags, por ejemplo tags: [react, vite].',
-  'calidad.reglas.equipo.titulo': 'Su equipo tiene personas',
-  'calidad.reglas.equipo.porque':
-    'Un equipo vacío es lo mismo que no tener responsable.',
-  'calidad.reglas.equipo.arreglo':
-    'Los equipos se importan desde GitHub (DevHRL). Crea el equipo allí y agrega a sus miembros.',
   'calidad.reglas.produccion.titulo': 'Está en producción',
   'calidad.reglas.produccion.porque':
-    'El Oro es para lo que el hospital ya usa todos los días.',
+    'Dice si el hospital ya lo usa todos los días.',
   'calidad.reglas.produccion.arreglo':
     'Cuando esté en uso, cambia spec.lifecycle a production.',
   'calidad.reglas.readme.titulo': 'Tiene README',
@@ -870,7 +919,7 @@ const es = {
     'Cómo orientarte en el portal y cómo sumar tu repositorio. Seis pasos, de leer a publicar.',
   'guia.p1Titulo': 'Encuentra tu proyecto',
   'guia.p1Texto':
-    'Cada sistema del hospital tiene su portada, con sus componentes, documentación, APIs y equipo.',
+    'Cada sistema del hospital tiene su portada: qué es, en qué va, su documentación y sus miembros.',
   'guia.p1Accion': 'Ir a proyectos',
   'guia.p2Titulo': 'Lee la documentación',
   'guia.p2Texto':
@@ -895,14 +944,14 @@ const es = {
     'Los diagramas van como archivos .drawio.svg: el portal permite ampliarlos.',
   'guia.p5Titulo': 'Sube de nivel de calidad',
   'guia.p5Texto':
-    'Cada componente gana Bronce, Plata y Oro a medida que cumple prácticas básicas. Cada comprobación dice cómo resolverla.',
+    'Cada componente muestra cuántas comprobaciones de calidad cumple y cuáles le faltan. Cada comprobación dice cómo resolverla.',
   'guia.p5Accion': 'Ver calidad',
   'guia.p6Titulo': 'Reglas que no se rompen',
   'guia.p6Regla1':
     'Ningún dato de pacientes en el portal ni en los repositorios: ni nombres, ni capturas con datos, ni Excel de ejemplo.',
   'guia.p6Regla2':
     'Las contraseñas y claves van en .env, que git ignora. Nunca en el código ni en la documentación.',
-  'guia.p6Regla3': 'Todo repositorio tiene un equipo responsable.',
+  'guia.p6Regla3': 'Todo repositorio tiene un README que dice cómo ejecutarlo.',
   'entidad.proyecto': 'Proyecto',
   'entidad.sinProyecto': 'No pertenece a ningún proyecto',
   'entidad.ciclo': 'Ciclo de vida',
@@ -916,7 +965,7 @@ const es = {
   'entidad.darDeBaja': 'Dar de baja la entidad',
   'catalogo.titulo': 'Catálogo',
   'catalogo.descripcion':
-    'Todo lo registrado en el portal: componentes, APIs, sistemas y equipos.',
+    'Todo lo registrado en el portal: componentes, APIs, sistemas y recursos.',
   'catalogo.crear': 'Crear',
   'catalogo.tituloTodos': '{{tipo}}',
   'catalogo.tituloPropios': '{{tipo}} · a tu cargo',
@@ -1076,47 +1125,41 @@ const es = {
   'entidad.contexto': 'Contexto',
   'entidad.clase': 'Clase',
   'entidad.tecnologias': 'Tecnologías',
-  'entidad.nivel': 'Nivel de calidad',
+  'entidad.calidad': 'Calidad',
   'entidad.verDocumentacion': 'Documentación',
   'entidad.verCodigo': 'Código fuente',
   'entidad.editarFicha': 'Editar la ficha',
   'entidad.acciones': 'Acciones',
   'entidad.comprobaciones': 'Comprobaciones',
-  'entidad.comprobacionesSiguiente':
-    '{{cumplidas}} de {{total}} comprobaciones para {{nivel}}',
   'entidad.verCalidad': 'Todas las comprobaciones y cómo cumplirlas',
   'portada.cifraPiezas': 'Componentes y APIs',
   'portada.cifraDocumentadas': 'Con documentación',
-  'portada.cifraBronce': 'Con nivel Bronce o más',
+  'portada.cifraCalidad': 'Comprobaciones cumplidas',
+  'portada.porMejorar': 'Por mejorar',
+  'portada.porMejorarAyuda':
+    'Componentes y APIs que menos comprobaciones de calidad cumplen, con lo que les falta.',
+  'portada.porMejorarVacioTitulo': 'Nada por mejorar',
+  'portada.porMejorarVacioDescripcion':
+    'Todos los componentes y APIs cumplen las comprobaciones que se pudieron evaluar.',
   'portada.ayudaProyectos':
     'Sistemas publicados en el portal (catalog/hrl.yaml). Cada uno tiene su propia página.',
   'portada.ayudaPiezas':
     'Componentes más APIs que pertenecen a un proyecto publicado. Lo que no tiene spec.system no se cuenta.',
   'portada.ayudaDocumentadas':
     'Parte de los componentes y APIs que publican TechDocs. «Sin datos» significa que aún no hay nada que medir, no 0 %.',
-  'portada.ayudaBronce':
-    'Parte de los componentes y APIs que cumplen las tres comprobaciones de Bronce: responsable, proyecto y descripción.',
-  'portada.pendiente': 'Pendiente para ti',
-  'portada.pendienteAyuda':
-    'Componentes y APIs de tus equipos que aún no llegan a Oro, con lo siguiente que les falta.',
-  'portada.pendienteVacioTitulo': 'Nada pendiente',
-  'portada.pendienteVacioDescripcion':
-    'Todo lo de tus equipos está en nivel Oro, o todavía no son responsables de nada.',
-  'portada.pendienteSinEquipoTitulo': 'Aún no estás en ningún equipo',
-  'portada.pendienteSinEquipoDescripcion':
-    'Esta lista muestra lo que es de tus equipos. Los equipos se importan de GitHub (DevHRL) cuando se crean allí.',
+  'portada.ayudaCalidad':
+    'Comprobaciones de calidad cumplidas sobre las evaluadas, sumando todos los componentes y APIs.',
   'portada.queFalta': 'Qué falta',
   'portada.verQueFalta': 'Qué le falta a {{nombre}}',
   'portada.accesoAutoservicio': 'Crear un repositorio o documentar uno',
   'mapa.titulo': 'Mapa',
   'mapa.intro':
-    'Cómo se relacionan los proyectos del hospital con sus componentes, APIs, recursos y equipos. Todo sale del catálogo.',
+    'Cómo se relacionan los proyectos del hospital con sus componentes, APIs y recursos. Todo sale del catálogo.',
   'mapa.vistas': 'Vistas del mapa',
   'mapa.grafo': 'Grafo',
   'mapa.tarjetas': 'Tarjetas',
   'mapa.pista':
     'Haz clic en un nodo para abrir su ficha. Haz clic en el grafo para activar el zoom con la rueda.',
-  'mapa.mostrarEquipos': 'Mostrar equipos',
   'mapa.errorCarga': 'No se pudo cargar el mapa',
   'mapa.sinDominioTitulo': 'El dominio del hospital no está en el catálogo',
   'mapa.sinDominioDescripcion':
@@ -1139,6 +1182,118 @@ const es = {
   'mapa.clases.group.titulo': 'Equipos',
   'mapa.clases.group.ayuda':
     'Equipos responsables de proyectos y componentes. Vienen de GitHub (DevHRL) o de catalog/hrl.yaml.',
+  'calidad.faltanEvaluar': '{{cuenta}} aún sin evaluar',
+  'calidad.columnaPuntaje': 'Comprobaciones',
+  'calidad.columnaFaltan': 'Le falta',
+  'calidad.columnaCategoria': 'Categoría',
+  'calidad.cifraCumplidas': 'comprobaciones cumplidas',
+  'calidad.ayudaCumplidas':
+    'Comprobaciones cumplidas sobre las que se pudieron evaluar, sumando todos los componentes y APIs.',
+  'calidad.cifraReadme': 'con README',
+  'calidad.ayudaReadme':
+    'Parte de los componentes y APIs cuyo repositorio tiene un README en la raíz.',
+  'calidad.cifraSinEvaluar': 'aún sin evaluar',
+  'calidad.ayudaSinEvaluar':
+    'Componentes y APIs sin ningún resultado todavía: el portal aún no leyó su repositorio ni su ficha.',
+  'calidad.categoria.identificacion': 'Identificación',
+  'calidad.categoria.documentacion': 'Documentación',
+  'calidad.categoria.repositorio': 'Repositorio',
+  'calidad.categoria.operacion': 'Operación',
+  'calidad.reglas.pruebas.titulo': 'Tiene pruebas automáticas',
+  'calidad.reglas.pruebas.porque':
+    'Cada cambio se comprueba solo; sin ellas, los errores los encuentran los usuarios.',
+  'calidad.reglas.pruebas.arreglo':
+    'Agrega un flujo de GitHub Actions en .github/workflows/ que ejecute las pruebas (o la prueba de humo) en cada push.',
+  'recorrido.queEs': 'Qué es',
+  'recorrido.queEsPregunta': 'Qué hace el sistema y de qué piezas está hecho.',
+  'recorrido.queEsEnlace': 'Ver componentes y APIs',
+  'recorrido.piezas':
+    'Componentes: {{componentes}} · APIs: {{apis}} · Recursos: {{recursos}}',
+  'recorrido.enQueVa': 'En qué va',
+  'recorrido.enQueVaPregunta': 'Qué funciones ya están y cuáles faltan.',
+  'recorrido.enQueVaEnlace': 'Ver el avance',
+  'recorrido.ultimaFase': 'Última etapa cerrada: {{fase}} ({{fecha}}).',
+  'recorrido.siguiente': 'Lo siguiente pendiente:',
+  'recorrido.comoEsta': 'Cómo está hecho',
+  'recorrido.comoEstaPregunta':
+    'Tecnologías, arquitectura, despliegue y procesos.',
+  'recorrido.comoEstaEnlace': 'Ver la ficha técnica',
+  'recorrido.sinFicha':
+    'Este proyecto aún no tiene ficha técnica (fichas/<proyecto>/ficha.json).',
+  'recorrido.diagramas':
+    '{{cuenta}} diagramas: arquitectura, despliegue y procesos.',
+  'recorrido.dondeLeer': 'Dónde leer sobre él',
+  'recorrido.dondeLeerPregunta':
+    'Wiki, repositorios y documentos institucionales.',
+  'recorrido.dondeLeerEnlace': 'Ver la documentación',
+  'recorrido.documentos':
+    'Páginas de wiki (TechDocs): {{wiki}} · Documentos institucionales: {{documentos}} · Repositorios: {{repos}}',
+  'recorrido.solidez': 'Qué tan sólido es',
+  'recorrido.solidezPregunta':
+    'Último resultado de las pruebas automáticas y comprobaciones de calidad.',
+  'recorrido.solidezEnlace': 'Ver calidad y pruebas',
+  'recorrido.calidad':
+    '{{cumplidas}} de {{total}} comprobaciones de calidad cumplidas.',
+  'recorrido.quienes': 'Quiénes trabajan en él',
+  'recorrido.quienesPregunta': 'Personas con acceso a sus repositorios.',
+  'recorrido.quienesEnlace': 'Ver los miembros',
+  'avance.resumen': '{{completadas}} de {{total}} funciones completadas',
+  'avance.fuente': 'Abrir el plan',
+  'avance.ayuda':
+    'Se lee del plan del proyecto en su repositorio: cada entrega marcada [hecho] cuenta como completada; lo hecho en parte, en curso o bloqueado cuenta como pendiente.',
+  'avance.retiradas': 'No se cuentan {{cuenta}} entregas retiradas.',
+  'avance.pendientes': 'Pendientes',
+  'avance.completadas': 'Completadas',
+  'avance.ningunaPendiente': 'Nada pendiente en el plan.',
+  'avance.ningunaCompletada': 'Aún no hay nada completado.',
+  'avance.ultimo': 'Lo último integrado',
+  'avance.ultimoAyuda':
+    'Los últimos pull requests integrados (o commits) en los repositorios del proyecto.',
+  'avance.sinCambios': 'No se pudieron leer cambios recientes.',
+  'avance.errorCarga': 'No se pudo cargar el avance',
+  'avance.sinPlanTitulo': 'Este proyecto aún no declara su plan',
+  'avance.sinPlanDescripcion':
+    'Agrega la anotación hrl/avance al System en catalog/hrl.yaml con la URL de su plan (p. ej. docs/PLAN.md), con las etapas como «## Etapa · **[hecho]**» y las entregas como filas de tabla.',
+  'avance.noLeidoTitulo': 'No se pudo leer el plan',
+  'avance.noLeidoDescripcion':
+    'El portal no pudo leer el plan declarado: {{error}}',
+  'miembros.resumen': 'Personas: {{personas}} · Repositorios: {{repos}}',
+  'miembros.segunColaboradores': 'Personas con acceso al repositorio',
+  'miembros.segunContribuidores':
+    'Autores de commits (el portal no puede ver quién tiene acceso)',
+  'miembros.aportes': 'Commits: {{cuenta}}',
+  'miembros.errorCarga': 'No se pudieron cargar los miembros',
+  'miembros.permiso.admin': 'Administración',
+  'miembros.permiso.maintain': 'Mantenimiento',
+  'miembros.permiso.write': 'Escritura',
+  'miembros.permiso.triage': 'Clasificación',
+  'miembros.permiso.read': 'Lectura',
+  'pruebas.titulo': 'Pruebas automáticas',
+  'pruebas.ayuda':
+    'La última ejecución de cada flujo de GitHub Actions en los repositorios del proyecto.',
+  'pruebas.sinCi':
+    'Este repositorio no tiene ejecuciones de pruebas automáticas.',
+  'pruebas.sinCiCorto': 'Sin pruebas automáticas',
+  'pruebas.sinCiTitulo': 'Todavía no hay pruebas automáticas',
+  'pruebas.sinCiDescripcion':
+    'Ningún repositorio del proyecto ejecuta GitHub Actions. Agrega un flujo en .github/workflows/ que corra las pruebas en cada push y su resultado aparecerá aquí.',
+  'pruebas.errorCarga': 'No se pudieron cargar los resultados de las pruebas',
+  'pruebas.resultado.success': 'Pasó',
+  'pruebas.resultado.failure': 'Falló',
+  'pruebas.resultado.en_curso': 'En curso',
+  'pruebas.resultado.otro': 'Sin resultado',
+  'proyecto.pestanaAvance': 'Avance',
+  'proyecto.pestanaCalidadPruebas': 'Calidad y pruebas',
+  'proyecto.pestanaMiembros': 'Miembros',
+  'proyecto.repositorios': 'Repositorios',
+  'proyecto.repositoriosAyuda':
+    'El código del proyecto. Su README es la primera lectura: qué es, cómo se ejecuta y a quién preguntar.',
+  'proyecto.leerReadme': 'Leer el README',
+  'proyecto.sinReposTitulo': 'No se encontraron repositorios',
+  'proyecto.sinReposDescripcion':
+    'El portal busca los repositorios en los enlaces del System y en la anotación de código fuente de sus componentes.',
+  'proyecto.wikiGithub': 'Wiki de {{repo}}',
+  'proyecto.wikiGithubAyuda': 'Wiki del repositorio en GitHub',
 } as const;
 
 export const textosHrlEs = createTranslationResource({

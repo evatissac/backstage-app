@@ -15,8 +15,8 @@
 
 :root,
 [data-theme-mode='light'] {
-  /* Poppins y JetBrains Mono se cargan en public/index.html. */
-  --bui-font-regular: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto,
+  /* Figtree y JetBrains Mono se cargan en public/index.html. */
+  --bui-font-regular: 'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto,
     Arial, sans-serif;
   --bui-font-monospace: 'JetBrains Mono', ui-monospace, 'Cascadia Code',
     Consolas, monospace;
@@ -72,14 +72,6 @@
   --hrl-barra-borde: #17201f;
   --hrl-barra-ancho: 264px;
   --hrl-barra-ancho-plegada: 72px;
-
-  /* Niveles de calidad (modules/calidad). Fondo suave y texto legible. */
-  --hrl-bronce-fondo: #fbeee4;
-  --hrl-bronce-texto: #8a4b1f;
-  --hrl-plata-fondo: #eef1f4;
-  --hrl-plata-texto: #4b5563;
-  --hrl-oro-fondo: #fdf3d3;
-  --hrl-oro-texto: #8a6400;
   --hrl-ok: #15803d;
 }
 
@@ -118,12 +110,5 @@
   --hrl-sombra: 0 1px 2px rgb(0 0 0 / 30%);
   --hrl-sombra-elevada: 0 2px 4px rgb(0 0 0 / 30%),
     0 18px 40px -16px rgb(0 0 0 / 60%);
-
-  --hrl-bronce-fondo: rgb(205 127 50 / 18%);
-  --hrl-bronce-texto: #e8a874;
-  --hrl-plata-fondo: rgb(203 213 225 / 14%);
-  --hrl-plata-texto: #cbd5e1;
-  --hrl-oro-fondo: rgb(234 179 8 / 16%);
-  --hrl-oro-texto: #fcd34d;
   --hrl-ok: #4ade80;
 }

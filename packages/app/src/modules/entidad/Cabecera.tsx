@@ -22,13 +22,12 @@ import {
   colorProyecto,
   Entidad,
   iniciales,
-  partesRef,
   relaciones,
   rutaEntidad,
   rutaProyecto,
   tituloDe,
 } from '../comun/entidades';
-import { Insignia } from '../calidad';
+import { Puntaje } from '../calidad';
 import { useCalidadEntidad } from '../calidad/datos';
 import { MenuAcciones } from '../autoservicio';
 import './entidad.css';
@@ -50,12 +49,12 @@ const useProyecto = (entidad: Entidad) => {
   }, [catalogo, ref, entidad.metadata.name]);
 };
 
-const NivelCalidad = ({ entidad }: { entidad: Entidad }) => {
+const PuntajeCalidad = ({ entidad }: { entidad: Entidad }) => {
   const carga = useCalidadEntidad(entidad);
   if (carga.estado !== 'listo') return null;
   return (
     <Link to={`${rutaEntidad(entidad)}/calidad`} className="hrl-entidad__nivel">
-      <Insignia nivel={carga.datos.nivel} sinEvaluar={carga.datos.sinEvaluar} />
+      <Puntaje r={carga.datos} compacto />
     </Link>
   );
 };
@@ -143,34 +142,11 @@ const CabeceraConEntidad = (
   const sistema = proyecto.estado === 'listo' ? proyecto.datos : undefined;
   const color = sistema ? colorProyecto(sistema) : ColorDefecto;
   const spec = (entidad.spec ?? {}) as { type?: string; lifecycle?: string };
-  const responsables = relaciones(entidad, 'ownedBy');
   const conCalidad = ['component', 'api'].includes(entidad.kind.toLowerCase());
 
   const metadata = [
     ...(spec.lifecycle
       ? [{ label: t('entidad.ciclo'), value: spec.lifecycle }]
-      : []),
-    ...(responsables.length > 0
-      ? [
-          {
-            label: t('proyecto.responsable'),
-            value: (
-              <>
-                {responsables.map((r, i) => {
-                  const { kind, namespace, name } = partesRef(r);
-                  return (
-                    <span key={r}>
-                      {i > 0 && ', '}
-                      <Link to={`/catalog/${namespace}/${kind}/${name}`}>
-                        {name}
-                      </Link>
-                    </span>
-                  );
-                })}
-              </>
-            ),
-          },
-        ]
       : []),
   ];
 
@@ -197,7 +173,7 @@ const CabeceraConEntidad = (
             {proyecto.estado === 'listo' ? t('entidad.sinProyecto') : ''}
           </span>
         )}
-        {conCalidad && <NivelCalidad entidad={entidad} />}
+        {conCalidad && <PuntajeCalidad entidad={entidad} />}
       </div>
       <Header
         title={tituloDe(entidad)}
