@@ -77,14 +77,11 @@
   margin-top: var(--bui-space-4);
 }
 
-/* El campo de BUI, más grande y sobre el degradado. */
-.hrl-heroe__busqueda .bui-SearchField {
+/* El buscador de BUI, más grande y sobre el degradado. */
+.hrl-heroe__busqueda .bui-SearchAutocomplete {
   width: 100%;
-}
-
-.hrl-heroe__busqueda .bui-SearchFieldInputWrapper {
   height: 56px;
-  padding: 0 var(--bui-space-4);
+  padding: 0 var(--bui-space-2);
   border: 1px solid rgb(255 255 255 / 30%);
   border-radius: var(--bui-radius-5);
   background: rgb(255 255 255 / 96%);
@@ -92,29 +89,81 @@
   color: #0a1312;
 }
 
-.hrl-heroe__busqueda .bui-SearchFieldInput {
+.hrl-heroe__busqueda .bui-SearchAutocompleteInput {
   color: #0a1312;
   font-size: var(--bui-font-size-4);
 }
 
-.hrl-heroe__busqueda .bui-SearchFieldInput::placeholder {
+.hrl-heroe__busqueda .bui-SearchAutocompleteInput::placeholder {
   color: #5c6b69;
 }
 
-.hrl-heroe__busqueda .bui-SearchFieldInputIcon,
-.hrl-heroe__busqueda .bui-SearchFieldClear {
+.hrl-heroe__busqueda .bui-SearchAutocompleteSearchField svg,
+.hrl-heroe__busqueda .bui-SearchAutocompleteClear {
   color: #0f6661;
 }
 
-.hrl-heroe__busqueda .bui-SearchFieldInputWrapper:focus-within {
+.hrl-heroe__busqueda .bui-SearchAutocomplete:focus-within {
   outline: 3px solid var(--hrl-barra-indicador);
   outline-offset: 2px;
 }
 
-.hrl-heroe__pista {
-  margin: 0;
-  color: var(--hrl-heroe-texto-2);
+/* Resultados: título, tipo y un extracto, alineados a la izquierda. */
+.hrl-resultado {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--bui-space-3);
+  width: 100%;
+  padding: var(--bui-space-1) 0;
+  text-align: start;
+}
+
+.hrl-resultado__icono {
+  display: grid;
+  place-items: center;
+  color: var(--bui-fg-secondary);
+}
+
+.hrl-resultado__icono svg {
+  font-size: 20px;
+}
+
+.hrl-resultado__texto {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.hrl-resultado__titulo,
+.hrl-resultado__extracto {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hrl-resultado__titulo {
+  font-weight: var(--bui-font-weight-bold);
+}
+
+.hrl-resultado__extracto {
+  color: var(--bui-fg-secondary);
   font-size: var(--bui-font-size-2);
+}
+
+.hrl-resultado__tipo {
+  color: var(--bui-fg-secondary);
+  font-size: var(--bui-font-size-2);
+}
+
+.hrl-resultado--aviso {
+  grid-template-columns: auto minmax(0, 1fr);
+  color: var(--bui-fg-secondary);
+}
+
+.hrl-resultado--todos {
+  grid-template-columns: auto minmax(0, 1fr);
+  font-weight: var(--bui-font-weight-bold);
 }
 
 /* ---------- Cuerpo ---------- */
@@ -293,7 +342,7 @@
   margin-top: 0;
 }
 
-.hrl-heroe--centrado .hrl-heroe__busqueda .bui-SearchFieldInputWrapper {
+.hrl-heroe--centrado .hrl-heroe__busqueda .bui-SearchAutocomplete {
   height: 60px;
 }
 

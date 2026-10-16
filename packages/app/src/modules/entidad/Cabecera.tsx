@@ -18,6 +18,7 @@ import StarBorderIcon from '@material-ui/icons/StarBorder';
 import MasIcon from '@material-ui/icons/MoreVert';
 import { textosHrl } from '../idioma';
 import { useCarga } from '../comun/useCarga';
+import { EsqueletoSubportal } from '../comun/Esqueletos';
 import {
   colorProyecto,
   Entidad,
@@ -198,6 +199,6 @@ const CabeceraConEntidad = (
  */
 export const CabeceraEntidad = (props: EntityHeaderLayoutProps) => {
   const { entity } = useAsyncEntity();
-  if (!entity) return <Header title="…" />;
+  if (!entity) return <EsqueletoSubportal soloCabecera />;
   return <CabeceraConEntidad entidad={entity} {...props} />;
 };

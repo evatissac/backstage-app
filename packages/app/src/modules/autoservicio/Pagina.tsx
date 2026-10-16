@@ -24,6 +24,7 @@ import EnlaceIcon from '@material-ui/icons/LaunchOutlined';
 import BuscarIcon from '@material-ui/icons/SearchOutlined';
 import { textosHrl } from '../idioma';
 import { EstadoVacio } from '../comun/EstadoVacio';
+import { EsqueletoTarjetas } from '../comun/Esqueletos';
 import { Etiqueta } from '../comun/Etiqueta';
 import { rutaEntidad, tituloDe } from '../comun/entidades';
 import {
@@ -161,9 +162,9 @@ export const PaginaAutoservicio = () => {
   let contenido;
   if (carga.estado === 'cargando') {
     contenido = (
-      <div className="hrl-acciones">
-        <Skeleton width="100%" height={200} />
-        <Skeleton width="100%" height={200} />
+      <div className="hrl-seccion">
+        <Skeleton width={180} height={22} />
+        <EsqueletoTarjetas rejilla="hrl-acciones" cantidad={4} lineas={3} />
       </div>
     );
   } else if (carga.estado === 'error') {

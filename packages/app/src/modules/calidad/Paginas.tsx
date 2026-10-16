@@ -1,5 +1,6 @@
 import { Link, useSearchParams } from 'react-router-dom';
-import { Alert, Skeleton, Text } from '@backstage/ui';
+import { Alert, Text } from '@backstage/ui';
+import { EsqueletoReglas } from '../comun/Esqueletos';
 import { useTranslationRef } from '@backstage/frontend-plugin-api';
 import { useEntity } from '@backstage/plugin-catalog-react';
 import { textosHrl } from '../idioma';
@@ -100,8 +101,7 @@ export const PestanaCalidad = () => {
   const { entity } = useEntity();
   const carga = useCalidadEntidad(entity);
 
-  if (carga.estado === 'cargando')
-    return <Skeleton width="100%" height={300} />;
+  if (carga.estado === 'cargando') return <EsqueletoReglas reglas={6} />;
   if (carga.estado === 'error') {
     return (
       <Alert

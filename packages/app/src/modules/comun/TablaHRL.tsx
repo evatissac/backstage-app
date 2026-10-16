@@ -23,6 +23,7 @@ import ExportarIcon from '@material-ui/icons/GetAppOutlined';
 import FiltroIcon from '@material-ui/icons/FilterListOutlined';
 import { textosHrl } from '../idioma';
 import { EstadoVacio } from './EstadoVacio';
+import { EsqueletoTabla } from './Esqueletos';
 import './tabla.css';
 
 /**
@@ -271,7 +272,16 @@ export function TablaHRL<T extends { id: string }>(props: {
       : { type: 'none' as const };
 
   let cuerpo: ReactNode;
-  if (resultado.length === 0 && !props.cargando) {
+  if (props.cargando) {
+    // Filas con la forma de la tabla, no una tabla vacía que luego salta.
+    cuerpo = (
+      <EsqueletoTabla
+        sinBarra
+        columnas={Math.min(Math.max(visibles.length, 2), 6)}
+        filas={Math.min(porPagina, 8)}
+      />
+    );
+  } else if (resultado.length === 0) {
     cuerpo = sinCoincidencias;
   } else if (grupos) {
     cuerpo = grupos.map(([grupo, filas]) => (

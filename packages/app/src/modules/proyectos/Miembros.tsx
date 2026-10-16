@@ -10,7 +10,6 @@ import {
   DialogFooter,
   DialogHeader,
   SearchField,
-  Skeleton,
   Text,
   TextField,
 } from '@backstage/ui';
@@ -25,6 +24,7 @@ import QuitarIcon from '@material-ui/icons/DeleteOutline';
 import AgregarIcon from '@material-ui/icons/Add';
 import { textosHrl } from '../idioma';
 import { EstadoVacio } from '../comun/EstadoVacio';
+import { EsqueletoMiembros } from '../comun/Esqueletos';
 import {
   Candidato,
   fechaCorta,
@@ -225,7 +225,7 @@ export const PestanaMiembros = ({ sistema }: { sistema: string }) => {
   );
 
   if (carga.estado === 'cargando') {
-    return <Skeleton width="100%" height={240} />;
+    return <EsqueletoMiembros />;
   }
   if (carga.estado === 'error') {
     return (
@@ -244,6 +244,8 @@ export const PestanaMiembros = ({ sistema }: { sistema: string }) => {
       variant={grupos.length === 0 ? 'primary' : 'secondary'}
       iconStart={<EditarIcon />}
       onPress={() => setEditando(true)}
+      // Sin la lista de colaboradores no hay a quién elegir: espera girando.
+      loading={candidatos.estado === 'cargando'}
       isDisabled={candidatos.estado !== 'listo'}
     >
       {grupos.length === 0

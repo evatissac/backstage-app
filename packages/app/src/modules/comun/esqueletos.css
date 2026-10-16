@@ -1,0 +1,198 @@
+/* Pantallas de carga con la forma del contenido (ver Esqueletos.tsx). */
+
+.hrl-esq__formas {
+  display: contents;
+}
+
+.hrl-esq__lineas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bui-space-2);
+}
+
+.hrl-esq__tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bui-space-3);
+  padding: var(--bui-space-5);
+  border: 1px solid var(--bui-border-1);
+  border-radius: var(--bui-radius-4);
+  background: var(--hrl-superficie);
+  box-shadow: var(--hrl-sombra);
+}
+
+.hrl-esq__lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bui-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hrl-esq__fila {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--bui-space-3);
+  min-height: 52px;
+  padding: var(--bui-space-2) var(--bui-space-3);
+}
+
+.hrl-esq__fila-texto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bui-space-2);
+  min-width: 0;
+}
+
+.hrl-esq__tabla {
+  display: flex;
+  flex-direction: column;
+}
+
+.hrl-esq__tabla-barra {
+  display: flex;
+  gap: var(--bui-space-2);
+  margin-bottom: var(--bui-space-4);
+}
+
+.hrl-esq__tabla-cabecera,
+.hrl-esq__tabla-fila {
+  display: grid;
+  align-items: center;
+  gap: var(--bui-space-4);
+  padding: 0 var(--bui-space-3);
+}
+
+.hrl-esq__tabla-cabecera {
+  min-height: 40px;
+  border-bottom: 1px solid var(--bui-border-1);
+}
+
+.hrl-esq__tabla-fila {
+  min-height: 48px;
+  border-bottom: 1px solid var(--bui-border-1);
+}
+
+.hrl-esq__heroe {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bui-space-3);
+  padding: var(--bui-space-8) var(--bui-space-8) var(--bui-space-7);
+  border-bottom: 1px solid var(--bui-border-1);
+}
+
+.hrl-esq__pestanas {
+  display: flex;
+  gap: var(--bui-space-6);
+  padding: var(--bui-space-4) var(--bui-space-8);
+  border-bottom: 1px solid var(--bui-border-1);
+  overflow: hidden;
+}
+
+.hrl-esq__columnas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--bui-space-4);
+  margin-top: var(--bui-space-2);
+}
+
+.hrl-esq__personas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--bui-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hrl-esq__personas li {
+  display: flex;
+  align-items: center;
+  gap: var(--bui-space-3);
+}
+
+.hrl-esq__catalogo {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: var(--bui-space-5);
+}
+
+.hrl-esq__catalogo-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bui-space-3);
+}
+
+@media (max-width: 768px) {
+  .hrl-esq__heroe,
+  .hrl-esq__pestanas {
+    padding-inline: var(--bui-space-4);
+  }
+
+  .hrl-esq__catalogo {
+    grid-template-columns: 1fr;
+  }
+
+  .hrl-esq__catalogo-nav {
+    display: none;
+  }
+}
+
+/* ---------- Girador ---------- */
+
+.hrl-girador {
+  display: inline-block;
+  flex: none;
+  border: 2px solid var(--bui-border-1);
+  border-top-color: var(--bui-fg-primary);
+  border-radius: 50%;
+  animation: hrl-girar 700ms linear infinite;
+}
+
+.hrl-girador--pequeno {
+  width: 14px;
+  height: 14px;
+}
+
+.hrl-girador--mediano {
+  width: 24px;
+  height: 24px;
+  border-width: 3px;
+}
+
+@keyframes hrl-girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Sin movimiento: el círculo queda quieto y el texto que lo acompaña avisa. */
+@media (prefers-reduced-motion: reduce) {
+  .hrl-girador {
+    animation: none;
+    border-top-color: var(--bui-border-1);
+  }
+}
+
+/* ---------- Iframe con aviso de carga ---------- */
+
+.hrl-marco-carga {
+  position: relative;
+}
+
+.hrl-marco-carga__aviso {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--bui-space-3);
+  border-radius: var(--bui-radius-4);
+  background: var(--hrl-superficie);
+  color: var(--bui-fg-secondary);
+  font-size: var(--bui-font-size-3);
+  pointer-events: none;
+}

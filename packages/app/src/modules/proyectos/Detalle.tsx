@@ -1,5 +1,6 @@
 import { Navigate, NavLink, Route, Routes, useParams } from 'react-router-dom';
-import { Alert, ButtonLink, Skeleton } from '@backstage/ui';
+import { Alert, ButtonLink } from '@backstage/ui';
+import { EsqueletoSubportal } from '../comun/Esqueletos';
 import { useTranslationRef } from '@backstage/frontend-plugin-api';
 import WidgetsIcon from '@material-ui/icons/WidgetsOutlined';
 import SearchOffIcon from '@material-ui/icons/SearchOutlined';
@@ -138,14 +139,7 @@ export const Detalle = () => {
   const detalle = useDetalleProyecto(nombre);
 
   if (detalle.estado === 'cargando') {
-    return (
-      <div aria-busy>
-        <Skeleton width="100%" height={220} />
-        <div className="hrl-pagina">
-          <Skeleton width="100%" height={160} />
-        </div>
-      </div>
-    );
+    return <EsqueletoSubportal />;
   }
   if (detalle.estado === 'error') {
     return (

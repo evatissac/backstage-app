@@ -1,6 +1,11 @@
-import { ReactNode } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Alert, SearchField, Skeleton, Text } from '@backstage/ui';
+import { ReactNode, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import {
+  Alert,
+  SearchAutocomplete,
+  SearchAutocompleteItem,
+  Text,
+} from '@backstage/ui';
 import {
   identityApiRef,
   useApi,
@@ -8,6 +13,10 @@ import {
 } from '@backstage/frontend-plugin-api';
 import { catalogApiRef } from '@backstage/plugin-catalog-react';
 import { visitsApiRef } from '@backstage/plugin-home';
+import { searchApiRef } from '@backstage/plugin-search-react';
+import BuscarIcon from '@material-ui/icons/Search';
+import AvisoIcon from '@material-ui/icons/ErrorOutline';
+import CatalogoIcon from '@material-ui/icons/CategoryOutlined';
 import HistoryIcon from '@material-ui/icons/HistoryOutlined';
 import DocIcon from '@material-ui/icons/MenuBookOutlined';
 import ProyectoIcon from '@material-ui/icons/FolderSpecialOutlined';
@@ -23,6 +32,11 @@ import {
   tituloDe,
 } from '../comun/entidades';
 import { Cifra } from '../comun/Cifra';
+import {
+  Cargando,
+  EsqueletoLista,
+  Girador,
+} from '../comun/Esqueletos';
 import { Monograma } from '../proyectos/TarjetaProyecto';
 import { useResumenCatalogo } from '../proyectos/datos';
 import FolderIcon from '@material-ui/icons/FolderOpenOutlined';
@@ -36,10 +50,148 @@ const saludo = (hora: number) => {
   return 'portada.saludoNoche' as const;
 };
 
+/** El valor tras una pausa: no se consulta el servidor en cada tecla. */
+const useDiferido = (valor: string, ms: number) => {
+  const [diferido, setDiferido] = useState(valor);
+  useEffect(() => {
+    const id = window.setTimeout(() => setDiferido(valor), ms);
+    return () => window.clearTimeout(id);
+  }, [valor, ms]);
+  return diferido;
+};
+
+/**
+ * Buscador de la portada: muestra resultados mientras se escribe y, al final,
+ * un acceso a la página de búsqueda completa, con filtros.
+ */
+const BuscadorPortada = () => {
+  const { t } = useTranslationRef(textosHrl);
+  const searchApi = useApi(searchApiRef);
+  const [texto, setTexto] = useState('');
+  const termino = useDiferido(texto.trim(), 250);
+  const resultados = useCarga(
+    async () =>
+      termino
+        ? (await searchApi.query({ term: termino, filters: {}, types: [] }))
+            .results
+        : [],
+    [searchApi, termino],
+  );
+  // Mientras se escribe o se espera al servidor, la lista anterior ya no vale.
+  const buscando =
+    texto.trim() !== termino || resultados.estado === 'cargando';
+  const lista = resultados.estado === 'listo' ? resultados.datos : [];
+
+  const items: ReactNode[] = [];
+  if (texto.trim()) {
+    if (buscando) {
+      items.push(
+        <SearchAutocompleteItem
+          key="buscando"
+          id="buscando"
+          textValue={t('portada.buscando')}
+          isDisabled
+        >
+          <span className="hrl-resultado hrl-resultado--aviso">
+            <Girador tamano="pequeno" />
+            {t('portada.buscando')}
+          </span>
+        </SearchAutocompleteItem>,
+      );
+    } else if (resultados.estado === 'error') {
+      items.push(
+        <SearchAutocompleteItem
+          key="error"
+          id="error"
+          textValue={t('portada.buscarError')}
+          isDisabled
+        >
+          <span className="hrl-resultado hrl-resultado--aviso">
+            <AvisoIcon fontSize="small" aria-hidden />
+            {t('portada.buscarError')}
+          </span>
+        </SearchAutocompleteItem>,
+      );
+    } else if (lista.length === 0) {
+      items.push(
+        <SearchAutocompleteItem
+          key="vacio"
+          id="vacio"
+          textValue={t('portada.sinResultados', { termino })}
+          isDisabled
+        >
+          <span className="hrl-resultado hrl-resultado--aviso">
+            <AvisoIcon fontSize="small" aria-hidden />
+            {t('portada.sinResultados', { termino })}
+          </span>
+        </SearchAutocompleteItem>,
+      );
+    } else {
+      for (const r of lista.slice(0, 7)) {
+        const docs = r.type === 'techdocs';
+        items.push(
+          <SearchAutocompleteItem
+            key={r.document.location}
+            id={r.document.location}
+            href={r.document.location}
+            textValue={r.document.title}
+          >
+            <span className="hrl-resultado">
+              <span className="hrl-resultado__icono" aria-hidden>
+                {docs ? <DocIcon /> : <CatalogoIcon />}
+              </span>
+              <span className="hrl-resultado__texto">
+                <span className="hrl-resultado__titulo">
+                  {r.document.title}
+                </span>
+                {r.document.text && (
+                  <span className="hrl-resultado__extracto">
+                    {r.document.text}
+                  </span>
+                )}
+              </span>
+              <span className="hrl-resultado__tipo">
+                {docs
+                  ? t('portada.resultadoDocs')
+                  : t('portada.resultadoCatalogo')}
+              </span>
+            </span>
+          </SearchAutocompleteItem>,
+        );
+      }
+    }
+    items.push(
+      <SearchAutocompleteItem
+        key="todos"
+        id="todos"
+        href={`/search?query=${encodeURIComponent(texto.trim())}`}
+        textValue={t('portada.verTodosResultados', { termino: texto.trim() })}
+      >
+        <span className="hrl-resultado hrl-resultado--todos">
+          <BuscarIcon fontSize="small" aria-hidden />
+          {t('portada.verTodosResultados', { termino: texto.trim() })}
+        </span>
+      </SearchAutocompleteItem>,
+    );
+  }
+
+  return (
+    <SearchAutocomplete
+      aria-label={t('portada.buscarEtiqueta')}
+      placeholder={t('portada.buscarPlaceholder')}
+      size="medium"
+      inputValue={texto}
+      onInputChange={setTexto}
+      isLoading={buscando}
+    >
+      {items}
+    </SearchAutocomplete>
+  );
+};
+
 /** Héroe: saludo y un buscador grande, centrados. */
 const Heroe = () => {
   const { t } = useTranslationRef(textosHrl);
-  const navigate = useNavigate();
   const identityApi = useApi(identityApiRef);
   const perfil = useCarga(() => identityApi.getProfileInfo(), [identityApi]);
   const nombre =
@@ -58,14 +210,7 @@ const Heroe = () => {
         </h1>
       </div>
       <div className="hrl-heroe__busqueda">
-        <SearchField
-          aria-label={t('portada.buscarEtiqueta')}
-          placeholder={t('portada.buscarPlaceholder')}
-          onSubmit={valor =>
-            navigate(`/search?query=${encodeURIComponent(valor)}`)
-          }
-        />
-        <p className="hrl-heroe__pista">{t('portada.buscarPista')}</p>
+        <BuscadorPortada />
       </div>
     </section>
   );
@@ -179,7 +324,11 @@ const UltimoVisto = () => {
   };
 
   if (lista.estado === 'cargando') {
-    return <Skeleton width="100%" height={320} />;
+    return (
+      <Cargando>
+        <EsqueletoLista filas={6} dato />
+      </Cargando>
+    );
   }
   if (lista.estado === 'error') {
     return (
@@ -343,7 +492,11 @@ const Lateral = () => {
         titulo={t('portada.widgetProyectos')}
         enlace={{ a: '/proyectos', texto: t('portada.verTodos') }}
       >
-        {cargando && <Skeleton width="100%" height={120} />}
+        {cargando && (
+          <Cargando>
+            <EsqueletoLista filas={3} />
+          </Cargando>
+        )}
         {datos && datos.proyectos.length === 0 && (
           <Text variant="body-small" color="secondary">
             {t('portada.sinProyectos')}

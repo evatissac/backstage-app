@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
-import { Alert, Skeleton, Text } from '@backstage/ui';
+import { Alert, Text } from '@backstage/ui';
+import { EsqueletoAvance } from '../comun/Esqueletos';
 import { useTranslationRef } from '@backstage/frontend-plugin-api';
 import HechoIcon from '@material-ui/icons/CheckCircle';
 import PendienteIcon from '@material-ui/icons/RadioButtonUnchecked';
@@ -134,7 +135,7 @@ export const ResumenAvance = ({ sistema }: { sistema: string }) => {
   const carga = useAvance(sistema);
 
   if (carga.estado === 'cargando') {
-    return <Skeleton width="100%" height={320} />;
+    return <EsqueletoAvance />;
   }
   if (carga.estado === 'error') {
     return (

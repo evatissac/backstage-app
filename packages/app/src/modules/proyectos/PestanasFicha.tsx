@@ -9,6 +9,11 @@ import GrafoIcon from '@material-ui/icons/AccountTreeOutlined';
 import DriveIcon from '@material-ui/icons/FolderSharedOutlined';
 import LinkIcon from '@material-ui/icons/LaunchOutlined';
 import { textosHrl } from '../idioma';
+import {
+  Cargando,
+  EsqueletoLineas,
+  MarcoConCarga,
+} from '../comun/Esqueletos';
 import { EstadoVacio } from '../comun/EstadoVacio';
 import { CAPAS_FICHA, Diagrama, Ficha, rutaFicha, useFicha } from './ficha';
 import '../comun/comun.css';
@@ -22,7 +27,13 @@ const ConFicha = (props: {
   const { t } = useTranslationRef(textosHrl);
   const carga = useFicha(props.sistema);
   if (carga.estado === 'cargando') {
-    return <Skeleton width="100%" height={420} />;
+    return (
+      <Cargando className="hrl-seccion">
+        <Skeleton width="30%" height={22} />
+        <EsqueletoLineas lineas={2} />
+        <Skeleton width="100%" height={360} />
+      </Cargando>
+    );
   }
   if (carga.estado === 'error') {
     return (
@@ -92,7 +103,7 @@ const VistaDiagrama = (props: {
           {t('ficha.pantallaCompleta')}
         </ButtonLink>
       </figcaption>
-      <iframe
+      <MarcoConCarga
         key={tema}
         className="hrl-diagrama__marco"
         title={props.titulo}

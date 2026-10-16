@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { NavLink, useParams } from 'react-router-dom';
-import { Alert, ButtonLink, SearchField, Skeleton, Text } from '@backstage/ui';
+import { Alert, ButtonLink, SearchField, Text } from '@backstage/ui';
+import {
+  EsqueletoCatalogoVisual,
+  MarcoConCarga,
+} from '../comun/Esqueletos';
 import {
   appThemeApiRef,
   useApi,
@@ -96,7 +100,7 @@ export const PestanaCatalogoVisual = (props: {
   const grupos = useMemo(() => agrupar(historias, filtro), [historias, filtro]);
 
   if (carga.estado === 'cargando') {
-    return <Skeleton width="100%" height={560} />;
+    return <EsqueletoCatalogoVisual />;
   }
   if (carga.estado === 'error') {
     return (
@@ -224,7 +228,7 @@ export const PestanaCatalogoVisual = (props: {
             </ButtonLink>
           </span>
         </header>
-        <iframe
+        <MarcoConCarga
           key={`${actual.id}-${tema}`}
           className="hrl-catalogo-visual__marco"
           title={t('catalogoVisual.marco', {

@@ -14,6 +14,7 @@ import ApiIcon from '@material-ui/icons/SettingsEthernetOutlined';
 import RecursoIcon from '@material-ui/icons/StorageOutlined';
 import { textosHrl } from '../idioma';
 import { useCarga } from '../comun/useCarga';
+import { Cargando } from '../comun/Esqueletos';
 import { EstadoVacio } from '../comun/EstadoVacio';
 import { Cifra } from '../comun/Cifra';
 import '../comun/comun.css';
@@ -40,7 +41,12 @@ const Grafo = () => {
   const dominio = useCarga(() => catalogo.getEntityByRef(DOMINIO), [catalogo]);
 
   if (dominio.estado === 'cargando') {
-    return <Skeleton width="100%" height={520} />;
+    return (
+      <Cargando className="hrl-tarjeta hrl-mapa">
+        <Skeleton width="45%" height={14} />
+        <Skeleton width="100%" height={480} />
+      </Cargando>
+    );
   }
   if (dominio.estado === 'error') {
     return (

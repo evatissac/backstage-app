@@ -1,4 +1,4 @@
-import { Alert, Skeleton, Text } from '@backstage/ui';
+import { Alert, Text } from '@backstage/ui';
 import { useTranslationRef } from '@backstage/frontend-plugin-api';
 import FolderIcon from '@material-ui/icons/FolderOpenOutlined';
 import { textosHrl } from '../idioma';
@@ -6,6 +6,7 @@ import { EstadoVacio } from '../comun/EstadoVacio';
 import { ResumenCatalogo, useResumenCatalogo } from './datos';
 import { Carga } from '../comun/useCarga';
 import { TarjetaProyecto } from './TarjetaProyecto';
+import { EsqueletoTarjetas } from '../comun/Esqueletos';
 import './proyectos.css';
 
 export const RejillaProyectos = (props: {
@@ -17,11 +18,11 @@ export const RejillaProyectos = (props: {
 
   if (resumen.estado === 'cargando') {
     return (
-      <div className="hrl-proyectos-rejilla" aria-busy>
-        {[0, 1, 2].map(i => (
-          <Skeleton key={i} width="100%" height={300} />
-        ))}
-      </div>
+      <EsqueletoTarjetas
+        rejilla="hrl-proyectos-rejilla"
+        cantidad={props.limite ?? 3}
+        altoCabecera={168}
+      />
     );
   }
   if (resumen.estado === 'error') {

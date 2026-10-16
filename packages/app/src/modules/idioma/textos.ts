@@ -75,7 +75,12 @@ export const textosHrl = createTranslationRef({
       saludoSinNombre: 'Welcome',
       buscarEtiqueta: 'Search the portal',
       buscarPlaceholder: 'Search projects, components, docs…',
-      buscarPista: 'Press Ctrl K from any page to search.',
+      buscando: 'Searching…',
+      buscarError: 'Search is not available right now',
+      verTodosResultados: 'See all results for “{{termino}}”',
+      sinResultados: 'Nothing matches “{{termino}}”. Open the search page to try filters.',
+      resultadoCatalogo: 'Catalog',
+      resultadoDocs: 'Documentation',
       recientesVacioTitulo: 'Nothing visited yet',
       recientesVacioDescripcion:
         'The pages you open in the portal will appear here so you can get back to them.',
@@ -516,6 +521,10 @@ export const textosHrl = createTranslationRef({
       sinCoincidenciasDescripcion:
         'There are records, but none matches the search or the selected filters. Clear them to see everything.',
     },
+    carga: {
+      cargando: 'Loading…',
+      cargandoVista: 'Loading the preview…',
+    },
     migas: {
       etiqueta: 'Breadcrumb',
     },
@@ -724,7 +733,13 @@ const es = {
   'portada.saludoSinNombre': 'Te damos la bienvenida',
   'portada.buscarEtiqueta': 'Buscar en el portal',
   'portada.buscarPlaceholder': 'Busca proyectos, componentes, documentación…',
-  'portada.buscarPista': 'Pulsa Ctrl K desde cualquier página para buscar.',
+  'portada.buscando': 'Buscando…',
+  'portada.buscarError': 'La búsqueda no está disponible ahora',
+  'portada.verTodosResultados': 'Ver todos los resultados de «{{termino}}»',
+  'portada.sinResultados':
+    'Nada coincide con «{{termino}}». Abre la página de búsqueda para probar con filtros.',
+  'portada.resultadoCatalogo': 'Catálogo',
+  'portada.resultadoDocs': 'Documentación',
   'portada.recientesVacioTitulo': 'Todavía no has visitado nada',
   'portada.recientesVacioDescripcion':
     'Las páginas que abras en el portal aparecerán aquí para volver a ellas.',
@@ -1031,6 +1046,8 @@ const es = {
   'tabla.sinValor': 'Sin valor',
   'tabla.resultados': '{{cuenta}} de {{total}} resultados',
   'tabla.cargando': 'Cargando…',
+  'carga.cargando': 'Cargando…',
+  'carga.cargandoVista': 'Cargando la vista…',
   'tabla.rango': '{{desde}}–{{hasta}} de {{total}}',
   'tabla.limpiar': 'Quitar filtros',
   'tabla.sinCoincidenciasTitulo': 'Nada coincide con los filtros',

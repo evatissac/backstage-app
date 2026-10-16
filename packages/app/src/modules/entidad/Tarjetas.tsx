@@ -9,6 +9,7 @@ import EditarIcon from '@material-ui/icons/EditOutlined';
 import AccionIcon from '@material-ui/icons/FlashOnOutlined';
 import { textosHrl } from '../idioma';
 import { useCarga } from '../comun/useCarga';
+import { EsqueletoReglas } from '../comun/Esqueletos';
 import { Etiqueta, estiloCiclo } from '../comun/Etiqueta';
 import {
   colorProyecto,
@@ -219,9 +220,7 @@ export const TarjetaComprobaciones = () => {
   const { t } = useTranslationRef(textosHrl);
   const { entity } = useEntity();
   const carga = useCalidadEntidad(entity);
-  if (carga.estado === 'cargando') {
-    return <Skeleton width="100%" height={160} />;
-  }
+  if (carga.estado === 'cargando') return <EsqueletoReglas reglas={3} />;
   if (carga.estado === 'error') return null;
   const r = carga.datos;
   const faltan = pendientes(r);

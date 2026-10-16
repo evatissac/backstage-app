@@ -1,4 +1,5 @@
-import { Alert, Skeleton, Text } from '@backstage/ui';
+import { Alert, Text } from '@backstage/ui';
+import { Cargando, EsqueletoLista } from '../comun/Esqueletos';
 import { useTranslationRef } from '@backstage/frontend-plugin-api';
 import ExitoIcon from '@material-ui/icons/CheckCircle';
 import FalloIcon from '@material-ui/icons/Cancel';
@@ -107,7 +108,11 @@ export const PestanaCalidadPruebas = ({ sistema }: { sistema: string }) => {
             {t('pruebas.ayuda')}
           </Text>
         </div>
-        {repos.estado === 'cargando' && <Skeleton width="100%" height={120} />}
+        {repos.estado === 'cargando' && (
+          <Cargando>
+            <EsqueletoLista filas={3} dato />
+          </Cargando>
+        )}
         {repos.estado === 'error' && (
           <Alert
             status="danger"

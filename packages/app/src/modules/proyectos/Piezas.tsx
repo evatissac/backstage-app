@@ -1,12 +1,13 @@
 import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { ButtonLink, Cell, CellText, Skeleton, Text } from '@backstage/ui';
+import { ButtonLink, Cell, CellText, Text } from '@backstage/ui';
 import { useTranslationRef } from '@backstage/frontend-plugin-api';
 import DocIcon from '@material-ui/icons/DescriptionOutlined';
 import WikiIcon from '@material-ui/icons/MenuBookOutlined';
 import CodigoIcon from '@material-ui/icons/CodeOutlined';
 import { textosHrl } from '../idioma';
 import { EstadoVacio } from '../comun/EstadoVacio';
+import { Cargando, EsqueletoLista } from '../comun/Esqueletos';
 import { IconoTipo } from '../comun/iconos';
 import { TablaHRL } from '../comun/TablaHRL';
 import { Etiqueta, estiloCiclo } from '../comun/Etiqueta';
@@ -158,7 +159,11 @@ const Wiki = ({ d }: { d: DetalleProyecto }) => {
       ? repos.datos.repositorios.filter(r => r.wiki)
       : [];
   if (repos.estado === 'cargando' && documentos.length === 0) {
-    return <Skeleton width="100%" height={120} />;
+    return (
+      <Cargando>
+        <EsqueletoLista filas={3} />
+      </Cargando>
+    );
   }
   if (documentos.length === 0 && wikis.length === 0) {
     return (
@@ -209,7 +214,13 @@ const Wiki = ({ d }: { d: DetalleProyecto }) => {
 const Repositorios = ({ d }: { d: DetalleProyecto }) => {
   const { t } = useTranslationRef(textosHrl);
   const repos = useRepositorios(d.sistema.metadata.name);
-  if (repos.estado === 'cargando') return <Skeleton width="100%" height={80} />;
+  if (repos.estado === 'cargando') {
+    return (
+      <Cargando>
+        <EsqueletoLista filas={2} />
+      </Cargando>
+    );
+  }
   if (repos.estado === 'error') {
     return (
       <Text as="p" variant="body-small" color="danger">
