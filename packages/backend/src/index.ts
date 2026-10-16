@@ -20,8 +20,10 @@ backend.add(import('@backstage/plugin-auth-backend'));
 // See https://backstage.io/docs/backend-system/building-backends/migrating#the-auth-plugin
 backend.add(import('@backstage/plugin-auth-backend-module-guest-provider'));
 // See https://backstage.io/docs/auth/guest/provider
-// Login con GitHub (auth.providers.github en app-config.yaml)
-backend.add(import('@backstage/plugin-auth-backend-module-github-provider'));
+// Login con GitHub (auth.providers.github en app-config.yaml). Reemplaza al
+// módulo estándar: deja entrar a cualquier miembro de DevHRL sin esperar a que
+// el catálogo importe su usuario (ver modules/ingreso.ts).
+backend.add(import('./modules/ingreso'));
 
 // catalog plugin
 backend.add(import('@backstage/plugin-catalog-backend'));
@@ -31,8 +33,9 @@ backend.add(
 
 // Descubre los repos de la organización DevHRL (catalog.providers.github en app-config.yaml)
 backend.add(import('@backstage/plugin-catalog-backend-module-github'));
-// Importa los miembros y equipos de DevHRL como usuarios y grupos; el login solo
-// deja entrar a quien tenga su usuario en el catálogo, es decir, a los miembros.
+// Importa los miembros y equipos de DevHRL como usuarios y grupos del catálogo.
+// El login no depende de esta importación (ver modules/ingreso.ts): comprueba la
+// membresía en GitHub y la importación solo completa el perfil de cada persona.
 backend.add(import('@backstage/plugin-catalog-backend-module-github-org'));
 
 // See https://backstage.io/docs/features/software-catalog/configuration#subscribing-to-catalog-errors

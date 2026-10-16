@@ -179,11 +179,8 @@ auth:
       development:
         clientId: ${AUTH_GITHUB_CLIENT_ID}
         clientSecret: ${AUTH_GITHUB_CLIENT_SECRET}
-        signIn:
-          resolvers:
-            # El usuario de GitHub debe existir como User en el catálogo
-            # (lo importa githubOrg desde los miembros de DevHRL).
-            - resolver: usernameMatchingUserEntityName
+        # Sin `signIn.resolvers`: un resolver declarado aquí tendría prioridad
+        # sobre el de modules/ingreso.ts, que comprueba la membresía en GitHub.
   # see https://backstage.io/docs/ai/mcp-actions#client-id-metadata-documents
   # to learn more about client id metadata documents
   clientIdMetadataDocuments:

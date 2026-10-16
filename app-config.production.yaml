@@ -32,9 +32,7 @@ auth:
       production:
         clientId: ${AUTH_GITHUB_CLIENT_ID}
         clientSecret: ${AUTH_GITHUB_CLIENT_SECRET}
-        signIn:
-          resolvers:
-            - resolver: usernameMatchingUserEntityName
+        # La comprobación de membresía de DevHRL está en modules/ingreso.ts.
 
 # Dentro del contenedor no hay Docker: MkDocs viene instalado en la imagen y la
 # documentación compilada se guarda en un volumen montado en /app/techdocs.
