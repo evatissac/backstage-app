@@ -42,7 +42,7 @@ export const TarjetaProyecto = ({ proyecto }: { proyecto: Proyecto }) => {
       <span className="hrl-identidad hrl-proyecto__cabecera">
         <Text
           as="h3"
-          variant="title-small"
+          variant="title-medium"
           weight="bold"
           className="hrl-identidad__titulo"
         >
@@ -52,7 +52,7 @@ export const TarjetaProyecto = ({ proyecto }: { proyecto: Proyecto }) => {
       <span className="hrl-proyecto__cuerpo">
         <Text
           as="p"
-          variant="body-small"
+          variant="body-medium"
           color="secondary"
           className="hrl-proyecto__desc"
         >

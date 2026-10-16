@@ -2,8 +2,8 @@
 
 .hrl-proyectos-rejilla {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: var(--bui-space-5);
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: var(--bui-space-6);
 }
 
 /* Tarjeta de proyecto: cabecera de identidad + cuerpo técnico. */
@@ -31,8 +31,8 @@
 }
 
 .hrl-proyecto__cabecera {
-  min-height: 108px;
-  padding: var(--bui-space-4) var(--bui-space-5) var(--bui-space-5);
+  min-height: 168px;
+  padding: var(--bui-space-6) var(--bui-space-6) var(--bui-space-5);
 }
 
 .hrl-proyecto__cuerpo {
@@ -40,7 +40,8 @@
   flex: 1;
   flex-direction: column;
   gap: var(--bui-space-4);
-  padding: var(--bui-space-4) var(--bui-space-5) var(--bui-space-4);
+  min-height: 132px;
+  padding: var(--bui-space-5) var(--bui-space-6) var(--bui-space-6);
 }
 
 .hrl-proyecto__desc {

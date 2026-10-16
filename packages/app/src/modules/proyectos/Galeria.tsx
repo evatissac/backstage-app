@@ -19,7 +19,7 @@ export const RejillaProyectos = (props: {
     return (
       <div className="hrl-proyectos-rejilla" aria-busy>
         {[0, 1, 2].map(i => (
-          <Skeleton key={i} width="100%" height={220} />
+          <Skeleton key={i} width="100%" height={300} />
         ))}
       </div>
     );

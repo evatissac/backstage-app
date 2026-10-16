@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Alert, SearchField, Skeleton, Text } from '@backstage/ui';
 import {
@@ -15,7 +16,17 @@ import { textosHrl } from '../idioma';
 import { useCarga } from '../comun/useCarga';
 import { EstadoVacio } from '../comun/EstadoVacio';
 import { IconoTipo } from '../comun/iconos';
-import { partesRef, tituloDe } from '../comun/entidades';
+import {
+  colorProyecto,
+  partesRef,
+  rutaProyecto,
+  tituloDe,
+} from '../comun/entidades';
+import { Cifra } from '../comun/Cifra';
+import { Monograma } from '../proyectos/TarjetaProyecto';
+import { useResumenCatalogo } from '../proyectos/datos';
+import FolderIcon from '@material-ui/icons/FolderOpenOutlined';
+import ChevronIcon from '@material-ui/icons/ChevronRight';
 import '../comun/comun.css';
 import './portada.css';
 
@@ -25,7 +36,7 @@ const saludo = (hora: number) => {
   return 'portada.saludoNoche' as const;
 };
 
-/** Héroe compacto: saludo y búsqueda en una franja. */
+/** Héroe: saludo y un buscador grande, centrados. */
 const Heroe = () => {
   const { t } = useTranslationRef(textosHrl);
   const navigate = useNavigate();
@@ -37,7 +48,7 @@ const Heroe = () => {
       : '';
 
   return (
-    <section className="hrl-heroe hrl-heroe--compacto hrl-heroe--solo">
+    <section className="hrl-heroe hrl-heroe--centrado">
       <div className="hrl-heroe__contenido">
         <p className="hrl-heroe__antetitulo">{t('portal.title')}</p>
         <h1 className="hrl-heroe__titulo">
@@ -258,17 +269,139 @@ const UltimoVisto = () => {
   );
 };
 
-/** Inicio: solo lo último que viste en el portal. */
+/** Una caja de la columna lateral, con su título y, si hace falta, «Ver todos». */
+const Widget = (props: {
+  titulo: string;
+  enlace?: { a: string; texto: string };
+  children: ReactNode;
+}) => (
+  <section className="hrl-widget">
+    <header className="hrl-widget__cabecera">
+      <Text as="h3" variant="body-medium" weight="bold">
+        {props.titulo}
+      </Text>
+      {props.enlace && (
+        <Link to={props.enlace.a} className="hrl-widget__enlace">
+          {props.enlace.texto}
+        </Link>
+      )}
+    </header>
+    {props.children}
+  </section>
+);
+
+/** Columna lateral: el portal en cifras, los proyectos y los accesos. */
+const Lateral = () => {
+  const { t } = useTranslationRef(textosHrl);
+  const resumen = useResumenCatalogo();
+  const datos = resumen.estado === 'listo' ? resumen.datos : undefined;
+  const cargando = resumen.estado === 'cargando';
+  // Si la carga falla no se muestra un 0: «Sin datos» es lo honesto.
+  const valor = (n?: number) => (datos ? n : null);
+
+  const accesos = [
+    { a: '/proyectos', texto: t('paginas.proyectos') },
+    { a: '/docs', texto: t('paginas.techdocs') },
+    { a: '/mapa', texto: t('paginas.mapa') },
+    { a: '/autoservicio', texto: t('paginas.autoservicio') },
+    { a: '/proyectos/hrl-core-ui', texto: t('portada.accesoKit') },
+  ];
+
+  return (
+    <aside className="hrl-lateral">
+      <Widget titulo={t('portada.widgetCifras')}>
+        <div className="hrl-lateral__cifras">
+          <Cifra
+            valor={valor(datos?.proyectos.length)}
+            etiqueta={t('portada.cifraProyectos')}
+            ayuda={t('portada.cifraProyectosAyuda')}
+            href="/proyectos"
+            cargando={cargando}
+          />
+          <Cifra
+            valor={valor(datos?.componentes)}
+            etiqueta={t('portada.cifraComponentes')}
+            ayuda={t('portada.cifraComponentesAyuda')}
+            cargando={cargando}
+          />
+          <Cifra
+            valor={valor(datos?.apis)}
+            etiqueta={t('portada.cifraApis')}
+            ayuda={t('portada.cifraApisAyuda')}
+            cargando={cargando}
+          />
+          <Cifra
+            valor={valor(datos?.personas)}
+            etiqueta={t('portada.cifraPersonas')}
+            ayuda={t('portada.cifraPersonasAyuda')}
+            cargando={cargando}
+          />
+        </div>
+      </Widget>
+
+      <Widget
+        titulo={t('portada.widgetProyectos')}
+        enlace={{ a: '/proyectos', texto: t('portada.verTodos') }}
+      >
+        {cargando && <Skeleton width="100%" height={120} />}
+        {datos && datos.proyectos.length === 0 && (
+          <Text variant="body-small" color="secondary">
+            {t('portada.sinProyectos')}
+          </Text>
+        )}
+        {datos && (
+          <ul className="hrl-widget__lista">
+            {datos.proyectos.slice(0, 6).map(p => (
+              <li key={p.sistema.metadata.name}>
+                <Link to={rutaProyecto(p.sistema)} className="hrl-widget__fila">
+                  <Monograma
+                    texto={tituloDe(p.sistema)}
+                    color={colorProyecto(p.sistema)}
+                  />
+                  <span className="hrl-widget__nombre">
+                    {tituloDe(p.sistema)}
+                  </span>
+                  <ChevronIcon fontSize="small" aria-hidden />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Widget>
+
+      <Widget titulo={t('portada.widgetAccesos')}>
+        <ul className="hrl-widget__lista">
+          {accesos.map(x => (
+            <li key={x.a}>
+              <Link to={x.a} className="hrl-widget__fila">
+                <span className="hrl-widget__icono" aria-hidden>
+                  <FolderIcon fontSize="small" />
+                </span>
+                <span className="hrl-widget__nombre">{x.texto}</span>
+                <ChevronIcon fontSize="small" aria-hidden />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </Widget>
+    </aside>
+  );
+};
+
+/** Inicio: buscador, lo último que viste y, al lado, el estado del portal. */
 export const Portada = () => {
   const { t } = useTranslationRef(textosHrl);
   return (
     <div className="hrl-portada">
       <Heroe />
-      <div className="hrl-portada__cuerpo">
-        <Text as="h2" variant="title-small" weight="bold">
-          {t('portada.recientes')}
-        </Text>
-        <UltimoVisto />
+      <div className="hrl-portada__cuerpo hrl-portada__cuerpo--dos">
+        <div className="hrl-portada__principal">
+          <Text as="h2" variant="title-small" weight="bold">
+            {t('portada.recientes')}
+          </Text>
+          <UltimoVisto />
+        </div>
+        <Lateral />
       </div>
     </div>
   );

@@ -375,3 +375,20 @@
     transition: none;
   }
 }
+
+/* ---------- Barra superior con la ruta: más baja ---------- */
+
+.bui-PluginHeader {
+  --bui-plugin-header-padding-top: var(--bui-space-2);
+  --bui-plugin-header-margin-bottom: var(--bui-space-3);
+  --bui-plugin-header-toolbar-padding-bottom: var(--bui-space-2);
+}
+
+.bui-PluginHeaderToolbarIcon {
+  width: 28px;
+  height: 28px;
+}
+
+.bui-PluginHeaderToolbarName {
+  font-size: var(--bui-font-size-3);
+}
