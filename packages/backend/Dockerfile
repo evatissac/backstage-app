@@ -74,6 +74,8 @@ RUN --mount=type=cache,target=/home/node/.cache/yarn,sharing=locked,uid=1000,gid
 
 COPY --from=build --chown=node:node /app/packages/backend/dist/bundle/ ./
 COPY --chown=node:node app-config.yaml app-config.production.yaml ./
+# Arranque que tolera variables sin valor (ver el propio script).
+COPY --chown=node:node packages/backend/arranque.sh ./
 # Dominio, sistemas y equipos del hospital (catalog.locations en app-config.production.yaml).
 COPY --chown=node:node catalog ./catalog
 # Plantillas de los caminos dorados (página «Crear»).
@@ -87,4 +89,4 @@ ENV NODE_ENV=production
 ENV NODE_OPTIONS="--no-node-snapshot"
 
 EXPOSE 7007
-CMD ["node", "packages/backend", "--config", "app-config.yaml", "--config", "app-config.production.yaml"]
+CMD ["sh", "arranque.sh"]
