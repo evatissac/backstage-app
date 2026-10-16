@@ -47,12 +47,19 @@ services:
       - '7007'
     volumes:
       - techdocs:/app/techdocs
+    # Traefik (Coolify) solo enruta a contenedores sanos: mientras este chequeo
+    # falle, el dominio responde «no available server». Por eso:
+    # - 127.0.0.1 y no localhost: Node resuelve localhost a ::1 y el chequeo
+    #   falla si el servidor no escucha en IPv6.
+    # - start_period amplio: el primer arranque crea una base por plugin, corre
+    #   las migraciones e indexa el catálogo, y la preparación (readiness)
+    #   responde 503 hasta que todos los plugins terminan.
     healthcheck:
-      test: ['CMD', 'node', '-e', "require('http').get('http://localhost:7007/.backstage/health/v1/readiness', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
-      interval: 30s
+      test: ['CMD', 'node', '-e', "require('http').get('http://127.0.0.1:7007/.backstage/health/v1/readiness', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 15s
       timeout: 10s
-      retries: 3
-      start_period: 180s
+      retries: 5
+      start_period: 300s
 
 volumes:
   portal-db:
