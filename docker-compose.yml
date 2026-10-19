@@ -39,7 +39,6 @@ services:
       POSTGRES_PASSWORD: ${SERVICE_PASSWORD_POSTGRES}
       AUTH_GITHUB_CLIENT_ID: ${AUTH_GITHUB_CLIENT_ID}
       AUTH_GITHUB_CLIENT_SECRET: ${AUTH_GITHUB_CLIENT_SECRET}
-      GITHUB_TOKEN: ${GITHUB_TOKEN}
       # --no-node-snapshot lo pide el Scaffolder; repetirlo porque esta variable
       # reemplaza la del Dockerfile.
       NODE_OPTIONS: '--no-node-snapshot --max-old-space-size=1536'
