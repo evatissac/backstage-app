@@ -1,0 +1,196 @@
+# Camino dorado para empezar un proyecto desde cero: crea su repositorio en
+# DevHRL, lo registra como proyecto (aparece en «Proyectos») y deja lista la
+# documentación: situación, proceso, arquitectura, tecnologías y decisiones.
+# El repositorio se crea con la cuenta de GitHub de quien llena el formulario.
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: nuevo-proyecto-hrl
+  title: Nuevo proyecto HRL
+  description: >-
+    Empieza un proyecto nuevo: crea su repositorio en DevHRL, lo publica en
+    Proyectos y deja lista su documentación (situación, proceso, arquitectura,
+    tecnologías y decisiones).
+  annotations:
+    # Cómo se presenta en Autoservicio (modules/autoservicio/datos.ts).
+    hrl/verbo: Crear proyecto
+  tags:
+    - golden-path
+    - recomendado
+spec:
+  owner: equipo-plataforma
+  type: proyecto
+
+  parameters:
+    - title: El proyecto
+      required: [nombre, titulo, descripcion, situacion]
+      properties:
+        nombre:
+          title: Nombre corto
+          type: string
+          description: En minúsculas y con guiones. Será el nombre del repositorio y del proyecto en el portal.
+          pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
+          maxLength: 63
+          ui:autofocus: true
+          ui:help: 'Ejemplo: egresos-hospitalarios'
+        titulo:
+          title: Título
+          type: string
+          description: Cómo se mostrará en el portal.
+          ui:help: 'Ejemplo: Egresos hospitalarios'
+        descripcion:
+          title: Descripción
+          type: string
+          description: Una frase que diga qué hace. Sin datos de pacientes.
+          minLength: 10
+          maxLength: 200
+        situacion:
+          title: Situación actual
+          type: string
+          description: Qué pasa hoy y por qué hace falta este proyecto. Se puede ampliar después.
+          ui:widget: textarea
+          ui:options:
+            rows: 6
+        objetivo:
+          title: Objetivo
+          type: string
+          description: Qué tiene que lograr el proyecto. Opcional.
+          ui:widget: textarea
+          ui:options:
+            rows: 3
+
+    - title: Responsables y etapa
+      required: [responsable, tipo, etapa]
+      properties:
+        responsable:
+          title: Responsable
+          type: string
+          description: Tú o tu equipo. Solo el responsable y los administradores pueden quitarlo del portal.
+          ui:field: OwnerPicker
+          ui:options:
+            catalogFilter:
+              kind: [Group, User]
+        tipo:
+          title: Tipo
+          type: string
+          default: website
+          enum: [website, service, library]
+          enumNames:
+            - Sitio web (interfaz)
+            - Servicio (API, bot, proceso)
+            - Biblioteca (código compartido)
+        etapa:
+          title: Etapa
+          type: string
+          default: experimental
+          enum: [experimental, production]
+          enumNames:
+            - En diseño o desarrollo
+            - En uso en el hospital
+
+    - title: Tecnologías
+      properties:
+        tecnologias:
+          title: Tecnologías previstas
+          type: array
+          description: Se pueden cambiar después en catalog-info.yaml y en docs/tecnologias.md.
+          uniqueItems: true
+          items:
+            type: string
+            enum:
+              - hrl-core-ui
+              - react
+              - vite
+              - vue
+              - angular
+              - typescript
+              - node
+              - express
+              - python
+              - fastapi
+              - django
+              - flask
+              - php
+              - laravel
+              - java
+              - spring
+              - dotnet
+              - postgresql
+              - mysql
+              - mariadb
+              - sqlserver
+              - oracle
+              - mongodb
+              - redis
+              - excel
+              - docker
+          ui:widget: checkboxes
+        notasTecnologias:
+          title: Notas sobre las tecnologías
+          type: string
+          description: Otras herramientas o por qué se eligieron. Opcional.
+          ui:widget: textarea
+          ui:options:
+            rows: 3
+
+    - title: Repositorio
+      required: [repoUrl]
+      properties:
+        repoUrl:
+          title: Ubicación
+          type: string
+          description: Usa el mismo nombre corto del primer paso.
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts: [github.com]
+            allowedOwners: [DevHRL]
+            requestUserCredentials:
+              secretsKey: USER_OAUTH_TOKEN
+              additionalScopes:
+                github: [repo]
+
+  steps:
+    - id: plantilla
+      name: Preparar los archivos
+      action: fetch:template
+      input:
+        url: ./esqueleto
+        values:
+          nombre: ${{ parameters.nombre }}
+          repoSlug: ${{ (parameters.repoUrl | parseRepoUrl).owner }}/${{ (parameters.repoUrl | parseRepoUrl).repo }}
+          titulo: ${{ parameters.titulo }}
+          descripcion: ${{ parameters.descripcion }}
+          situacion: ${{ parameters.situacion }}
+          objetivo: ${{ parameters.objetivo }}
+          responsable: ${{ parameters.responsable }}
+          tipo: ${{ parameters.tipo }}
+          etapa: ${{ parameters.etapa }}
+          tecnologias: ${{ parameters.tecnologias or [] }}
+          notasTecnologias: ${{ parameters.notasTecnologias }}
+          creadoPor: ${{ user.ref }}
+
+    - id: publicar
+      name: Crear el repositorio en GitHub
+      action: publish:github
+      input:
+        repoUrl: ${{ parameters.repoUrl }}
+        description: ${{ parameters.descripcion }}
+        defaultBranch: main
+        repoVisibility: private
+        # Los repos privados del plan gratuito no admiten protección de ramas.
+        protectDefaultBranch: false
+        token: ${{ secrets.USER_OAUTH_TOKEN }}
+
+    - id: registrar
+      name: Publicar el proyecto en el portal
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps['publicar'].output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+
+  output:
+    links:
+      - title: Repositorio
+        url: ${{ steps['publicar'].output.remoteUrl }}
+      - title: Abrir el proyecto
+        url: /proyectos/${{ parameters.nombre }}

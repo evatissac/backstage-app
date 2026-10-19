@@ -1,0 +1,39 @@
+# Ficha del proyecto en el Portal de Desarrollo HRL. Declara el proyecto (un
+# System, que aparece en «Proyectos») y su repositorio principal (un Component).
+# Si cambias algo aquí (responsable, etapa, tecnologías), el portal lo toma solo.
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: ${{ values.nombre }}
+  title: ${{ values.titulo | dump }}
+  description: ${{ values.descripcion | dump }}
+  links:
+    - url: https://github.com/${{ values.repoSlug }}
+      title: Repositorio
+spec:
+  owner: ${{ values.responsable }}
+  domain: salud-hrl
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{ values.nombre }}
+  title: ${{ values.titulo | dump }}
+  description: ${{ values.descripcion | dump }}
+  annotations:
+    github.com/project-slug: ${{ values.repoSlug }}
+    backstage.io/source-location: url:https://github.com/${{ values.repoSlug }}
+    # La documentación está en docs/ de este repo (ver mkdocs.yml).
+    backstage.io/techdocs-ref: dir:.
+{%- if values.tecnologias | length %}
+  tags:
+{%- for t in values.tecnologias %}
+    - ${{ t }}
+{%- endfor %}
+{%- endif %}
+spec:
+  type: ${{ values.tipo }}
+  # experimental mientras se diseña o desarrolla; production cuando ya se usa.
+  lifecycle: ${{ values.etapa }}
+  owner: ${{ values.responsable }}
+  system: ${{ values.nombre }}

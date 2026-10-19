@@ -235,6 +235,10 @@ catalog:
         - allow: [Domain, System, Component, Resource, Group, User]
     # Caminos dorados: plantillas de la página «Crear» (plantillas/).
     - type: file
+      target: ../../plantillas/nuevo-proyecto/template.yaml
+      rules:
+        - allow: [Template]
+    - type: file
       target: ../../plantillas/nuevo-repositorio/template.yaml
       rules:
         - allow: [Template]
@@ -388,6 +392,17 @@ techInsights:
 permission:
   # setting this to `false` will disable permissions
   enabled: true
+
+hrl:
+  # Administradores del portal (usuario de GitHub): pueden todo. El resto de los
+  # miembros ve todo, usa las plantillas y gestiona solo lo que es suyo. Ver
+  # packages/backend/src/modules/permisos.ts. Los miembros del grupo
+  # `plataforma` también serán administradores cuando exista ese equipo en GitHub.
+  admins:
+    - GiancarloChavez
+    - And3rs14
+    - NeyGuTo
+    - stephano16
 
 # see https://backstage.io/docs/ai/mcp-actions for more details
 mcpActions:

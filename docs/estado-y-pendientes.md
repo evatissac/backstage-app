@@ -65,7 +65,7 @@ Detalles que importan:
 | Calidad                      | ✅ `/calidad`, pestaña _Calidad_ en cada componente/API y en cada proyecto: niveles Bronce, Plata y Oro calculados con el catálogo (`modules/calidad/reglas.ts`). No lee el contenido de los repos                                                                                                                          |
 | Primeros pasos               | ✅ Lista en la portada que se marca sola (visitas y favoritos) y guía en `/primeros-pasos`                                                                                                                                                                                                                                  |
 | Kubernetes                   | ✅ Quitado                                                                                                                                                                                                                                                                                                                  |
-| Permisos                     | ⚠️ «Permitir todo»                                                                                                                                                                                                                                                                                                          |
+| Permisos                     | ✅ Política propia (`packages/backend/src/modules/permisos.ts`): administradores en `hrl.admins` (o grupo `plataforma`) pueden todo; los miembros ven todo, usan plantillas y solo refrescan o borran lo suyo                                                                                                                |
 | Logo y colores               | ⚠️ Paleta verde agua (`modules/tema/paleta.ts` y `tokens.css`). Sin logo: un sello «HRL» ocupa su lugar hasta que llegue (`modules/nav/Marca.tsx`)                                                                                                                                                                          |
 
 ## 3. Cómo retomar el trabajo
@@ -388,7 +388,7 @@ Antes de volver a desplegar:
       versionado: este repositorio es público).
 - [ ] Reemplazar el token personal por una GitHub App de la organización (también
       resuelve las callbacks de varias direcciones).
-- [ ] Política de permisos distinta de «permitir todo» antes de abrir a los 30.
+- [x] Política de permisos distinta de «permitir todo» (`modules/permisos.ts`).
 
 ## 7. Dónde está cada cosa
 

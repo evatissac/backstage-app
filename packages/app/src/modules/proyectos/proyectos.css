@@ -1,5 +1,14 @@
 /* Galería y subportales de proyecto. `--hrl-proyecto` es el color del proyecto. */
 
+/* Título de la galería con el botón «Nuevo proyecto» a la derecha. */
+.hrl-proyectos-cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--bui-space-4);
+}
+
 .hrl-proyectos-rejilla {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));

@@ -122,7 +122,8 @@ export const textosHrl = createTranslationRef({
       errorCarga: 'Could not load the projects',
       vacioTitulo: 'There are no projects yet',
       vacioDescripcion:
-        'Projects are the systems defined in catalog/hrl.yaml. Once one is added there, it will appear here.',
+        'Create the first one with New project, or define it in catalog/hrl.yaml.',
+      nuevo: 'New project',
       stack: 'Technology stack',
       abrir: 'Open',
     },
@@ -753,7 +754,8 @@ const es = {
   'proyectos.errorCarga': 'No se pudieron cargar los proyectos',
   'proyectos.vacioTitulo': 'Todavía no hay proyectos',
   'proyectos.vacioDescripcion':
-    'Los proyectos son los sistemas definidos en catalog/hrl.yaml. Cuando se agregue uno allí, aparecerá aquí.',
+    'Crea el primero con Nuevo proyecto, o defínelo en catalog/hrl.yaml.',
+  'proyectos.nuevo': 'Nuevo proyecto',
   'proyecto.pestanaResumen': 'Resumen',
   'proyecto.pestanaComponentes': 'Componentes',
   'proyecto.pestanaDocumentacion': 'Documentación',

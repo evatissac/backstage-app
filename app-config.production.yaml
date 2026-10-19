@@ -54,6 +54,10 @@ catalog:
       rules:
         - allow: [Domain, System, Component, Resource, Group, User]
     - type: file
+      target: ./plantillas/nuevo-proyecto/template.yaml
+      rules:
+        - allow: [Template]
+    - type: file
       target: ./plantillas/nuevo-repositorio/template.yaml
       rules:
         - allow: [Template]
